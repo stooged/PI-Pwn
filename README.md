@@ -2,6 +2,15 @@
 
 this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0<br>
 
+
+
+
+[![https://www.youtube.com/watch?v=ebaVTBpM2-0](https://img.youtube.com/vi/ebaVTBpM2-0/0.jpg)](https://www.youtube.com/watch?v=ebaVTBpM2-0)
+
+https://www.youtube.com/watch?v=ebaVTBpM2-0<br>
+
+
+
 you need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> onto a sd card.<br>
 place the sd card into your computer and copy the PPPwn folder to the sd card.<br>
 
