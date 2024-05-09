@@ -49,3 +49,10 @@ the idea is you boot the console and the pi together and the pi will keep trying
 
 
 you can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
+
+<br>
+
+Tested on the following models<br>
+<a href=https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/>Raspberry Pi 3B+</a><br>
+<a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4 Model B</a><br>
+<a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a><br>
