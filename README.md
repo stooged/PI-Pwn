@@ -24,6 +24,17 @@ Tested on the following models<br>
 you need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> onto a sd card.<br>
 place the sd card into your computer and copy the PPPwn folder to the sd card.<br>
 
+
+<br>
+
+if you are using a <b>usb to ethernet adapter</b> you need to edit <a href=https://github.com/stooged/PI-Pwn/blob/main/PPPwn/run.sh>run.sh</a> and set `USBETHERNET=true`.<br>
+if your pi has an ethernet port and you are using a usb to ethernet adapter your interface for the usb adapter should be `INTERFACE="eth1"`<br>
+if you are using something like a pi zero 2 the interface will be `INTERFACE="eth0"`<br>
+
+
+<br>
+
+
 place the sd card into the raspberry pi and run the following commands<br>
 
 

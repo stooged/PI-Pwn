@@ -9,6 +9,9 @@ FIRMWAREVERSION="11.00"
 # shutdown pi on successful pppwn  [true | false]
 SHUTDOWN=true
 
+# using a usb to ethernet adapter  [true | false]
+USBETHERNET=false
+
 
 echo -e "\n\n\033[36m _____  _____  _____                 
 |  __ \\|  __ \\|  __ \\
@@ -17,7 +20,15 @@ echo -e "\n\n\033[36m _____  _____  _____
 | |    | |    | |     \\ V  V /| | | |
 |_|    |_|    |_|      \\_/\\_/ |_| |_|\033[0m
 \n\033[33mhttps://github.com/TheOfficialFloW/PPPwn\033[0m\n"
-
+if [ $USBETHERNET = true ] ; then
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+	coproc read -t 5 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+   else	
+	sudo ip link set $INTERFACE down
+	coproc read -t 5 && wait "$!" || true
+	sudo ip link set $INTERFACE up
+fi
 echo -e "\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m\n"
 while [ true ]
 do
@@ -32,10 +43,14 @@ if [ $ret -ge 1 ]
         exit 1
    else
         echo -e "\033[31m\nFailed retrying...\033[0m\n"
-        sudo ip link set $INTERFACE down
-        sleep 4
-        sudo ip link set $INTERFACE up
+		if [ $USBETHERNET = true ] ; then
+        	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+        	coproc read -t 5 && wait "$!" || true
+        	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+           else	
+        	sudo ip link set $INTERFACE down
+        	coproc read -t 5 && wait "$!" || true
+        	sudo ip link set $INTERFACE up
+        fi
 fi
 done
-
-
