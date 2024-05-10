@@ -18,6 +18,9 @@ STAGE1="stage1"
 # name of stage2 BIN"
 STAGE2="stage2"
 
+if [[ $FIRMWAREVERSION == *"."* ]]; then
+  FIRMWAREVERSION=${FIRMWAREVERSION/.}
+fi
 echo -e "\n\n\033[36m _____  _____  _____                 
 |  __ \\|  __ \\|  __ \\
 | |__) | |__) | |__) |_      ___ __
