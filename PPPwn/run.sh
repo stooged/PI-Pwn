@@ -22,8 +22,10 @@ echo -e "\n\n\033[36m _____  _____  _____
 \n\033[33mhttps://github.com/TheOfficialFloW/PPPwn\033[0m\n"
 if [ $USBETHERNET = true ] ; then
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
-	coproc read -t 5 && wait "$!" || true
+	coproc read -t 2 && wait "$!" || true
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+	coproc read -t 5 && wait "$!" || true
+	sudo ip link set $INTERFACE up
    else	
 	sudo ip link set $INTERFACE down
 	coproc read -t 5 && wait "$!" || true
