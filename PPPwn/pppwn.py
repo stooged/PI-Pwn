@@ -822,9 +822,9 @@ class Exploit():
 def main():
     parser = ArgumentParser('pppwn.py')
     parser.add_argument('--interface', required=True)
-    parser.add_argument('--fw', choices=['900', '1100'], default='1100')
-    parser.add_argument('--stage1', default='stage1.bin')
-    parser.add_argument('--stage2', default='stage2.bin')
+    parser.add_argument('--fw', choices=['900', '1100', '9.00', '11.00'], default='1100')
+    parser.add_argument('--stage1', default='pppwn.bin')
+    parser.add_argument('--stage2', default='stage2_11.00.bin')
     args = parser.parse_args()
 
     #print('[+] PPPwn - PlayStation 4 PPPoE RCE by theflow')
@@ -840,6 +840,11 @@ def main():
         offs = OffsetsFirmware_900()
     elif args.fw == '1100':
         offs = OffsetsFirmware_1100()
+    elif args.fw == '9.00':
+        offs = OffsetsFirmware_900()
+    elif args.fw == '11.00':
+        offs = OffsetsFirmware_1100()
+        
 
     exploit = Exploit(offs, args.interface, stage1, stage2)
     exploit.run()
