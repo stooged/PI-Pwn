@@ -12,6 +12,11 @@ SHUTDOWN=true
 # using a usb to ethernet adapter  [true | false]
 USBETHERNET=false
 
+# name of stage1 BIN"
+STAGE1="stage1"
+
+# name of stage2 BIN"
+STAGE2="stage2"
 
 echo -e "\n\n\033[36m _____  _____  _____                 
 |  __ \\|  __ \\|  __ \\
@@ -34,7 +39,7 @@ fi
 echo -e "\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m\n"
 while [ true ]
 do
-ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
+ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/$STAGE1.bin --stage2=/boot/firmware/PPPwn/$STAGE2.bin)
 if [ $ret -ge 1 ]
    then
         echo -e "\033[32m\nConsole PPPwned! \033[0m\n"
