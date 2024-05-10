@@ -18,6 +18,7 @@ STAGE1="stage1"
 # name of stage2 BIN"
 STAGE2="stage2"
 
+# Remove '.' if exist
 if [[ $FIRMWAREVERSION == *"."* ]]; then
   FIRMWAREVERSION=${FIRMWAREVERSION/.}
 fi
