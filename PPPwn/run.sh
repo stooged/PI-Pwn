@@ -22,9 +22,6 @@ STAGE2="stage2_${FIRMWARE_VERSION}"
 #this does not work if you did not set the console to connect to the internet during the install
 PPPOECONN=false
 
-
-
-
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
