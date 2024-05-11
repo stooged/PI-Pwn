@@ -4,12 +4,19 @@ this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 
 
 
-
-[![https://www.youtube.com/watch?v=ebaVTBpM2-0](https://img.youtube.com/vi/ebaVTBpM2-0/0.jpg)](https://www.youtube.com/watch?v=ebaVTBpM2-0)
-
-https://www.youtube.com/watch?v=ebaVTBpM2-0<br>
+## install video
+[![https://player.vimeo.com/video/945141797?autoplay=1](https://i.vimeocdn.com/video/1850373616-93857870e2a0e3974e00b8e53991557af388fc14b13f305998b8757bc11407f7-d)](https://player.vimeo.com/video/945141797?autoplay=1)
 
 <br>
+
+
+
+## internet settings follow up video
+[![https://player.vimeo.com/video/945142322?autoplay=1](https://i.vimeocdn.com/video/1850373112-c392e1538902fb22bb8c98558100943e7b8390c029f9e54cb9f27c22da1d6c42-d)](https://player.vimeo.com/video/945142322?autoplay=1)
+
+
+<br>
+
 
 Tested on the following models<br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/>Raspberry Pi 3B+</a><br>
@@ -55,7 +62,8 @@ On your PS4:<br>
 - Go to `Settings` and then `Network`<br>
 - Select `Set Up Internet connection` and choose `Use a LAN Cable`<br>
 - Choose `Custom` setup and choose `PPPoE` for `IP Address Settings`<br>
-- Enter anything for `PPPoE User ID` and `PPPoE Password`<br>
+- Enter `ppp` for `PPPoE User ID` and `PPPoE Password`<br>
+- NOTE if you enable internet access you must match the username and password entered during the install or use the default `ppp`
 - Choose `Automatic` for `DNS Settings` and `MTU Settings`<br>
 - Choose `Do Not Use` for `Proxy Server`<br>
 
@@ -65,7 +73,7 @@ for GoldHen you need to place the goldhen.bin file onto the root of a usb drive 
 
 once everything is setup and the ethernet cable is plugged in between the pi and the console the pi should automatically try and pwn the console.<br>
 the exploit may fail many times but the pi will continue to purge the console to keep trying to pwn itself.<br>
-once pwned the process will stop and the pi will shut down. <br>
+once pwned the process will stop and the pi will shut down if you are not using internet access. <br>
 
 you will need to restart the pi if you wish to pwn the console again.<br>
 
