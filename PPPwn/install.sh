@@ -3,10 +3,10 @@ sudo apt update
 sudo apt install python3-scapy -y
 sudo rm /usr/lib/systemd/system/bluetooth.target
 sudo rm /usr/lib/systemd/system/network-online.target
-sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
+sudo sed -i 's^sudo bash /boot/firmware/PI-Pwn/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]
-WorkingDirectory=/boot/firmware/PPPwn
-ExecStart=/boot/firmware/PPPwn/run.sh
+WorkingDirectory=/boot/firmware/PI-Pwn/PPPwn
+ExecStart=/boot/firmware/PI-Pwn/PPPwn/run.sh
 Restart=never
 User=root
 Group=root
@@ -100,7 +100,7 @@ break;;
 esac
 done
 echo '"'$PPPU'"  *  "'$PPPW'"  *' | sudo tee /etc/ppp/pap-secrets
-sudo sed -i 's^PPPOECONN=false^PPPOECONN=true^g' /boot/firmware/PPPwn/run.sh
+sudo sed -i 's^PPPOECONN=false^PPPOECONN=true^g' /boot/firmware/PI-Pwn/PPPwn/run.sh
 echo -e '\033[32mPPPoE installed\033[0m'
 break;;
 [Nn]* ) echo -e '\033[35mSkipping PPPoE install\033[0m'
