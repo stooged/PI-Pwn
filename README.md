@@ -9,13 +9,11 @@ this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 
 <br>
 
-<br>
 
 
 ## internet settings follow up video
 [![https://www.youtube.com/watch?v=iaFxJI2jqb0](https://img.youtube.com/vi/iaFxJI2jqb0/0.jpg)](https://www.youtube.com/watch?v=iaFxJI2jqb0)
 
-https://www.youtube.com/watch?v=iaFxJI2jqb0<br>
 
 <br>
 
