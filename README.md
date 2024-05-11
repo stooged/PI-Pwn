@@ -77,7 +77,7 @@ once pwned the process will stop and the pi will shut down if you are not using 
 
 you will need to restart the pi if you wish to pwn the console again.<br>
 
-the idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the pppwn succeedes.<br>
+the idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the pppwn succeeded.<br>
 
 
 you can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
