@@ -12,7 +12,7 @@ this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 
 
 ## internet settings follow up video
-[![https://www.youtube.com/watch?v=iaFxJI2jqb0](https://img.youtube.com/vi/iaFxJI2jqb0/0.jpg)](https://www.youtube.com/watch?v=iaFxJI2jqb0)
+[![https://player.vimeo.com/video/945142322?autoplay=1](https://i.vimeocdn.com/video/1850373112-c392e1538902fb22bb8c98558100943e7b8390c029f9e54cb9f27c22da1d6c42-d)](https://player.vimeo.com/video/945142322?autoplay=1)
 
 
 <br>
