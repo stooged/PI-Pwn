@@ -3,9 +3,17 @@ sudo apt update
 sudo apt install python3-scapy -y
 sudo rm /usr/lib/systemd/system/bluetooth.target
 sudo rm /usr/lib/systemd/system/network-online.target
-sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
-sudo sed -i 's^exit 0^sudo bash /boot/firmware/PPPwn/run.sh \&\n\nexit 0^g' /etc/rc.local
+echo '[Service]
+WorkingDirectory=/boot/firmware/PPPwn
+ExecStart=/boot/firmware/PPPwn/run.sh
+Restart=never
+User=root
+Group=root
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
+sudo chmod u+rwx /etc/systemd/system/pipwn.service
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
 case $pppq in
@@ -100,5 +108,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+sudo systemctl enable pipwn
+sudo systemctl start pipwn
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot
