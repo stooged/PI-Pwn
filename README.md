@@ -75,7 +75,7 @@ for GoldHen you need to place the goldhen.bin file onto the root of a usb drive 
 
 once everything is setup and the ethernet cable is plugged in between the pi and the console the pi should automatically try and pwn the console.<br>
 the exploit may fail many times but the pi will continue to purge the console to keep trying to pwn itself.<br>
-once pwned the process will stop and the pi will shut down. <br>
+once pwned the process will stop and the pi will shut down if you are not using internet access. <br>
 
 you will need to restart the pi if you wish to pwn the console again.<br>
 
