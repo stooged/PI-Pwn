@@ -13,10 +13,10 @@ SHUTDOWN=true
 USBETHERNET=false
 
 # name of stage1 BIN"
-STAGE1="stage1_${FIRMWARE_VERSION}"
+STAGE1="stage1_$FIRMWARE_VERSION"
 
 # name of stage2 BIN"
-STAGE2="stage2_${FIRMWARE_VERSION}"
+STAGE2="stage2_$FIRMWARE_VERSION"
 
 # enable pppoe after pwn  [true | false]
 #this does not work if you did not set the console to connect to the internet during the install
