@@ -7,7 +7,7 @@ this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 ## install video
 [![https://player.vimeo.com/video/945141797](https://i.vimeocdn.com/video/1850373616-93857870e2a0e3974e00b8e53991557af388fc14b13f305998b8757bc11407f7-d)](https://player.vimeo.com/video/945141797)
 
-https://www.youtube.com/watch?v=ebaVTBpM2-0<br>
+<br>
 
 <br>
 
