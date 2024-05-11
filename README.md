@@ -4,12 +4,21 @@ this is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 
 
 
-
+## install video
 [![https://www.youtube.com/watch?v=ebaVTBpM2-0](https://img.youtube.com/vi/ebaVTBpM2-0/0.jpg)](https://www.youtube.com/watch?v=ebaVTBpM2-0)
 
 https://www.youtube.com/watch?v=ebaVTBpM2-0<br>
 
 <br>
+
+
+## internet settings follow up video
+[![https://www.youtube.com/watch?v=iaFxJI2jqb0](https://img.youtube.com/vi/iaFxJI2jqb0/0.jpg)](https://www.youtube.com/watch?v=iaFxJI2jqb0)
+
+https://www.youtube.com/watch?v=iaFxJI2jqb0<br>
+
+<br>
+
 
 Tested on the following models<br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/>Raspberry Pi 3B+</a><br>
@@ -55,7 +64,8 @@ On your PS4:<br>
 - Go to `Settings` and then `Network`<br>
 - Select `Set Up Internet connection` and choose `Use a LAN Cable`<br>
 - Choose `Custom` setup and choose `PPPoE` for `IP Address Settings`<br>
-- Enter anything for `PPPoE User ID` and `PPPoE Password`<br>
+- Enter `ppp` for `PPPoE User ID` and `PPPoE Password`<br>
+- NOTE if you enable internet access you must match the username and password entered during the install or use the default `ppp`
 - Choose `Automatic` for `DNS Settings` and `MTU Settings`<br>
 - Choose `Do Not Use` for `Proxy Server`<br>
 

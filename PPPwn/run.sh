@@ -3,7 +3,7 @@
 # raspberry pi ethernet interface
 INTERFACE="eth0" 
 
-# console firmware version [11.00 | 9.00]
+# console firmware version  [11.00 | 9.00]
 FIRMWAREVERSION="11.00" 
 
 # shutdown pi on successful pppwn  [true | false]
@@ -11,6 +11,11 @@ SHUTDOWN=true
 
 # using a usb to ethernet adapter  [true | false]
 USBETHERNET=false
+
+
+# enable pppoe after pwn  [true | false]
+#this does not work if you did not set the console to connect to the internet during the install
+PPPOECONN=false
 
 
 echo -e "\n\n\033[36m _____  _____  _____                 
@@ -39,8 +44,20 @@ if [ $ret -ge 1 ]
    then
         echo -e "\033[32m\nConsole PPPwned! \033[0m\n"
 		sudo ip link set $INTERFACE down
-		if [ $SHUTDOWN = true ] ; then
-			sudo poweroff
+		if [ $PPPOECONN = true ] ; then
+		    coproc read -t 3 && wait "$!" || true
+		    sudo ip link set $INTERFACE up
+			coproc read -t 3 && wait "$!" || true
+			sudo pppoe-server -I $INTERFACE -T 60 -N 20 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2
+			sudo sysctl net.ipv4.ip_forward=1
+			sudo sysctl net.ipv4.conf.all.route_localnet=1
+			sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353
+			sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
+			echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n"
+		   else
+        	if [ $SHUTDOWN = true ] ; then
+        	 sudo poweroff
+        	fi
 		fi
         exit 1
    else
