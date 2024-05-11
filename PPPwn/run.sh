@@ -59,7 +59,7 @@ if [ $USBETHERNET = true ] ; then
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
 fi
-echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWARE_VERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m\n" | sudo tee /dev/tty1
+echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWARE_VERSION\033[92m\nInterface:\033[92m\nStage1:\033[93m $STAGE1\033[92m\nStage2:\033[93m $STAGE2\033[93m $INTERFACE\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
 ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWARE_VERSION//.} --stage1=/boot/firmware/PPPwn/$STAGE1.bin --stage2=/boot/firmware/PPPwn/$STAGE2.bin)
