@@ -4,8 +4,6 @@ sudo apt install python3-scapy -y
 sudo rm /usr/lib/systemd/system/bluetooth.target
 sudo rm /usr/lib/systemd/system/network-online.target
 sudo sed -i '/sudo bash \/boot\/firmware\/PPPwn\/run.sh \&/d' /etc/rc.local # Removes old run command from rc.local
-sudo sed -i '/sudo bash \/boot\/firmware\/PI-Pwn\/PPPwn\/run.sh \&/d' /etc/rc.local # Removes current run command from rc.local
-sudo sed -i '/^exit 0$/i sudo bash /boot/firmware/PI-Pwn/PPPwn/run.sh &' /etc/rc.local # Adds run.sh to rc.local
 echo '[Service]
 WorkingDirectory=/boot/firmware/PI-Pwn/PPPwn
 ExecStart=/boot/firmware/PI-Pwn/PPPwn/run.sh
