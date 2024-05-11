@@ -61,10 +61,16 @@ ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FI
 if [ $ret -ge 1 ]
    then
         echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
-		sudo ip link set $INTERFACE down
 		if [ $PPPOECONN = true ] ; then
-		    coproc read -t 3 && wait "$!" || true
-		    sudo ip link set $INTERFACE up
+		    if [ $USBETHERNET = true ] ; then
+		     echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+        	 coproc read -t 3 && wait "$!" || true
+        	 echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+		    else	
+        	 sudo ip link set $INTERFACE down
+        	 coproc read -t 3 && wait "$!" || true
+        	 sudo ip link set $INTERFACE up
+		    fi
 			coproc read -t 3 && wait "$!" || true
 			sudo sysctl net.ipv4.ip_forward=1
 			sudo sysctl net.ipv4.conf.all.route_localnet=1
@@ -72,9 +78,11 @@ if [ $ret -ge 1 ]
 			sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
 			echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n" | sudo tee /dev/tty1
 			sudo pppoe-server -I $INTERFACE -T 60 -N 20 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2 -F
-		   else
+		else
         	if [ $SHUTDOWN = true ] ; then
         	 sudo poweroff
+			else
+			 sudo ip link set $INTERFACE down
         	fi
 		fi
         exit 1
@@ -84,7 +92,7 @@ if [ $ret -ge 1 ]
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
         	coproc read -t 5 && wait "$!" || true
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
-           else	
+        else	
         	sudo ip link set $INTERFACE down
         	coproc read -t 5 && wait "$!" || true
         	sudo ip link set $INTERFACE up
