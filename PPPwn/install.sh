@@ -138,15 +138,15 @@ break;;
 esac
 done
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want to use the C++ version of PPPwn, This version is much faster than the python version\r\n\r\n\033[36m(Y|N)?: \033[0m')" cppp
+read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of pppwn, It is much slower\r\n\r\n\033[36m(Y|N)?: \033[0m')" cppp
 case $cppp in
 [Yy]* ) 
-UCPP="true"
-echo -e '\033[32mThe C++ version of PPPwn is being used\033[0m'
+UCPP="false"
+echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
 break;;
 [Nn]* ) 
-echo -e '\033[35mThe C++ version of PPPwn is NOT being used\033[0m'
-UCPP="false"
+echo -e '\033[35mThe C++ version of PPPwn is being used\033[0m'
+UCPP="true"
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac

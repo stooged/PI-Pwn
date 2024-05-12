@@ -7,11 +7,13 @@ FIRMWAREVERSION="11.00"
 SHUTDOWN=true
 USBETHERNET=false
 PPPOECONN=false
-USECPP=false
+USECPP=true
 else
 source /boot/firmware/PPPwn/config.sh
 fi
-
+if [[ -z $USECPP ]] ;then
+USECPP=true
+fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
@@ -66,7 +68,7 @@ if [ $PPPOECONN = true ] ; then
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
-   echo -e "\033[92m\IP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
+   echo -e "\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
 fi
 while [ true ]
 do
