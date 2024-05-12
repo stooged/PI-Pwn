@@ -62,19 +62,22 @@ if [ $USBETHERNET = true ] ; then
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
 fi
-echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m" | sudo tee /dev/tty1
+echo -e "\n\033[36m$PITYP\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m" | sudo tee /dev/tty1
 if [ $USECPP = true ] ; then
    echo -e "\033[92mPPPwn:\033[93m C++ $CPPBIN \033[0m" | sudo tee /dev/tty1
 else
    echo -e "\033[92mPPPwn:\033[93m Python pppwn.py \033[0m" | sudo tee /dev/tty1
 fi
 if [ $PPPOECONN = true ] ; then
-   echo -e "\033[93mInternet Access Enabled\033[0m" | sudo tee /dev/tty1
+   echo -e "\033[92mInternet Access:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
+else   
+   echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
    echo -e "\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
 fi
+echo -e "\033[95mReady for console connection\033[0m" | sudo tee /dev/tty1
 while [ true ]
 do
 if [ $USECPP = true ] ; then
