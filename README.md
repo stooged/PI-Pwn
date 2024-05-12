@@ -68,7 +68,7 @@ To update goldhen just repeat the above process and the new version will be copi
 ## FTP / Binload
 
 If the pi pwn was setup to allow internet access you can use the ftp, klog, and binloader servers on the console<br>
-Your pi must be also connected to your home network via wifi or a second enthernet connection<br>
+Your pi must be also connected to your home network via wifi or a second ethernet connection<br>
 To connect to the servers from your pc just connect to the raspberry pi ip on your network and all requests will be forwarded to the console<br>
 
 For ftp make sure you set the transfer mode on your ftp client software to `Active` not passive.<br>
