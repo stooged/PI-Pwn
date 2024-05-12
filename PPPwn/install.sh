@@ -1,19 +1,4 @@
 #!/bin/bash
-sudo apt update
-sudo apt install python3-scapy -y
-sudo rm /usr/lib/systemd/system/bluetooth.target
-sudo rm /usr/lib/systemd/system/network-online.target
-sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
-echo '[Service]
-WorkingDirectory=/boot/firmware/PPPwn
-ExecStart=/boot/firmware/PPPwn/run.sh
-Restart=never
-User=root
-Group=root
-Environment=NODE_ENV=production
-[Install]
-WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
-sudo chmod u+rwx /etc/systemd/system/pipwn.service
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
 case $pppq in
@@ -142,6 +127,7 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of 
 case $cppp in
 [Yy]* ) 
 UCPP="false"
+sudo apt install python3-scapy -y
 echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
 break;;
 [Nn]* ) 
@@ -182,6 +168,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+ip link
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mWould you like to change the pi lan interface, the default is eth0\r\n\r\n\033[36m(Y|N)?: \033[0m')" ifset
 case $ifset in
@@ -232,6 +219,19 @@ USECPP='$UCPP'
 # enable pppoe after pwn  [true | false]
 #this does not work if you did not set the console to connect to the internet during the install
 PPPOECONN='$INET'' | sudo tee /boot/firmware/PPPwn/config.sh
+sudo rm /usr/lib/systemd/system/bluetooth.target
+sudo rm /usr/lib/systemd/system/network-online.target
+sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
+echo '[Service]
+WorkingDirectory=/boot/firmware/PPPwn
+ExecStart=/boot/firmware/PPPwn/run.sh
+Restart=never
+User=root
+Group=root
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
+sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo systemctl enable pipwn
 sudo systemctl start pipwn
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'

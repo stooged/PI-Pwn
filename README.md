@@ -12,24 +12,31 @@ A dns blocker is also installed and used to prevent updates.<br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4 Model B</a><br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a><br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/>Raspberry Pi 3B+</a><br>
+<a href=https://www.raspberrypi.com/products/raspberry-pi-2-model-b/>Raspberry Pi 2 Model B</a><br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/>Raspberry Pi Zero 2 W</a> with usb to ethernet adapter<br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-zero-w/>Raspberry Pi Zero W</a> with usb to ethernet adapter<br>
+<a href=https://wiki.radxa.com/Rock4/4cplus>ROCK PI 4C Plus</a> with armbian <a href=https://imola.armbian.com/archive/rockpi-4cplus/archive/Armbian_23.11.1_Rockpi-4cplus_bookworm_current_6.1.63.img.xz>Image</a><br>
+
 
 ## Install
 <br>
 
 You need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> onto a sd card.<br>
-Place the sd card into your computer and copy the PPPwn folder to the sd card.<br>
 
-Place the sd card into the raspberry pi, boot it and run the following commands<br>
-
+Place the sd card into the raspberry pi, boot it and connect it to the internet then run the following commands<br>
 
 <br>
 
-
 ```sh
-sudo chmod 777 /boot/firmware/PPPwn/install.sh
-sudo bash /boot/firmware/PPPwn/install.sh
+sudo apt update
+sudo apt install git -y
+git clone https://github.com/stooged/PI-Pwn
+sudo mkdir /boot/firmware/
+cd PI-Pwn
+sudo cp -r PPPwn /boot/firmware/
+cd /boot/firmware/PPPwn
+sudo chmod 777 *
+sudo bash install.sh
 ```
 
 <br>
