@@ -7,7 +7,7 @@ FIRMWAREVERSION="11.00"
 SHUTDOWN=true
 USBETHERNET=false
 PPPOECONN=false
-USECPP=true
+USECPP=false
 else
 source /boot/firmware/PPPwn/config.sh
 fi
