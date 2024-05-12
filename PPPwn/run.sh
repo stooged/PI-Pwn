@@ -7,6 +7,7 @@ FIRMWAREVERSION="11.00"
 SHUTDOWN=true
 USBETHERNET=false
 PPPOECONN=false
+USECPP=true
 else
 source /boot/firmware/PPPwn/config.sh
 fi
@@ -14,18 +15,32 @@ fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
+CPPBIN="pppwn7"
 elif [[ $PITYP == *"Raspberry Pi 3"* ]] ;then
 coproc read -t 10 && wait "$!" || true
+CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi 4"* ]] ;then
 coproc read -t 5 && wait "$!" || true
+CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 coproc read -t 5 && wait "$!" || true
+CPPBIN="pppwn64"
+elif [[ $PITYP == *"Raspberry Pi Zero 2"* ]] ;then
+coproc read -t 8 && wait "$!" || true
+CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 coproc read -t 10 && wait "$!" || true
+CPPBIN="pppwn11"
 elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
 coproc read -t 15 && wait "$!" || true
+CPPBIN="pppwn11"
 else
 coproc read -t 5 && wait "$!" || true
+CPPBIN="pppwn64"
+fi
+arch=$(getconf LONG_BIT)
+if [ $arch -eq 32 ] || [ $CPPBIN = "pppwn64" ] ; then
+CPPBIN="pppwn7"
 fi
 echo -e "\n\n\033[36m _____  _____  _____                 
 |  __ \\|  __ \\|  __ \\
@@ -48,14 +63,18 @@ fi
 echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m" | sudo tee /dev/tty1
 if [ $PPPOECONN = true ] ; then
    echo -e "\033[93mInternet Access Enabled\033[0m" | sudo tee /dev/tty1
-   PIIP=$(hostname -I) || true
-   if [ "$PIIP" ]; then
-        echo -e "\033[92m\IP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
-   fi
+fi
+PIIP=$(hostname -I) || true
+if [ "$PIIP" ]; then
+   echo -e "\033[92m\IP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
 fi
 while [ true ]
 do
-ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
+if [ $USECPP = true ] ; then
+   ret=$(sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --stage1 "/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin" --stage2 "/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin")
+else
+   ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
+fi
 if [ $ret -ge 1 ]
    then
         echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
@@ -91,11 +110,11 @@ if [ $ret -ge 1 ]
         echo -e "\033[31m\nFailed retrying...\033[0m\n" | sudo tee /dev/tty1
 		if [ $USBETHERNET = true ] ; then
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
-        	coproc read -t 5 && wait "$!" || true
+        	coproc read -t 4 && wait "$!" || true
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
-        else	
+           else	
         	sudo ip link set $INTERFACE down
-        	coproc read -t 5 && wait "$!" || true
+        	coproc read -t 4 && wait "$!" || true
         	sudo ip link set $INTERFACE up
         fi
 fi

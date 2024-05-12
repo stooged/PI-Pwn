@@ -1,6 +1,6 @@
 # PI Pwn
 
-This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0<br>
+This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0<br>
 It aso supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
 A dns blocker is also installed and used to prevent updates.<br>
 
@@ -43,7 +43,7 @@ During the install process you will be asked to set some options.<br>
 If you are using a <b>usb to ethernet adapter</b> for the connection to the console you need to select yes<br>
 If your pi has an ethernet port and you are using a usb to ethernet adapter your interface for the usb adapter should be eth1<br>
 If you are using something like a pi zero 2 the interface will be eth0<br>
-
+If you choose to use the C++ version of PPPwn it should be much faster than the original python version.<br>
 
 Once the pi reboots pppwn will run automatically.<br>
 

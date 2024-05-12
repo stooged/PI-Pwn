@@ -138,6 +138,20 @@ break;;
 esac
 done
 while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to use the C++ version of PPPwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" cppp
+case $cppp in
+[Yy]* ) 
+UCPP="true"
+echo -e '\033[32mThe C++ version of PPPwn is being used\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe C++ version of PPPwn is NOT being used\033[0m'
+UCPP="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
 read -p "$(printf '\r\n\r\n\033[36mWould you like to change the firmware version being used, the default is 11.00\r\n\r\n\033[36m(Y|N)?: \033[0m')" fwset
 case $fwset in
 [Yy]* ) 
@@ -212,6 +226,8 @@ SHUTDOWN='$SHTDN'
 # using a usb to ethernet adapter  [true | false]
 USBETHERNET='$USBE'
 
+#use c++ version of pppwn
+USECPP='$UCPP'
 
 # enable pppoe after pwn  [true | false]
 #this does not work if you did not set the console to connect to the internet during the install
