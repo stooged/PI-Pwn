@@ -26,6 +26,9 @@ address=/ribob01.net/127.0.0.1
 address=/cddbp.net/127.0.0.1
 address=/nintendo.net/127.0.0.1
 address=/ea.com/127.0.0.1' | sudo tee /etc/dnsmasq.more.conf
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved.service
+sudo systemctl mask systemd-resolved
 sudo systemctl restart dnsmasq
 echo 'auth
 lcp-echo-failure 3
@@ -127,7 +130,7 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of 
 case $cppp in
 [Yy]* ) 
 UCPP="false"
-sudo apt install python3-scapy -y
+sudo apt install python3 python3-scapy -y
 echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
 break;;
 [Nn]* ) 
