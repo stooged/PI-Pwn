@@ -1,24 +1,15 @@
 #!/bin/bash
 
-# raspberry pi ethernet interface
+if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
+# If you have a file called config.sh you need to edit these values in that file not here
 INTERFACE="eth0" 
-
-# console firmware version  [11.00 | 9.00]
 FIRMWAREVERSION="11.00" 
-
-# shutdown pi on successful pppwn  [true | false]
 SHUTDOWN=true
-
-# using a usb to ethernet adapter  [true | false]
 USBETHERNET=false
-
-
-# enable pppoe after pwn  [true | false]
-#this does not work if you did not set the console to connect to the internet during the install
 PPPOECONN=false
-
-
-
+else
+source /boot/firmware/PPPwn/config.sh
+fi
 
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
@@ -54,7 +45,14 @@ if [ $USBETHERNET = true ] ; then
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
 fi
-echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m\n" | sudo tee /dev/tty1
+echo -e "\n\033[36m$PITYP\033[0m\n\033[32mReady for console connection\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m" | sudo tee /dev/tty1
+if [ $PPPOECONN = true ] ; then
+   echo -e "\033[93mInternet Access Enabled\033[0m" | sudo tee /dev/tty1
+   PIIP=$(hostname -I) || true
+   if [ "$PIIP" ]; then
+        echo -e "\033[92m\IP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
+   fi
+fi
 while [ true ]
 do
 ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
@@ -76,6 +74,7 @@ if [ $ret -ge 1 ]
 			sudo sysctl net.ipv4.conf.all.route_localnet=1
 			sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353
 			sudo iptables -t nat -I PREROUTING -p tcp --dport 2121 -j DNAT --to 192.168.2.2:2121
+			sudo iptables -t nat -I PREROUTING -p tcp --dport 3232 -j DNAT --to 192.168.2.2:3232
 			sudo iptables -t nat -I PREROUTING -p tcp --dport 9090 -j DNAT --to 192.168.2.2:9090
 			sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
 			echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n" | sudo tee /dev/tty1

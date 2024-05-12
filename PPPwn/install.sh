@@ -64,8 +64,6 @@ case $PPPU in
  echo -e '\033[31mCannot be empty!\033[0m';;
  * )  
 if grep -q '^[0-9a-zA-Z_ -]*$' <<<$PPPU ; then 
-
-
 if [ ${#PPPU} -le 1 ]  || [ ${#PPPU} -ge 33 ] ; then
 echo -e '\033[31mUsername must be between 2 and 32 characters long\033[0m';
 else 
@@ -100,14 +98,124 @@ break;;
 esac
 done
 echo '"'$PPPU'"  *  "'$PPPW'"  *' | sudo tee /etc/ppp/pap-secrets
-sudo sed -i 's^PPPOECONN=false^PPPOECONN=true^g' /boot/firmware/PPPwn/run.sh
+INET="true"
+SHTDN="false"
 echo -e '\033[32mPPPoE installed\033[0m'
 break;;
-[Nn]* ) echo -e '\033[35mSkipping PPPoE install\033[0m'
+[Nn]* ) 
+echo -e '\033[35mSkipping PPPoE install\033[0m'
+INET="false"
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to shutdown after pwn success\r\n\r\n\033[36m(Y|N)?: \033[0m')" pisht
+case $pisht in
+[Yy]* ) 
+SHTDN="true"
+echo -e '\033[32mThe pi will shutdown\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe pi will not shutdown\033[0m'
+SHTDN="false"
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mAre you using a usb to ethernet adapter for the console connection\r\n\r\n\033[36m(Y|N)?: \033[0m')" usbeth
+case $usbeth in
+[Yy]* ) 
+USBE="true"
+echo -e '\033[32mUsb to ethernet is being used\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mUsb to ethernet is NOT being used\033[0m'
+USBE="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mWould you like to change the firmware version being used, the default is 11.00\r\n\r\n\033[36m(Y|N)?: \033[0m')" fwset
+case $fwset in
+[Yy]* ) 
+while true; do
+read -p  "$(printf '\033[33mEnter the firmware version [11.00 | 9.00]: \033[0m')" FWV
+case $FWV in
+"" ) 
+ echo -e '\033[31mCannot be empty!\033[0m';;
+ * )  
+if grep -q '^[0-9.]*$' <<<$FWV ; then 
+
+if [[ ! "$FWV" =~ ^("11.00"|"9.00")$ ]]  ; then
+echo -e '\033[31mThe version must be 11.00 or 9.00\033[0m';
+else 
+break;
+fi
+else 
+echo -e '\033[31mThe version must only contain alphanumeric characters\033[0m';
+fi
+esac
+done
+echo -e '\033[32mYou are using '$FWV'\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mUsing the default setting: 11.00\033[0m'
+FWV="11.00"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mWould you like to change the pi lan interface, the default is eth0\r\n\r\n\033[36m(Y|N)?: \033[0m')" ifset
+case $ifset in
+[Yy]* ) 
+while true; do
+read -p  "$(printf '\033[33mEnter the interface value: \033[0m')" IFCE
+case $IFCE in
+"" ) 
+ echo -e '\033[31mCannot be empty!\033[0m';;
+ * )  
+if grep -q '^[0-9a-zA-Z_ -]*$' <<<$IFCE ; then 
+if [ ${#IFCE} -le 1 ]  || [ ${#IFCE} -ge 17 ] ; then
+echo -e '\033[31mThe interface must be between 2 and 16 characters long\033[0m';
+else 
+break;
+fi
+else 
+echo -e '\033[31mThe interface must only contain alphanumeric characters\033[0m';
+fi
+esac
+done
+echo -e '\033[32mYou are using '$IFCE'\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mUsing the default setting: eth0\033[0m'
+IFCE="eth0"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+echo '#!/bin/bash
+
+# raspberry pi ethernet interface
+INTERFACE="'$IFCE'" 
+
+# console firmware version  [11.00 | 9.00]
+FIRMWAREVERSION="'$FWV'" 
+
+# shutdown pi on successful pppwn  [true | false]
+SHUTDOWN='$SHTDN'
+
+# using a usb to ethernet adapter  [true | false]
+USBETHERNET='$USBE'
+
+
+# enable pppoe after pwn  [true | false]
+#this does not work if you did not set the console to connect to the internet during the install
+PPPOECONN='$INET'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo systemctl enable pipwn
 sudo systemctl start pipwn
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
