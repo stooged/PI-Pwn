@@ -21,7 +21,7 @@ A dns blocker is also installed and used to prevent updates.<br>
 ## Install
 <br>
 
-You need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> or <a href="https://www.armbian.com/">Armbian Cli/Minimal</a> onto a sd card.<br>
+You need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> or <a href="https://www.armbian.com/">Armbian Cli / Minimal</a> onto a sd card.<br>
 
 Place the sd card into the raspberry pi, boot it and connect it to the internet then run the following commands<br>
 
