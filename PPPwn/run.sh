@@ -39,7 +39,7 @@ coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
 fi
 arch=$(getconf LONG_BIT)
-if [ $arch -eq 32 ] || [ $CPPBIN = "pppwn64" ] ; then
+if [ $arch -eq 32 ] && [ $CPPBIN = "pppwn64" ] ; then
 CPPBIN="pppwn7"
 fi
 echo -e "\n\n\033[36m _____  _____  _____                 
