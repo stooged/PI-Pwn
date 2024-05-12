@@ -26,9 +26,6 @@ address=/ribob01.net/127.0.0.1
 address=/cddbp.net/127.0.0.1
 address=/nintendo.net/127.0.0.1
 address=/ea.com/127.0.0.1' | sudo tee /etc/dnsmasq.more.conf
-sudo systemctl stop systemd-resolved
-sudo systemctl disable systemd-resolved.service
-sudo systemctl mask systemd-resolved
 sudo systemctl restart dnsmasq
 echo 'auth
 lcp-echo-failure 3
