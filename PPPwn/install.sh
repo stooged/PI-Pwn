@@ -224,6 +224,8 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+else
+VUSB="false"
 fi
 echo '#!/bin/bash
 INTERFACE="'$IFCE'" 
