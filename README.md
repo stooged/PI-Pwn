@@ -4,7 +4,7 @@ This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 It aso supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
 A dns blocker is also installed and used to prevent updates.<br>
 
-The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can act as a virtual flash drive to the console if the pi is plugged into the console usb port removing the need for as flash drive to load payloads.<br>
+The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can act as a virtual flash drive to the console if the pi is plugged into the console usb port removing the need for a flash drive to load payloads.<br>
 
 <br>
 
