@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-# If you have a file called config.sh you need to edit these values in that file not here
 INTERFACE="eth0" 
 FIRMWAREVERSION="11.00" 
 SHUTDOWN=true
 USBETHERNET=false
 PPPOECONN=false
 USECPP=true
+VMUSB=false
 else
 source /boot/firmware/PPPwn/config.sh
 fi
@@ -18,9 +18,11 @@ PITYP=$(tr -d '\0' </proc/device-tree/model)
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 CPPBIN="pppwn7"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi 3"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 CPPBIN="pppwn64"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi 4"* ]] ;then
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
@@ -30,15 +32,19 @@ CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi Zero 2"* ]] ;then
 coproc read -t 8 && wait "$!" || true
 CPPBIN="pppwn64"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 CPPBIN="pppwn11"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 CPPBIN="pppwn11"
+VMUSB=false
 else
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
+VMUSB=false
 fi
 arch=$(getconf LONG_BIT)
 if [ $arch -eq 32 ] && [ $CPPBIN = "pppwn64" ] ; then
@@ -67,6 +73,12 @@ if [ $USECPP = true ] ; then
    echo -e "\033[92mPPPwn:\033[93m C++ $CPPBIN \033[0m" | sudo tee /dev/tty1
 else
    echo -e "\033[92mPPPwn:\033[93m Python pppwn.py \033[0m" | sudo tee /dev/tty1
+fi
+if [ $VMUSB = true ] ; then
+   echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
+   sudo modprobe g_mass_storage file=/boot/firmware/PPPwn/pwndev stall=0 ro=0 removable=1 
+else
+   echo -e "\033[92mVirtual Drive:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
 if [ $PPPOECONN = true ] ; then
    echo -e "\033[92mInternet Access:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
