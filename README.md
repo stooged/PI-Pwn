@@ -30,7 +30,7 @@ Place the sd card into the raspberry pi, boot it and connect it to the internet 
 <br>
 
 ```sh
-sudo bash -c "$(wget -O - https://raw.githubusercontent.com/lucaslealdev/PI-Pwn-script/main/run.sh)"
+sudo bash -c "$(wget -O - https://raw.githubusercontent.com/stooged/PI-Pwn/main/run.sh)"
 ```
 
 <br>
