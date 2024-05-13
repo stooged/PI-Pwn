@@ -102,9 +102,8 @@ if [ $ret -ge 1 ]
 			sudo sysctl net.ipv4.ip_forward=1
 			sudo sysctl net.ipv4.conf.all.route_localnet=1
 			sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353
-			sudo iptables -t nat -I PREROUTING -p tcp --dport 2121 -j DNAT --to 192.168.2.2:2121
-			sudo iptables -t nat -I PREROUTING -p tcp --dport 3232 -j DNAT --to 192.168.2.2:3232
-			sudo iptables -t nat -I PREROUTING -p tcp --dport 9090 -j DNAT --to 192.168.2.2:9090
+			sudo iptables -t nat -I PREROUTING -p tcp --dport 1024:65535 -j DNAT --to 192.168.2.2:1024-65535
+			sudo iptables -t nat -I PREROUTING -p udp --dport 1024:65535 -j DNAT --to 192.168.2.2:1024-65535
 			sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
 			echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n" | sudo tee /dev/tty1
 			sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2 -F
@@ -129,3 +128,8 @@ if [ $ret -ge 1 ]
         fi
 fi
 done
+
+
+
+
+sudo iptables -t nat -I PREROUTING -p tcp -j DNAT --to 192.168.2.2

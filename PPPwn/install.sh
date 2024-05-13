@@ -82,7 +82,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-echo '"'$PPPU'"  *  "'$PPPW'"  *' | sudo tee /etc/ppp/pap-secrets
+echo '"'$PPPU'"  *  "'$PPPW'"  192.168.2.2' | sudo tee /etc/ppp/pap-secrets
 INET="true"
 SHTDN="false"
 echo -e '\033[32mPPPoE installed\033[0m'
@@ -127,7 +127,7 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of 
 case $cppp in
 [Yy]* ) 
 UCPP="false"
-sudo apt install python3-scapy -y
+sudo apt install python3 python3-scapy -y
 echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
 break;;
 [Nn]* ) 
