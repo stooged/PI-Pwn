@@ -1,5 +1,6 @@
-wget https://github.com/lucaslealdev/PI-Pwn-script/archive/refs/heads/main.zip
-unzip main.zip -d PI-Pwn
+sudo apt update
+sudo apt install git -y
+git clone https://github.com/stooged/PI-Pwn
 sudo mkdir /boot/firmware/
 cd PI-Pwn
 sudo cp -r PPPwn /boot/firmware/
