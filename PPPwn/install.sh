@@ -82,7 +82,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-echo '"'$PPPU'"  *  "'$PPPW'"  *' | sudo tee /etc/ppp/pap-secrets
+echo '"'$PPPU'"  *  "'$PPPW'"  192.168.2.2' | sudo tee /etc/ppp/pap-secrets
 INET="true"
 SHTDN="false"
 echo -e '\033[32mPPPoE installed\033[0m'
