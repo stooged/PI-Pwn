@@ -32,9 +32,11 @@ CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi Zero 2"* ]] ;then
 coproc read -t 8 && wait "$!" || true
 CPPBIN="pppwn64"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 CPPBIN="pppwn11"
+VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 CPPBIN="pppwn11"

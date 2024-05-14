@@ -200,7 +200,7 @@ break;;
 esac
 done
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
-if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] || [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
+if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
 case $vusb in
