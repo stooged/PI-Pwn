@@ -77,7 +77,7 @@ fi
 if [ $VMUSB = true ] ; then
    UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
    if [[ -z $UDEV ]] ;then
-      UDEV="/boot/firmware/PPPwn/pwndev"
+      UDEV="$HOME/PPPwn/pwndev"
 	  echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
 	else
 	  echo -e "\033[92mFlash Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
@@ -90,12 +90,12 @@ else
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
 if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
-   echo -en "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
+   echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
    while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
    do
       coproc read -t 2 && wait "$!" || true
    done
-   echo -en "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
+   echo -e "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then

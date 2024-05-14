@@ -205,12 +205,13 @@ while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
 case $vusb in
 [Yy]* ) 
-if [ ! -f /boot/firmware/PPPwn/pwndev ]; then
-sudo dd if=/dev/zero of=/boot/firmware/PPPwn/pwndev bs=4096 count=65535 
-sudo mkdosfs /boot/firmware/PPPwn/pwndev -F 32  
+if [ ! -f $HOME/PPPwn/pwndev ]; then
+sudo mkdir $HOME/PPPwn
+sudo dd if=/dev/zero of=$HOME/PPPwn/pwndev bs=4096 count=65535 
+sudo mkdosfs $HOME/PPPwn/pwndev -F 32  
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 sudo mkdir /media/pwndev
-sudo mount -o loop /boot/firmware/PPPwn/pwndev /media/pwndev
+sudo mount -o loop $HOME/PPPwn/pwndev /media/pwndev
 sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev
 UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
@@ -253,6 +254,16 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
+if [ -f /boot/firmware/PPPwn/pwndev ]; then
+sudo rm /boot/firmware/PPPwn/pwndev
+sudo mkdir $HOME/PPPwn
+sudo dd if=/dev/zero of=$HOME/PPPwn/pwndev bs=4096 count=65535 
+sudo mkdosfs $HOME/PPPwn/pwndev -F 32 
+sudo mkdir /media/pwndev
+sudo mount -o loop $HOME/PPPwn/pwndev /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev
+fi
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo systemctl enable pipwn
 sudo systemctl start pipwn
