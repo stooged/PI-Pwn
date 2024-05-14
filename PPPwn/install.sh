@@ -199,26 +199,49 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+PITYP=$(tr -d '\0' </proc/device-tree/model) 
+if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
+case $vusb in
+[Yy]* ) 
+if [ ! -f $HOME/PPPwn/pwndev ]; then
+sudo mkdir $HOME/PPPwn
+sudo dd if=/dev/zero of=$HOME/PPPwn/pwndev bs=4096 count=65535 
+sudo mkdosfs $HOME/PPPwn/pwndev -F 32  
+echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
+sudo mkdir /media/pwndev
+sudo mount -o loop $HOME/PPPwn/pwndev /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev
+UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
+if [[ $UDEV == *"dev/sd"* ]] ;then
+sudo mount -o loop $UDEV /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev 
+fi
+fi
+echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c of the pi\033[0m'
+VUSB="true"
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe pi will not mount as a drive\033[0m'
+VUSB="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+else
+VUSB="false"
+fi
 echo '#!/bin/bash
-
-# raspberry pi ethernet interface
 INTERFACE="'$IFCE'" 
-
-# console firmware version  [11.00 | 9.00]
 FIRMWAREVERSION="'$FWV'" 
-
-# shutdown pi on successful pppwn  [true | false]
 SHUTDOWN='$SHTDN'
-
-# using a usb to ethernet adapter  [true | false]
 USBETHERNET='$USBE'
-
-#use c++ version of pppwn
 USECPP='$UCPP'
-
-# enable pppoe after pwn  [true | false]
-#this does not work if you did not set the console to connect to the internet during the install
-PPPOECONN='$INET'' | sudo tee /boot/firmware/PPPwn/config.sh
+PPPOECONN='$INET'
+VMUSB='$VUSB'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm /usr/lib/systemd/system/bluetooth.target
 sudo rm /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
@@ -231,6 +254,16 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
+if [ -f /boot/firmware/PPPwn/pwndev ]; then
+sudo rm /boot/firmware/PPPwn/pwndev
+sudo mkdir $HOME/PPPwn
+sudo dd if=/dev/zero of=$HOME/PPPwn/pwndev bs=4096 count=65535 
+sudo mkdosfs $HOME/PPPwn/pwndev -F 32 
+sudo mkdir /media/pwndev
+sudo mount -o loop $HOME/PPPwn/pwndev /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev
+fi
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo systemctl enable pipwn
 sudo systemctl start pipwn

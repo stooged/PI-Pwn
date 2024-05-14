@@ -1,8 +1,12 @@
 # PI Pwn
 
-This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0<br>
-It aso supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
+This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0, 9.00<br>
+It also supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
 A dns blocker is also installed and used to prevent updates.<br>
+
+The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can act as a virtual flash drive to the console if the pi is plugged into the console usb port removing the need for a flash drive to load payloads.<br>
+
+
 
 <br>
 
@@ -70,6 +74,15 @@ To connect to the servers from your pc just connect to the raspberry pi ip on yo
 
 For ftp make sure you set the transfer mode on your ftp client software to `Active` not passive.<br>
 
+
+## Flash/Virtual drive
+
+You can put a usb flash drive in the pi and that will be mounted to the console, if you have no drive in the pi a virtual drive will be mounted.<br>
+To use this feature you must plug the raspberry pi 4/5 into the consoles usb port using the usb-c connection on the pi.<br>
+If you have power issues you can use a usb Y cable to inject power from another source but in my tests both pi variants ran using a single cable.<br>
+
+
+
 ## What it does
 
 Once everything is setup and the ethernet cable is plugged in between the pi and the console the pi should automatically try and pwn the console.<br>
@@ -80,18 +93,7 @@ You will need to restart the pi if you wish to pwn the console again.<br>
 
 The idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the process completes<br>
 
-# Updating
+## Updating
 
 You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
-The install.sh script can also be run again to install changes or change the PPPoE user/password
-
-
-## install video
-[![https://player.vimeo.com/video/945141797?autoplay=1](https://i.vimeocdn.com/video/1850373616-93857870e2a0e3974e00b8e53991557af388fc14b13f305998b8757bc11407f7-d)](https://player.vimeo.com/video/945141797?autoplay=1)
-
-<br>
-
-## internet settings follow up video
-[![https://player.vimeo.com/video/945142322?autoplay=1](https://i.vimeocdn.com/video/1850373112-c392e1538902fb22bb8c98558100943e7b8390c029f9e54cb9f27c22da1d6c42-d)](https://player.vimeo.com/video/945142322?autoplay=1)
-
-
+The install.sh script can also be run again to install updates or change the settings.
