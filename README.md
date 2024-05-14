@@ -36,7 +36,7 @@ Place the sd card into the raspberry pi, boot it and connect it to the internet 
 ```sh
 sudo apt update
 sudo apt install git -y
-sudo rm -r PI-Pwn
+sudo rm -f -r PI-Pwn
 sudo systemctl stop pipwn
 git clone https://github.com/stooged/PI-Pwn
 sudo mkdir /boot/firmware/

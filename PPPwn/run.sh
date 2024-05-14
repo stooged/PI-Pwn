@@ -77,7 +77,7 @@ fi
 if [ $VMUSB = true ] ; then
    UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
    if [[ -z $UDEV ]] ;then
-      UDEV="$HOME/PPPwn/pwndev"
+      UDEV="/media/PPPwn/pwndev"
 	  echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
 	else
 	  echo -e "\033[92mFlash Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
