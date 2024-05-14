@@ -220,7 +220,7 @@ sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev 
 fi
 fi
-echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c or otg port of the pi\033[0m'
+echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c of the pi\033[0m'
 VUSB="true"
 break;;
 [Nn]* ) 
