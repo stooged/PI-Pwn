@@ -132,6 +132,7 @@ if [ $ret -ge 1 ]
 			sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2 -F
 		else
         	if [ $SHUTDOWN = true ] ; then
+        	 coproc read -t 5 && wait "$!" || true
         	 sudo poweroff
 			else
 			 sudo ip link set $INTERFACE down
