@@ -102,7 +102,7 @@ You will need to restart the pi if you wish to pwn the console again.<br>
 
 The idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the process completes<br>
 
-# Updating
+## Updating
 
 You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
 The install.sh script can also be run again to install updates or change the settings.

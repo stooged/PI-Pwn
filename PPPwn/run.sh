@@ -89,11 +89,17 @@ if [ $PPPOECONN = true ] ; then
 else   
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
+while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
+do
+echo -en "\r\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
+coproc read -t 2 && wait "$!" || true
+done
+echo -en "\r\033[32mLink found      \033[0m\n" | sudo tee /dev/tty1
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
-   echo -e "\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
+   echo -e "\n\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
 fi
-echo -e "\033[95mReady for console connection\033[0m" | sudo tee /dev/tty1
+echo -e "\n\033[95mReady for console connection\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
 if [ $USECPP = true ] ; then
