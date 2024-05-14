@@ -211,12 +211,12 @@ sudo mkdosfs /boot/firmware/PPPwn/pwndev -F 32
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 sudo mkdir /media/pwndev
 sudo mount -o loop /boot/firmware/PPPwn/pwndev /media/pwndev
-sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev
-UDEV=$(blkid | grep '^/dev/sd' | cut -f1 -d':')
+UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
 if [[ $UDEV == *"dev/sd"* ]] ;then
 sudo mount -o loop $UDEV /media/pwndev
-sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev 
 fi
 fi

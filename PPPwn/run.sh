@@ -75,7 +75,7 @@ else
    echo -e "\033[92mPPPwn:\033[93m Python pppwn.py \033[0m" | sudo tee /dev/tty1
 fi
 if [ $VMUSB = true ] ; then
-   UDEV=$(blkid | grep '^/dev/sd' | cut -f1 -d':')
+   UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
    if [[ -z $UDEV ]] ;then
       UDEV="/boot/firmware/PPPwn/pwndev"
 	  echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
@@ -89,12 +89,14 @@ if [ $PPPOECONN = true ] ; then
 else   
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
-while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
-do
-echo -en "\r\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
-coproc read -t 2 && wait "$!" || true
-done
-echo -en "\r\033[32mLink found      \033[0m\n" | sudo tee /dev/tty1
+if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
+   echo -en "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
+   while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
+   do
+      coproc read -t 2 && wait "$!" || true
+   done
+   echo -en "\033[32mLink found      \033[0m\n" | sudo tee /dev/tty1
+fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
    echo -e "\n\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
