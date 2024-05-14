@@ -95,7 +95,7 @@ if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
    do
       coproc read -t 2 && wait "$!" || true
    done
-   echo -en "\033[32mLink found      \033[0m\n" | sudo tee /dev/tty1
+   echo -en "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
@@ -129,6 +129,7 @@ if [ $ret -ge 1 ]
 			sudo iptables -t nat -I PREROUTING -p tcp --dport 2121 -j DNAT --to 192.168.2.2:2121
 			sudo iptables -t nat -I PREROUTING -p tcp --dport 3232 -j DNAT --to 192.168.2.2:3232
 			sudo iptables -t nat -I PREROUTING -p tcp --dport 9090 -j DNAT --to 192.168.2.2:9090
+			sudo iptables -t nat -I PREROUTING -p tcp --dport 12800 -j DNAT --to 192.168.2.2:12800
 			sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
 			echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n" | sudo tee /dev/tty1
 			sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2 -F
