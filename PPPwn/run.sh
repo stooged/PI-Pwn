@@ -32,11 +32,9 @@ CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi Zero 2"* ]] ;then
 coproc read -t 8 && wait "$!" || true
 CPPBIN="pppwn64"
-VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 CPPBIN="pppwn11"
-VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 CPPBIN="pppwn11"
@@ -75,10 +73,14 @@ else
    echo -e "\033[92mPPPwn:\033[93m Python pppwn.py \033[0m" | sudo tee /dev/tty1
 fi
 if [ $VMUSB = true ] ; then
-   echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
-   sudo modprobe g_mass_storage file=/boot/firmware/PPPwn/pwndev stall=0 ro=0 removable=1 
-else
-   echo -e "\033[92mVirtual Drive:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
+   UDEV=$(blkid | grep '^/dev/sd' | cut -f1 -d':')
+   if [[ -z $UDEV ]] ;then
+      UDEV="/boot/firmware/PPPwn/pwndev"
+	  echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
+	else
+	  echo -e "\033[92mFlash Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
+   fi
+   sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
 fi
 if [ $PPPOECONN = true ] ; then
    echo -e "\033[92mInternet Access:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
@@ -131,9 +133,11 @@ if [ $ret -ge 1 ]
    else
         echo -e "\033[31m\nFailed retrying...\033[0m\n" | sudo tee /dev/tty1
 		if [ $USBETHERNET = true ] ; then
+		  if [[ ! $UDEV == *"dev/sd"* ]] ;then
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
         	coproc read -t 4 && wait "$!" || true
         	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+		  fi	
            else	
         	sudo ip link set $INTERFACE down
         	coproc read -t 4 && wait "$!" || true
@@ -141,8 +145,3 @@ if [ $ret -ge 1 ]
         fi
 fi
 done
-
-
-
-
-sudo iptables -t nat -I PREROUTING -p tcp -j DNAT --to 192.168.2.2

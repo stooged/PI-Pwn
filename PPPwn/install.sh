@@ -200,21 +200,27 @@ break;;
 esac
 done
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
-if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
+if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] || [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
 case $vusb in
 [Yy]* ) 
 if [ ! -f /boot/firmware/PPPwn/pwndev ]; then
-sudo dd if=/dev/zero of=/boot/firmware/PPPwn/pwndev bs=4096 count=65535 
+sudo dd if=/dev/zero of=/boot/firmware/PPPwn/pwndev bs=4096 count=32767 
 sudo mkdosfs /boot/firmware/PPPwn/pwndev -F 32  
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 sudo mkdir /media/pwndev
 sudo mount -o loop /boot/firmware/PPPwn/pwndev /media/pwndev
-sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin"  /media/pwndev
+sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev
+UDEV=$(blkid | grep '^/dev/sd' | cut -f1 -d':')
+if [[ $UDEV == *"dev/sd"* ]] ;then
+sudo mount -o loop $UDEV /media/pwndev
+sudo cp "/home/pi/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev 
 fi
-echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c port of the pi\033[0m'
+fi
+echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c or otg port of the pi\033[0m'
 VUSB="true"
 break;;
 [Nn]* ) 
