@@ -105,15 +105,4 @@ The idea is you boot the console and the pi together and the pi will keep trying
 # Updating
 
 You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
-The install.sh script can also be run again to install changes or change the PPPoE user/password
-
-
-## install video
-[![https://player.vimeo.com/video/945141797?autoplay=1](https://i.vimeocdn.com/video/1850373616-93857870e2a0e3974e00b8e53991557af388fc14b13f305998b8757bc11407f7-d)](https://player.vimeo.com/video/945141797?autoplay=1)
-
-<br>
-
-## internet settings follow up video
-[![https://player.vimeo.com/video/945142322?autoplay=1](https://i.vimeocdn.com/video/1850373112-c392e1538902fb22bb8c98558100943e7b8390c029f9e54cb9f27c22da1d6c42-d)](https://player.vimeo.com/video/945142322?autoplay=1)
-
-
+The install.sh script can also be run again to install updates or change the settings.
