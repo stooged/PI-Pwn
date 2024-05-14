@@ -206,7 +206,7 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to
 case $vusb in
 [Yy]* ) 
 if [ ! -f /boot/firmware/PPPwn/pwndev ]; then
-sudo dd if=/dev/zero of=/boot/firmware/PPPwn/pwndev bs=4096 count=32767 
+sudo dd if=/dev/zero of=/boot/firmware/PPPwn/pwndev bs=4096 count=65535 
 sudo mkdosfs /boot/firmware/PPPwn/pwndev -F 32  
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 sudo mkdir /media/pwndev
