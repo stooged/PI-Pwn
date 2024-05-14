@@ -220,6 +220,7 @@ sudo mount -o loop $UDEV /media/pwndev
 sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev 
 fi
+sudo rm -r /media/pwndev
 fi
 echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c of the pi\033[0m'
 VUSB="true"
@@ -263,6 +264,7 @@ sudo mkdir /media/pwndev
 sudo mount -o loop $HOME/PPPwn/pwndev /media/pwndev
 sudo cp "$HOME/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev
+sudo rm -r /media/pwndev
 fi
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo systemctl enable pipwn
