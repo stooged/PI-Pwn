@@ -6,7 +6,7 @@ A dns blocker is also installed and used to prevent updates.<br>
 
 The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can act as a virtual flash drive to the console if the pi is plugged into the console usb port removing the need for a flash drive to load payloads.<br>
 
-
+You can also setup a webserver to control the pi or change settings by accessing http://pppwn.local <br> 
 
 <br>
 
