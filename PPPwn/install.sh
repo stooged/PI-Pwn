@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt install pppoe dnsmasq iptables nginx php-fpm python3 python3-scapy -y
+sudo apt install pppoe dnsmasq iptables nginx php-fpm -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
@@ -84,6 +84,23 @@ fi
 sudo rm -f -r /media/pwndev
 fi
 fi
+
+if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to enable the option to use the python(slower) PPPwn\033[36m(Y|N)?: \033[0m')" cppp
+case $cppp in
+[Yy]* ) 
+sudo apt install python3 python3-scapy -y
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe python version of PPPwn will not be available\033[0m'
+break;;
+* ) 
+echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
+
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
@@ -188,6 +205,9 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
+UCPP="true"
+else
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of pppwn, It is much slower\r\n\r\n\033[36m(Y|N)?: \033[0m')" cppp
 case $cppp in
@@ -202,6 +222,7 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+fi
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mWould you like to change the firmware version being used, the default is 11.00\r\n\r\n\033[36m(Y|N)?: \033[0m')" fwset
 case $fwset in

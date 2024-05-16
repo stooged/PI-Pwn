@@ -137,7 +137,7 @@ select {
 }
 
 
-input {
+input[type=text] {
     background: #454545;
 	color: #FFFFFF;
 	padding: 5px 5px;
@@ -247,8 +247,7 @@ print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reb
 
 print("<br><table align=center><td><form method=\"post\">");
 
-print("<label for=\"interface\">Interface: </label>
-<select name=\"interface\">");
+print("<select name=\"interface\">");
 foreach ($idata as $x) {
 $x = trim($x);
 if ($x !== "" && $x !== "lo" && $x !== "ppp0" && !str_starts_with($x, "wlan"))
@@ -261,11 +260,10 @@ print("<option value=\"".$x."\">".$x."</option>");
 }
 }
 }
-print("</select><br><br>");
+print("</select><label for=\"interface\">&nbsp; Interface</label><br><br>");
 
 
-print("<label for=\"firmware\">Firmware version:</label>
-<select name=\"firmware\">");
+print("<select name=\"firmware\">");
 
 if ($firmware == "11.00")
 {
@@ -276,7 +274,7 @@ print("<option value=\"11.00\">11.00</option>
 <option value=\"9.00\" selected>9.00</option>");
 }
 
-print("</select><br>");
+print("</select><label for=\"firmware\">&nbsp; Firmware version</label><br>");
 
 
 
@@ -291,6 +289,10 @@ print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".
 
 
 
+$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
+exec($cmd ." 2>&1", $cppdata, $ret);
+if (implode($cppdata) == "install ok installed")
+{
 $cval = "";
 if ($usecpp == "true")
 {
@@ -299,6 +301,9 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"usecpp\" value=\"".$usecpp."\" ".$cval.">
 <label for=\"usecpp\">&nbsp;Use C++ version</label>
 <br>");
+}else{
+print("<input type=\"hidden\" name=\"usecpp\" value=\"true\">");
+}
 
 
 
@@ -333,8 +338,6 @@ print("<br>
 print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
 </form>
 </td>
-
-
 </table>
 </body>
 </html>");

@@ -14,6 +14,9 @@ fi
 if [[ -z $USECPP ]] ;then
 USECPP=true
 fi
+if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
+USECPP=true
+fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
