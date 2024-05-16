@@ -20,6 +20,24 @@ if (isset($_POST['save'])){
 	{
       exec('sudo rmmod g_mass_storage');
 	}
+	if (isset($_POST["pppoeconn"]) == true)
+	{
+      $cmd = 'sudo systemctl is-active pipwn';
+      exec($cmd ." 2>&1", $sresp, $pret);
+	  if (implode($sresp) != "active")
+	  {
+		$cmd = 'sudo systemctl is-active pppoe';
+		exec($cmd ." 2>&1", $presp, $pret);
+		if (implode($presp) != "active")
+		{
+			exec('sudo systemctl start pppoe'); 
+		}
+	  }
+	}
+	else
+	{
+      exec('sudo systemctl stop pppoe');
+	}
 	sleep(1);
 }
  
@@ -281,6 +299,18 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"usecpp\" value=\"".$usecpp."\" ".$cval.">
 <label for=\"usecpp\">&nbsp;Use C++ version</label>
 <br>");
+
+
+
+$cval = "";
+if ($pppoeconn == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
+<label for=\"usecpp\">&nbsp;Enable console internet access</label>
+<br>");
+
 
 
 if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))

@@ -56,6 +56,15 @@ netmask 255.255.255.0
 defaultroute
 noipdefault
 usepeerdns' | sudo tee /etc/ppp/pppoe-server-options
+echo '[Service]
+WorkingDirectory=/boot/firmware/PPPwn
+ExecStart=/boot/firmware/PPPwn/pppoe.sh
+Restart=never
+User=root
+Group=root
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pppoe.service
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to set a PPPoE username and password?\r\nif you select no then these defaults will be used\r\n\r\nUsername: \033[33mppp\r\n\033[36mPassword: \033[33mppp\r\n\r\n\033[36m(Y|N)?: \033[0m')" wapset
 case $wapset in
@@ -325,7 +334,8 @@ sudo umount /media/pwndev
 sudo rm -f -r /media/pwndev
 fi
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
+sudo chmod u+rwx /etc/systemd/system/pppoe.service
 sudo systemctl enable pipwn
-sudo systemctl start pipwn
+sudo systemctl enable pppoe
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot
