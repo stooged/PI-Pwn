@@ -1,26 +1,6 @@
 #!/bin/bash
 
-if [ -f /boot/firmware/PPPwn/config.sh ]; then
-while true; do
-read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
-case $cppp in
-[Yy]* ) 
-break;;
-[Nn]* ) 
-sudo systemctl start pipwn
-echo -e '\033[36mInstall complete\033[0m'
-exit 1
-break;;
-* ) 
-echo -e '\033[31mPlease answer Y or N\033[0m';;
-esac
-done
-fi
-while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
-case $pppq in
-[Yy]* ) 
-sudo apt install pppoe dnsmasq iptables -y
+sudo apt install pppoe dnsmasq iptables nginx php-fpm python3 python3-scapy -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
@@ -65,6 +45,65 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pppoe.service
+HSTN=$(hostname | cut -f1 -d' ')
+if [[ ! $HSTN == "pppwn" ]] ;then
+PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
+echo 'server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /boot/firmware/PPPwn;
+	index index.html index.htm index.php;
+	server_name _;
+	location / {
+		try_files $uri $uri/ =404;
+	}
+	location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
+	}
+}' | sudo tee /etc/nginx/sites-enabled/default
+echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
+sudo /etc/init.d/nginx restart
+fi
+if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
+if [ ! -f /media/PPPwn/pwndev ]; then
+sudo mkdir /media/PPPwn
+sudo dd if=/dev/zero of=/media/PPPwn/pwndev bs=4096 count=65535 
+sudo mkdosfs /media/PPPwn/pwndev -F 32  
+echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
+sudo mkdir /media/pwndev
+sudo mount -o loop /media/PPPwn/pwndev /media/pwndev
+sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev
+UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
+if [[ $UDEV == *"dev/sd"* ]] ;then
+sudo mount -o loop $UDEV /media/pwndev
+sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
+sudo umount /media/pwndev 
+fi
+sudo rm -f -r /media/pwndev
+fi
+fi
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
+case $cppp in
+[Yy]* ) 
+break;;
+[Nn]* ) 
+sudo systemctl start pipwn
+echo -e '\033[36mUpdate complete\033[0m'
+exit 1
+break;;
+* ) 
+echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
+case $pppq in
+[Yy]* ) 
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to set a PPPoE username and password?\r\nif you select no then these defaults will be used\r\n\r\nUsername: \033[33mppp\r\n\033[36mPassword: \033[33mppp\r\n\r\n\033[36m(Y|N)?: \033[0m')" wapset
 case $wapset in
@@ -154,7 +193,6 @@ read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of 
 case $cppp in
 [Yy]* ) 
 UCPP="false"
-sudo apt install python3 python3-scapy -y
 echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
 break;;
 [Nn]* ) 
@@ -232,23 +270,6 @@ while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
 case $vusb in
 [Yy]* ) 
-if [ ! -f /media/PPPwn/pwndev ]; then
-sudo mkdir /media/PPPwn
-sudo dd if=/dev/zero of=/media/PPPwn/pwndev bs=4096 count=65535 
-sudo mkdosfs /media/PPPwn/pwndev -F 32  
-echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
-sudo mkdir /media/pwndev
-sudo mount -o loop /media/PPPwn/pwndev /media/pwndev
-sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
-sudo umount /media/pwndev
-UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
-if [[ $UDEV == *"dev/sd"* ]] ;then
-sudo mount -o loop $UDEV /media/pwndev
-sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
-sudo umount /media/pwndev 
-fi
-sudo rm -f -r /media/pwndev
-fi
 echo -e '\033[32mThe pi will mount as a drive and goldhen.bin has been placed in the drive\n\033[33mYou must plug the pi into the console usb port using the usb-c of the pi\033[0m'
 VUSB="true"
 break;;
@@ -262,45 +283,6 @@ done
 else
 VUSB="false"
 fi
-HSTN=$(hostname | cut -f1 -d' ')
-if [[ ! $HSTN == "pppwn" ]] ;then
-while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want to setup a webserver to control the pi\033[36m(Y|N)?: \033[0m')" websvr
-case $websvr in
-[Yy]* ) 
-sudo apt install nginx php-fpm -y
-PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
-echo 'server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	root /boot/firmware/PPPwn;
-	index index.html index.htm index.php;
-	server_name _;
-	location / {
-		try_files $uri $uri/ =404;
-	}
-	location ~ \.php$ {
-    include snippets/fastcgi-php.conf;
-    fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
-	}
-}' | sudo tee /etc/nginx/sites-enabled/default
-
-sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts
-sudo sed -i "s^$HSTN^pppwn^g" /etc/hostname
-echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
-sudo /etc/init.d/nginx restart
-WEBSV="true"
-echo -e '\033[32mWebserver installed\033[0m'
-break;;
-[Nn]* ) 
-WEBSV="false"
-echo -e '\033[36mWebserver not installed\033[0m'
-break;;
-* ) 
-echo -e '\033[31mPlease answer Y or N\033[0m';;
-esac
-done
-fi
 echo '#!/bin/bash
 INTERFACE="'$IFCE'" 
 FIRMWAREVERSION="'$FWV'" 
@@ -308,8 +290,7 @@ SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 USECPP='$UCPP'
 PPPOECONN='$INET'
-VMUSB='$VUSB'
-WEBSVR='$WEBSV'' | sudo tee /boot/firmware/PPPwn/config.sh
+VMUSB='$VUSB'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
@@ -322,20 +303,13 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
-if [ -f /boot/firmware/PPPwn/pwndev ] && [ ! -f /media/PPPwn/pwndev ]; then
-sudo rm -f /boot/firmware/PPPwn/pwndev
-sudo mkdir /media/PPPwn
-sudo dd if=/dev/zero of=/media/PPPwn/pwndev bs=4096 count=65535 
-sudo mkdosfs /media/PPPwn/pwndev -F 32 
-sudo mkdir /media/pwndev
-sudo mount -o loop /media/PPPwn/pwndev /media/pwndev
-sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
-sudo umount /media/pwndev
-sudo rm -f -r /media/pwndev
-fi
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pppoe.service
 sudo systemctl enable pipwn
 sudo systemctl enable pppoe
+if [[ ! $HSTN == "pppwn" ]] ;then
+sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts
+sudo sed -i "s^$HSTN^pppwn^g" /etc/hostname
+fi
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot

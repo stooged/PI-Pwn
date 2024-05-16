@@ -2,13 +2,6 @@
 
 if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
 INTERFACE="eth0" 
-FIRMWAREVERSION="11.00" 
-SHUTDOWN=true
-USBETHERNET=false
-PPPOECONN=false
-USECPP=true
-VMUSB=false
-WEBSVR=false
 else
 source /boot/firmware/PPPwn/config.sh
 fi

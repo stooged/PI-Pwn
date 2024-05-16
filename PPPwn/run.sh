@@ -8,7 +8,6 @@ USBETHERNET=false
 PPPOECONN=false
 USECPP=true
 VMUSB=false
-WEBSVR=false
 else
 source /boot/firmware/PPPwn/config.sh
 fi
