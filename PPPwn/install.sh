@@ -65,6 +65,7 @@ echo 'server {
 echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 sudo /etc/init.d/nginx restart
 fi
+PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 if [ ! -f /media/PPPwn/pwndev ]; then
 sudo mkdir /media/PPPwn
@@ -84,7 +85,6 @@ fi
 sudo rm -f -r /media/pwndev
 fi
 fi
-
 if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to enable the option to use the python(slower) PPPwn\033[36m(Y|N)?: \033[0m')" cppp
@@ -100,7 +100,6 @@ echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
 fi
-
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
@@ -285,7 +284,6 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
