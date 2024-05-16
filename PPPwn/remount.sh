@@ -16,4 +16,3 @@ if [ $VMUSB = true ] ; then
   fi
    sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
 fi
-   
