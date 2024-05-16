@@ -1,4 +1,21 @@
 #!/bin/bash
+
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
+case $cppp in
+[Yy]* ) 
+break;;
+[Nn]* ) 
+sudo systemctl start pipwn
+echo -e '\033[36mInstall complete\033[0m'
+exit 1
+break;;
+* ) 
+echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
 case $pppq in
@@ -25,7 +42,8 @@ address=/sonyentertainmentnetwork.com/127.0.0.1
 address=/ribob01.net/127.0.0.1
 address=/cddbp.net/127.0.0.1
 address=/nintendo.net/127.0.0.1
-address=/ea.com/127.0.0.1' | sudo tee /etc/dnsmasq.more.conf
+address=/ea.com/127.0.0.1
+address=/pppwn.local/192.168.2.1' | sudo tee /etc/dnsmasq.more.conf
 sudo systemctl restart dnsmasq
 echo 'auth
 lcp-echo-failure 3
@@ -235,6 +253,45 @@ done
 else
 VUSB="false"
 fi
+HSTN=$(hostname | cut -f1 -d' ')
+if [[ ! $HSTN == "pppwn" ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to setup a webserver to control the pi\033[36m(Y|N)?: \033[0m')" websvr
+case $websvr in
+[Yy]* ) 
+sudo apt install nginx php-fpm -y
+PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
+echo 'server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /boot/firmware/PPPwn;
+	index index.html index.htm index.php;
+	server_name _;
+	location / {
+		try_files $uri $uri/ =404;
+	}
+	location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
+	}
+}' | sudo tee /etc/nginx/sites-enabled/default
+
+sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts
+sudo sed -i "s^$HSTN^pppwn^g" /etc/hostname
+echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
+sudo /etc/init.d/nginx restart
+WEBSV="true"
+echo -e '\033[32mWebserver installed\033[0m'
+break;;
+[Nn]* ) 
+WEBSV="false"
+echo -e '\033[36mWebserver not installed\033[0m'
+break;;
+* ) 
+echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
 echo '#!/bin/bash
 INTERFACE="'$IFCE'" 
 FIRMWAREVERSION="'$FWV'" 
@@ -242,7 +299,8 @@ SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 USECPP='$UCPP'
 PPPOECONN='$INET'
-VMUSB='$VUSB'' | sudo tee /boot/firmware/PPPwn/config.sh
+VMUSB='$VUSB'
+WEBSVR='$WEBSV'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
