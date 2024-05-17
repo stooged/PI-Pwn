@@ -53,6 +53,10 @@ if (isset($_POST['shutdown'])){
    exec('sudo poweroff');
 }
 
+if (isset($_POST['payloads'])){
+   header("Location: payloads.php");
+}
+
 if (isset($_POST['remount'])){
    exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
 }
@@ -106,7 +110,7 @@ if ($pret == 0){
       $portlist .= trim($x);
    }
 }else{
-   $portlist = "2121,3232,9090,8080,12800";	
+   $portlist = "2121,3232,9090,8080,12800,1337";	
 }
 
 
@@ -229,12 +233,11 @@ function setEnd() {
 
 <center>
 <br><br>
-<form method=\"post\">");
+<form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
 
 
 $cmd = 'sudo tr -d \'\0\' </proc/device-tree/model';
 exec($cmd ." 2>&1", $pidata, $ret);
-
 if ($vmusb == "true" && str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
 {
 print("<button name=\"remount\">Remount USB</button> &nbsp; ");

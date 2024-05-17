@@ -65,6 +65,13 @@ echo 'server {
 echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 sudo /etc/init.d/nginx restart
 fi
+if [ ! -f /etc/udev/rules.d/99-pwnmnt.rules ]; then
+sudo mkdir /media/pwndrives
+echo 'MountFlags=shared' | sudo tee -a /usr/lib/systemd/system/systemd-udevd.service
+echo 'ACTION=="add", KERNEL=="sd*", SUBSYSTEMS=="usb|scsi", DRIVERS=="sd", SYMLINK+="usbdrive", RUN+="/boot/firmware/PPPwn/pwnmount.sh $kernel"
+ACTION=="remove", SUBSYSTEM=="block", RUN+="/boot/firmware/PPPwn/pwnumount.sh $kernel"' | sudo tee /etc/udev/rules.d/99-pwnmnt.rules
+sudo udevadm control --reload
+fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 if [ ! -f /media/PPPwn/pwndev ]; then
@@ -74,11 +81,13 @@ sudo mkdosfs /media/PPPwn/pwndev -F 32
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 sudo mkdir /media/pwndev
 sudo mount -o loop /media/PPPwn/pwndev /media/pwndev
+sudo mkdir /media/pwndev/payloads
 sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev
 UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
 if [[ $UDEV == *"dev/sd"* ]] ;then
 sudo mount -o loop $UDEV /media/pwndev
+sudo mkdir /media/pwndev/payloads
 sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
 sudo umount /media/pwndev 
 fi
