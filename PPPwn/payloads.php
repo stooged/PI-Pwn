@@ -140,7 +140,7 @@ foreach ($rdir as $x) {
 			{
 				if (str_ends_with($z, ".bin") || str_ends_with($z, ".elf"))
 				{
-					print("<button name=\"payload\" value=".urlencode('/media/pwndrives/'.$x.'/'.$y.'/'.$z).">".$z."</button>");
+					print("<button name=\"payload\" value=".urlencode('/media/pwndrives/'.$x.'/'.$y.'/'.$z).">".$z."</button>&nbsp; ");
 					$cnt++;
 					if ($cnt >= 4)
 					{

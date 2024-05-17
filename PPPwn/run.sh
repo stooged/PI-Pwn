@@ -111,7 +111,7 @@ do
 if [ $USECPP = true ] ; then
    ret=$(sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --stage1 "/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin" --stage2 "/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin")
 else
-   ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=$FIRMWAREVERSION --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
+   ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.} --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
 fi
 if [ $ret -ge 1 ]
    then
@@ -126,7 +126,6 @@ if [ $ret -ge 1 ]
         	 coproc read -t 3 && wait "$!" || true
         	 sudo ip link set $INTERFACE up
 		    fi
-			coproc read -t 3 && wait "$!" || true
 			sudo systemctl start pppoe
 		else
         	if [ $SHUTDOWN = true ] ; then
@@ -136,7 +135,7 @@ if [ $ret -ge 1 ]
 			 sudo ip link set $INTERFACE down
         	fi
 		fi
-        exit 1
+        exit 0
    else
         echo -e "\033[31m\nFailed retrying...\033[0m\n" | sudo tee /dev/tty1
 		if [ $USBETHERNET = true ] ; then

@@ -94,6 +94,10 @@ fi
 sudo rm -f -r /media/pwndev
 fi
 fi
+PPSTAT=$(sudo systemctl list-unit-files --state=enabled --type=service|grep pppoe) 
+if [[ ! $PPSTAT == "" ]] ; then
+sudo systemctl disable pppoe
+fi
 if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to enable the option to use the python(slower) PPPwn\033[36m(Y|N)?: \033[0m')" cppp
@@ -334,7 +338,6 @@ WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pppoe.service
 sudo systemctl enable pipwn
-sudo systemctl enable pppoe
 if [[ ! $HSTN == "pppwn" ]] ;then
 sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts
 sudo sed -i "s^$HSTN^pppwn^g" /etc/hostname
