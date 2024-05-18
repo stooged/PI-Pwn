@@ -7,9 +7,7 @@ if (isset($_POST['save'])){
 	$config .= "SHUTDOWN=false\n";
 	$config .= "USBETHERNET=".(isset($_POST["usbether"]) ? "true" : "false")."\n";
 	$config .= "PPPOECONN=".(isset($_POST["pppoeconn"]) ? "true" : "false")."\n";
-	$config .= "USECPP=".(isset($_POST["usecpp"]) ? "true" : "false")."\n";
 	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
-	$config .= "WEBSVR=true\n";
 	$config .= "DTLINK=".(isset($_POST["dtlink"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
@@ -78,17 +76,11 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'USBETHERNET')) {
       $usbether = (explode("=", $x)[1]);
    }
-   elseif (str_starts_with($x, 'USECPP')) {
-      $usecpp = (explode("=", $x)[1]);
-   }
    elseif (str_starts_with($x, 'PPPOECONN')) {
       $pppoeconn = (explode("=", $x)[1]);
    }
    elseif (str_starts_with($x, 'VMUSB')) {
       $vmusb = (explode("=", $x)[1]);
-   }
-   elseif (str_starts_with($x, 'WEBSVR')) {
-      $websvr = (explode("=", $x)[1]);
    }
    elseif (str_starts_with($x, 'DTLINK')) {
       $dtlink = (explode("=", $x)[1]);
@@ -99,10 +91,8 @@ foreach ($data as $x) {
    $firmware = "11.00";
    $shutdown = "false";
    $usbether = "false";
-   $usecpp = "true";
    $pppoeconn = "true";
    $vmusb = "false";
-   $websvr = "true";
    $dtlink = "false";
 }
 
@@ -297,23 +287,6 @@ print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".
 
 
 
-$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
-exec($cmd ." 2>&1", $cppdata, $ret);
-if (implode($cppdata) == "install ok installed")
-{
-$cval = "";
-if ($usecpp == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"usecpp\" value=\"".$usecpp."\" ".$cval.">
-<label for=\"usecpp\">&nbsp;Use C++ version</label>
-<br>");
-}else{
-print("<input type=\"hidden\" name=\"usecpp\" value=\"true\">");
-}
-
-
 $cval = "";
 if ($dtlink == "true")
 {
@@ -344,14 +317,17 @@ if ($vmusb == "true")
 $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
-<label for=\"vmusb\">&nbsp;Enable usb drive</label>");
+<label for=\"vmusb\">&nbsp;Enable usb drive to console</label>");
 }
 
 
 print("<br>
 <br>
 <label for=\"plist\">Ports: </label>
-<input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>");
+<input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>
+<div  style =\"text-align:left; font-size:12px; padding:4px;\">
+<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts ranges: 1000-1100</label>
+</div>");
 
 print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
 </form>

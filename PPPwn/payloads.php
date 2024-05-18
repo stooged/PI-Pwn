@@ -1,6 +1,5 @@
 <?php 
 
-
 if (isset($_POST['payload'])){
 $fso = fsockopen("tcp://192.168.2.2", 9090, $errn, $errs, 30);
 if ($fso){
@@ -14,6 +13,14 @@ fclose($file);
 }
 }
  
+if (isset($_POST['reload'])){
+	header("Location: payloads.php");
+}
+
+if (isset($_POST['back'])){
+	header("Location: index.php");
+}
+
 print("<html> 
 <head>
 <title>PI-Pwn</title>
@@ -24,7 +31,7 @@ body {
 	user-select: none;
     -webkit-user-select: none;
     background-color: #0E0E14;
-    color: white;
+    color: FFFFFF;
     font-family: Arial;
 }
 
@@ -112,10 +119,22 @@ input[type=checkbox]:checked:after {
     top: 2px;
     left: 6px;
 }
+
+input[type=submit] {
+    padding:4px;
+    color: #6495ED;
+    margin-top: 10px;
+    background-color: #0E0E14;
+    border: none;
+}
+
+input[type=submit]:hover {
+    text-decoration: underline;
+}
+
 </style>
 </head>
 <body>");
-
 
 print("<br><table align=center><td><form method=\"post\">");
 
@@ -154,9 +173,10 @@ foreach ($rdir as $x) {
 		}
 	}
 }
-done:
 
-print("</form></table><br><br><center>Place payloads in a folder called \"<b>payloads</b>\" on a usb drive and plug it in to the pi.<br>You must also enable the binloader server in goldhen.</center><br><br>");
+print("<button name=\"reload\" value=\"reload\">Reload page</button>");
+done:
+print("</form></td></table><br><br><center>Place payloads in a folder called \"<b>payloads</b>\" on a usb drive and plug it in to the pi.<br>You must also enable the binloader server in goldhen.<br><form method=\"post\"><input type=\"hidden\" value=\"back\"><input type=\"submit\" name=\"back\" value=\"Back to config page\"/></form></center>");
 print("</body></html>");
 
 ?>
