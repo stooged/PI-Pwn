@@ -8,6 +8,7 @@ USBETHERNET=false
 PPPOECONN=false
 USECPP=true
 VMUSB=false
+DTLINK=false
 else
 source /boot/firmware/PPPwn/config.sh
 fi
@@ -113,8 +114,7 @@ if [ $USECPP = true ] ; then
 else
    ret=$(sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.} --stage1=/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin --stage2=/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin)
 fi
-if [ $ret -ge 1 ]
-   then
+if [ $ret -ge 1 ] ; then
         echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
 		if [ $PPPOECONN = true ] ; then
 		    if [ $USBETHERNET = true ] ; then
@@ -127,12 +127,19 @@ if [ $ret -ge 1 ]
         	 sudo ip link set $INTERFACE up
 		    fi
 			sudo systemctl start pppoe
+			if [ $DTLINK = true ] ; then
+				sudo systemctl start dtlink
+			fi
 		else
-        	if [ $SHUTDOWN = true ] ; then
-        	 coproc read -t 5 && wait "$!" || true
-        	 sudo poweroff
+			if [ $SHUTDOWN = true ] ; then
+				coproc read -t 5 && wait "$!" || true
+				sudo poweroff
 			else
-			 sudo ip link set $INTERFACE down
+				if [ $DTLINK = true ] ; then
+					sudo systemctl start dtlink
+				else
+					sudo ip link set $INTERFACE down
+				fi
         	fi
 		fi
         exit 0

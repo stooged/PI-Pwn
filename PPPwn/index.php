@@ -10,6 +10,7 @@ if (isset($_POST['save'])){
 	$config .= "USECPP=".(isset($_POST["usecpp"]) ? "true" : "false")."\n";
 	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
 	$config .= "WEBSVR=true\n";
+	$config .= "DTLINK=".(isset($_POST["dtlink"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
     if (isset($_POST["vmusb"]) == true)
@@ -89,6 +90,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'WEBSVR')) {
       $websvr = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'DTLINK')) {
+      $dtlink = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -98,7 +102,8 @@ foreach ($data as $x) {
    $usecpp = "true";
    $pppoeconn = "true";
    $vmusb = "false";
-   $websvr = "true";	
+   $websvr = "true";
+   $dtlink = "false";
 }
 
 
@@ -307,6 +312,16 @@ print("<br><input type=\"checkbox\" name=\"usecpp\" value=\"".$usecpp."\" ".$cva
 }else{
 print("<input type=\"hidden\" name=\"usecpp\" value=\"true\">");
 }
+
+
+$cval = "";
+if ($dtlink == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
+<label for=\"usecpp\">&nbsp;Detect console shutdown and restart PPPwn</label>
+<br>");
 
 
 

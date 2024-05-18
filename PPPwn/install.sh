@@ -45,6 +45,15 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pppoe.service
+echo '[Service]
+WorkingDirectory=/boot/firmware/PPPwn
+ExecStart=/boot/firmware/PPPwn/dtlink.sh
+Restart=never
+User=root
+Group=root
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target' | sudo tee /etc/systemd/system/dtlink.service
 HSTN=$(hostname | cut -f1 -d' ')
 if [[ ! $HSTN == "pppwn" ]] ;then
 PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
@@ -129,6 +138,20 @@ echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
 fi
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to detect console shutdown and restart PPPwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" dlnk
+case $dlnk in
+[Yy]* ) 
+DTLNK="true"
+echo -e '\033[32mDetect shutdown enabled\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mDetect shutdown disabled\033[0m'
+DTLNK="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
 case $pppq in
@@ -322,7 +345,8 @@ SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 USECPP='$UCPP'
 PPPOECONN='$INET'
-VMUSB='$VUSB'' | sudo tee /boot/firmware/PPPwn/config.sh
+VMUSB='$VUSB'
+DTLINK='$DTLNK'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
@@ -337,6 +361,7 @@ Environment=NODE_ENV=production
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pppoe.service
+sudo chmod u+rwx /etc/systemd/system/dtlink.service
 sudo systemctl enable pipwn
 if [[ ! $HSTN == "pppwn" ]] ;then
 sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts

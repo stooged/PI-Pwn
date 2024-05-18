@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-INTERFACE="eth0" 
+INTERFACE="eth0"
 else
 source /boot/firmware/PPPwn/config.sh
 fi
@@ -20,8 +20,8 @@ if [ -f /boot/firmware/PPPwn/ports.txt ]; then
 	PORTS=$(sudo cat /boot/firmware/PPPwn/ports.txt | tr "," "\n")
 	for prt in $PORTS
 	do
-    	sudo iptables -t nat -I PREROUTING -p tcp --dport $prt -j DNAT --to 192.168.2.2:$prt
-		sudo iptables -t nat -I PREROUTING -p udp --dport $prt -j DNAT --to 192.168.2.2:$prt
+    	sudo iptables -t nat -I PREROUTING -p tcp --dport ${prt/-/:} -j DNAT --to 192.168.2.2:${prt/:/-}
+		sudo iptables -t nat -I PREROUTING -p udp --dport ${prt/-/:} -j DNAT --to 192.168.2.2:${prt/:/-}
 	done
 else
 	sudo iptables -t nat -I PREROUTING -p tcp --dport 2121 -j DNAT --to 192.168.2.2:2121
@@ -32,4 +32,7 @@ else
 fi
 sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE
 echo -e "\n\n\033[93m\nPPPoE Enabled \033[0m\n" | sudo tee /dev/tty1
-sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PS4 -S PS4 -L 192.168.2.1 -R 192.168.2.2 -F
+sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 -F
+
+
+
