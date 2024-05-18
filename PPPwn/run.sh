@@ -1,16 +1,18 @@
 #!/bin/bash
 
-if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-INTERFACE="eth0" 
-FIRMWAREVERSION="11.00" 
-SHUTDOWN=true
-USBETHERNET=false
-PPPOECONN=false
-VMUSB=false
-DTLINK=false
-else
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
 source /boot/firmware/PPPwn/config.sh
 fi
+if [ -z $INTERFACE ]; then INTERFACE="eth0"; fi
+if [ -z $FIRMWAREVERSION ]; then FIRMWAREVERSION="11.00"; fi
+if [ -z $SHUTDOWN ]; then SHUTDOWN=true; fi
+if [ -z $USBETHERNET ]; then USBETHERNET=false; fi
+if [ -z $PPPOECONN ]; then PPPOECONN=false; fi
+if [ -z $VMUSB ]; then VMUSB=false; fi
+if [ -z $DTLINK ]; then DTLINK=false; fi
+if [ -z $PPDBG ]; then PPDBG=false; fi
+if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
+
 echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind 
 echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
@@ -100,28 +102,40 @@ fi
 echo -e "\n\033[95mReady for console connection\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
-ret=$(sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --stage1 "/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin" --stage2 "/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin")
-if [ $ret -ge 1 ] ; then
-        echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
-		if [ $PPPOECONN = true ] ; then
-			sudo systemctl start pppoe
+while read -r stdo ; 
+do  
+ if [ $PPDBG = true ] ; then
+	echo -e $stdo | sudo tee /dev/tty1
+ fi
+ if [[ $stdo  == "[+] Done!" ]] ; then
+	echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
+	if [ $PPPOECONN = true ] ; then
+		sudo systemctl start pppoe
+		if [ $DTLINK = true ] ; then
+			sudo systemctl start dtlink
+		fi
+	else
+		if [ $SHUTDOWN = true ] ; then
+			coproc read -t 5 && wait "$!" || true
+			sudo poweroff
+		else
 			if [ $DTLINK = true ] ; then
 				sudo systemctl start dtlink
-			fi
-		else
-			if [ $SHUTDOWN = true ] ; then
-				coproc read -t 5 && wait "$!" || true
-				sudo poweroff
 			else
-				if [ $DTLINK = true ] ; then
-					sudo systemctl start dtlink
-				else
-					sudo ip link set $INTERFACE down
-				fi
-        	fi
-		fi
-        exit 0
-   else
-        echo -e "\033[31m\nFailed retrying...\033[0m\n" | sudo tee /dev/tty1
-fi
+				sudo ip link set $INTERFACE down
+			fi
+        fi
+	fi
+	exit 0
+ elif [[ $stdo  == *"Scanning for corrupted object...failed"* ]] ; then
+ 	echo -e "\033[31m\nFailed retrying...\033[0m\n" | sudo tee /dev/tty1
+ elif [[ $stdo  == *"Unsupported firmware version"* ]] ; then
+ 	echo -e "\033[31m\nUnsupported firmware version\033[0m\n" | sudo tee /dev/tty1
+ 	exit 1
+ elif [[ $stdo  == *"Cannot find interface with name of"* ]] ; then
+ 	echo -e "\033[31m\nInterface $INTERFACE not found\033[0m\n" | sudo tee /dev/tty1
+ 	exit 1
+ fi
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --stage1 "/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin" --stage2 "/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin")
+coproc read -t 1 && wait "$!" || true
 done

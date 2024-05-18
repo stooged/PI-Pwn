@@ -107,6 +107,9 @@ PPSTAT=$(sudo systemctl list-unit-files --state=enabled --type=service|grep pppo
 if [[ ! $PPSTAT == "" ]] ; then
 sudo systemctl disable pppoe
 fi
+if [ ! -f /boot/firmware/PPPwn/ports.txt ]; then
+echo '2121,3232,9090,8080,12800,1337' | sudo tee /boot/firmware/PPPwn/ports.txt
+fi
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-INTERFACE="eth0"
-DTLINK=false
-else
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
 source /boot/firmware/PPPwn/config.sh
 fi
+if [ -z $INTERFACE ]; then INTERFACE="eth0"; fi
+if [ -z $DTLINK ]; then DTLINK=false; fi
+
 
 if [ $DTLINK = true ] ; then
 echo -e "\033[32mMonitoring link\033[0m\n" | sudo tee /dev/tty1

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-VMUSB=false
-else
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
 source /boot/firmware/PPPwn/config.sh
 fi
+if [ -z $VMUSB ]; then VMUSB=false; fi
+
 if [ $VMUSB = true ] ; then
   sudo rmmod g_mass_storage
   UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')

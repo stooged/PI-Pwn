@@ -9,6 +9,8 @@ if (isset($_POST['save'])){
 	$config .= "PPPOECONN=".(isset($_POST["pppoeconn"]) ? "true" : "false")."\n";
 	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
 	$config .= "DTLINK=".(isset($_POST["dtlink"]) ? "true" : "false")."\n";
+	$config .= "PPDBG=".(isset($_POST["ppdbg"]) ? "true" : "false")."\n";
+	$config .= "TIMEOUT=\"".str_replace(" ", "", trim($_POST["timeout"]))."\"\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
     if (isset($_POST["vmusb"]) == true)
@@ -85,16 +87,35 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'DTLINK')) {
       $dtlink = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'PPDBG')) {
+      $ppdbg = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'TIMEOUT')) {
+      $timeout = (explode("=", str_replace("\"", "", $x))[1]);
+   }
 }
 }else{
    $interface = "eth0";
    $firmware = "11.00";
    $shutdown = "false";
    $usbether = "false";
-   $pppoeconn = "true";
+   $pppoeconn = "false";
    $vmusb = "false";
    $dtlink = "false";
+   $ppdbg = "false";
+   $timeout = "5m";
 }
+
+
+if (empty($interface)){ $interface = "eth0";}
+if (empty($firmware)){ $firmware = "11.00";}
+if (empty($shutdown)){ $shutdown = "false";}
+if (empty($usbether)){ $usbether = "false";}
+if (empty($pppoeconn)){ $pppoeconn = "false";}
+if (empty($vmusb)){ $vmusb = "false";}
+if (empty($dtlink)){ $dtlink = "false";}
+if (empty($ppdbg)){ $ppdbg = "false";}
+if (empty($timeout)){ $timeout = "5m";}
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -272,7 +293,21 @@ print("<option value=\"11.00\">11.00</option>
 <option value=\"9.00\" selected>9.00</option>");
 }
 
-print("</select><label for=\"firmware\">&nbsp; Firmware version</label><br>");
+print("</select><label for=\"firmware\">&nbsp; Firmware version</label><br><br>");
+
+
+
+print("<select name=\"timeout\">");
+for($x =1; $x<=5;$x++)
+{
+   if ($timeout == $x."m")
+   {
+	   print("<option value=\"".$x."m\" selected>".$x."m</option>");
+   }else{
+	   print("<option value=\"".$x."m\">".$x."m</option>");
+   }
+} 
+print("</select><label for=\"timeout\">&nbsp; Time to restart PPPwn if it hangs</label><br><br>");
 
 
 
@@ -293,9 +328,18 @@ if ($dtlink == "true")
 $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
-<label for=\"usecpp\">&nbsp;Detect console shutdown and restart PPPwn</label>
+<label for=\"dtlink\">&nbsp;Detect console shutdown and restart PPPwn</label>
 <br>");
 
+
+$cval = "";
+if ($ppdbg == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" ".$cval.">
+<label for=\"ppdbg\">&nbsp;Enable verbose PPPwn</label>
+<br>");
 
 
 $cval = "";
@@ -304,7 +348,7 @@ if ($pppoeconn == "true")
 $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
-<label for=\"usecpp\">&nbsp;Enable console internet access</label>
+<label for=\"pppoeconn\">&nbsp;Enable console internet access</label>
 <br>");
 
 

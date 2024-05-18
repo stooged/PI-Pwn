@@ -1,10 +1,9 @@
 #!/bin/bash
 
-if [ ! -f /boot/firmware/PPPwn/config.sh ]; then
-INTERFACE="eth0"
-else
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
 source /boot/firmware/PPPwn/config.sh
 fi
+if [ -z $INTERFACE ]; then INTERFACE="eth0"; fi
 
 sudo iptables -P INPUT ACCEPT
 sudo iptables -P FORWARD ACCEPT
