@@ -343,7 +343,9 @@ SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 PPPOECONN='$INET'
 VMUSB='$VUSB'
-DTLINK='$DTLNK'' | sudo tee /boot/firmware/PPPwn/config.sh
+DTLINK='$DTLNK'
+PPDBG=false
+TIMEOUT=5m' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local

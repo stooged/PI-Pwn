@@ -4,7 +4,7 @@ if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
 	$config .= "INTERFACE=\"".str_replace(" ", "", trim($_POST["interface"]))."\"\n";
 	$config .= "FIRMWAREVERSION=\"".$_POST["firmware"]."\"\n";
-	$config .= "SHUTDOWN=false\n";
+	$config .= "SHUTDOWN=".(isset($_POST["shutdownpi"]) ? "true" : "false")."\n";
 	$config .= "USBETHERNET=".(isset($_POST["usbether"]) ? "true" : "false")."\n";
 	$config .= "PPPOECONN=".(isset($_POST["pppoeconn"]) ? "true" : "false")."\n";
 	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
@@ -90,7 +90,7 @@ foreach ($data as $x) {
       $firmware = (explode("=", str_replace("\"", "", $x))[1]);
    }
    elseif (str_starts_with($x, 'SHUTDOWN')) {
-      $shutdown = (explode("=", $x)[1]);
+      $shutdownpi = (explode("=", $x)[1]);
    }
    elseif (str_starts_with($x, 'USBETHERNET')) {
       $usbether = (explode("=", $x)[1]);
@@ -114,7 +114,7 @@ foreach ($data as $x) {
 }else{
    $interface = "eth0";
    $firmware = "11.00";
-   $shutdown = "false";
+   $shutdownpi = "true";
    $usbether = "false";
    $pppoeconn = "false";
    $vmusb = "false";
@@ -126,7 +126,7 @@ foreach ($data as $x) {
 
 if (empty($interface)){ $interface = "eth0";}
 if (empty($firmware)){ $firmware = "11.00";}
-if (empty($shutdown)){ $shutdown = "false";}
+if (empty($shutdownpi)){ $shutdownpi = "true";}
 if (empty($usbether)){ $usbether = "false";}
 if (empty($pppoeconn)){ $pppoeconn = "false";}
 if (empty($vmusb)){ $vmusb = "false";}
@@ -467,6 +467,9 @@ print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".
 
 
 
+
+if ($shutdownpi == "false" || $pppoeconn == "true")
+{
 $cval = "";
 if ($dtlink == "true")
 {
@@ -475,6 +478,11 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
 <label for=\"dtlink\">&nbsp;Detect console shutdown and restart PPPwn</label>
 <br>");
+}
+else
+{
+print("<input type=\"hidden\" name=\"dtlink\" value=\"".$dtlink."\">");
+}
 
 
 
@@ -501,6 +509,23 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
 <label for=\"pppoeconn\">&nbsp;Enable console internet access</label>
 <br>");
+
+
+if ($pppoeconn == "false")
+{
+$cval = "";
+if ($shutdownpi == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
+<label for=\"shutdownpi\">&nbsp;Shutdown PI after PWN</label>
+<br>");
+}
+else
+{
+print("<input type=\"hidden\" name=\"shutdownpi\" value=\"".$shutdownpi."\">");
+}
 
 
 
