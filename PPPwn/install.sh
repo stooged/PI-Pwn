@@ -122,6 +122,20 @@ break;;
 esac
 done
 while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to enable PPPwn verbose\r\n\r\n\033[36m(Y|N)?: \033[0m')" ppdbg
+case $ppdbg in
+[Yy]* ) 
+PPDBG="true"
+echo -e '\033[32mPPPwn verbose enabled\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mPPPwn verbose disabled\033[0m'
+PPDBG="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
 case $pppq in
 [Yy]* ) 
@@ -343,7 +357,8 @@ SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 PPPOECONN='$INET'
 VMUSB='$VUSB'
-DTLINK='$DTLNK'' | sudo tee /boot/firmware/PPPwn/config.sh
+DTLINK='$DTLNK'
+PPDBG='$PPDBG'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
