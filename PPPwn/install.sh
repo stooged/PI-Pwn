@@ -8,23 +8,6 @@ server=8.8.8.8
 listen-address=127.0.0.1
 port=5353
 conf-file=/etc/dnsmasq.more.conf' | sudo tee /etc/dnsmasq.conf
-echo 'address=/playstation.com/127.0.0.1
-address=/playstation.net/127.0.0.1
-address=/playstation.org/127.0.0.1
-address=/akadns.net/127.0.0.1
-address=/akamai.net/127.0.0.1
-address=/akamaiedge.net/127.0.0.1
-address=/edgekey.net/127.0.0.1
-address=/edgesuite.net/127.0.0.1
-address=/llnwd.net/127.0.0.1
-address=/scea.com/127.0.0.1
-address=/sonyentertainmentnetwork.com/127.0.0.1
-address=/ribob01.net/127.0.0.1
-address=/cddbp.net/127.0.0.1
-address=/nintendo.net/127.0.0.1
-address=/ea.com/127.0.0.1
-address=/pppwn.local/192.168.2.1' | sudo tee /etc/dnsmasq.more.conf
-sudo systemctl restart dnsmasq
 echo 'auth
 lcp-echo-failure 3
 lcp-echo-interval 60
@@ -54,8 +37,6 @@ Group=root
 Environment=NODE_ENV=production
 [Install]
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/dtlink.service
-HSTN=$(hostname | cut -f1 -d' ')
-if [[ ! $HSTN == "pppwn" ]] ;then
 PHPVER=$(sudo php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
 echo 'server {
 	listen 80 default_server;
@@ -71,9 +52,9 @@ echo 'server {
     fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
 	}
 }' | sudo tee /etc/nginx/sites-enabled/default
+sudo sed -i "s^www-data	ALL=(ALL) NOPASSWD: ALL^^g" /etc/sudoers
 echo 'www-data	ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 sudo /etc/init.d/nginx restart
-fi
 if [ ! -f /etc/udev/rules.d/99-pwnmnt.rules ]; then
 sudo mkdir /media/pwndrives
 echo 'MountFlags=shared' | sudo tee -a /usr/lib/systemd/system/systemd-udevd.service
@@ -308,6 +289,53 @@ done
 else
 VUSB="false"
 fi
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mWould you like to change the hostname, the default is pppwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" hstset
+case $hstset in
+[Yy]* ) 
+while true; do
+read -p  "$(printf '\033[33mEnter the hostname: \033[0m')" HSTN
+case $HSTN in
+"" ) 
+ echo -e '\033[31mCannot be empty!\033[0m';;
+ * )  
+if grep -q '^[0-9a-zA-Z_ -]*$' <<<$HSTN ; then 
+if [ ${#HSTN} -le 3 ]  || [ ${#HSTN} -ge 21 ] ; then
+echo -e '\033[31mThe interface must be between 4 and 21 characters long\033[0m';
+else 
+break;
+fi
+else 
+echo -e '\033[31mThe hostname must only contain alphanumeric characters\033[0m';
+fi
+esac
+done
+echo -e '\033[32mYou are using '$HSTN', to access the webserver use http://'$HSTN'.local\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mUsing the default setting: pppwn\033[0m'
+HSTN="pppwn"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+echo 'address=/playstation.com/127.0.0.1
+address=/playstation.net/127.0.0.1
+address=/playstation.org/127.0.0.1
+address=/akadns.net/127.0.0.1
+address=/akamai.net/127.0.0.1
+address=/akamaiedge.net/127.0.0.1
+address=/edgekey.net/127.0.0.1
+address=/edgesuite.net/127.0.0.1
+address=/llnwd.net/127.0.0.1
+address=/scea.com/127.0.0.1
+address=/sonyentertainmentnetwork.com/127.0.0.1
+address=/ribob01.net/127.0.0.1
+address=/cddbp.net/127.0.0.1
+address=/nintendo.net/127.0.0.1
+address=/ea.com/127.0.0.1
+address=/'$HSTN'.local/192.168.2.1' | sudo tee /etc/dnsmasq.more.conf
+sudo systemctl restart dnsmasq
 echo '#!/bin/bash
 INTERFACE="'$IFCE'" 
 FIRMWAREVERSION="'$FWV'" 
@@ -332,9 +360,8 @@ sudo chmod u+rwx /etc/systemd/system/pipwn.service
 sudo chmod u+rwx /etc/systemd/system/pppoe.service
 sudo chmod u+rwx /etc/systemd/system/dtlink.service
 sudo systemctl enable pipwn
-if [[ ! $HSTN == "pppwn" ]] ;then
-sudo sed -i "s^$HSTN^pppwn^g" /etc/hosts
-sudo sed -i "s^$HSTN^pppwn^g" /etc/hostname
-fi
+CHSTN=$(hostname | cut -f1 -d' ')
+sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hosts
+sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hostname
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot
