@@ -248,9 +248,131 @@ input[type=checkbox]:checked:after {
     position: absolute;
     top: 2px;
     left: 6px;
+}	
+	
+.logger {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; 
+    padding-bottom: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 60%; 
+    overflow-x:hidden;
+    overflow-y:hidden;
+    background-color: #00000000;
 }
+
+
+.logger-content {
+    position: relative;
+    background-color: #0E0E14;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #6495ED;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+
+.close {
+    color: #6495ED;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #999999;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logger-header {
+    padding: 2px 8px;
+    background-color: #0E0E14;
+    color: 0E0E14;
+}
+
+.logger-body 
+{
+    padding: 2px 8px;
+}
+
+
+textarea {
+    resize: none;
+    border: none;
+    background-color: #0E0E14;
+    color: #FFFFFF;
+    box-sizing:border-box;
+    height: 100%;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;    
+    box-sizing: border-box;         
+}
+
+label[id=pwnlog] {
+    padding: 5px 5px;
+	font-size:12px; 
+	padding:4px; 
+	color:6495ED;
+}
+label[id=pwnlog]:hover,
+label[id=pwnlog]:focus {
+    color: #999999;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 </style>
 <script>
+var fid;
+
+function startLog() {
+   fid = setInterval(updateLog, 2000);
+}
+
+function stopLog() {
+  clearInterval(fid);
+}
+
+function updateLog() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/pwn.log');
+	xhr.setRequestHeader('Cache-Control', 'no-cache');
+	xhr.responseType = \"text\";
+	xhr.send();
+	xhr.onload = () => {
+	if (xhr.readyState === xhr.DONE) {
+    if (xhr.status === 200) {
+	document.getElementById(\"text_box\").value = xhr.responseText;
+	var textarea = document.getElementById('text_box');
+	textarea.scrollTop = textarea.scrollHeight;
+	}
+  }
+};
+}
+
 function setEnd() {
 	if (navigator.userAgent.includes('PlayStation 4')) {
 		let name = document.getElementById(\"plist\");
@@ -262,9 +384,15 @@ function setEnd() {
 </script>
 </head>
 <body>
-
-
 <center>
+
+<div id=\"pwnlogger\" class=\"logger\">
+<div class=\"logger-content\">
+<div class=\"logger-header\">
+<a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><span class=\"close\">&times;</span></a></div>
+<div class=\"logger-body\">
+<textarea disabled id=\"text_box\" rows=\"40\"></textarea>
+</div></div></div>
 <br><br>
 <form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
 
@@ -349,14 +477,20 @@ print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cva
 <br>");
 
 
-$cval = "";
+
 if ($ppdbg == "true")
 {
-$cval = "checked";
+print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" checked>
+<label for=\"ppdbg\">&nbsp;Enable verbose PPPwn</label> &nbsp; <a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><label id=\"pwnlog\">Open Log Viewer</label></a>
+<br>");
 }
-print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" ".$cval.">
+else
+{
+print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\">
 <label for=\"ppdbg\">&nbsp;Enable verbose PPPwn</label>
 <br>");
+}
+
 
 
 $cval = "";
@@ -386,7 +520,7 @@ print("<br>
 <br>
 <label for=\"plist\">Ports: </label>
 <input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>
-<div  style =\"text-align:left; font-size:12px; padding:4px;\">
+<div style=\"text-align:left; font-size:12px; padding:4px;\">
 <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts ranges: 1000-1100</label>
 </div>");
 
@@ -394,6 +528,28 @@ print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></
 </form>
 </td>
 </table>
+<script>
+var logger = document.getElementById(\"pwnlogger\");
+var btn = document.getElementById(\"pwnlog\");
+var span = document.getElementsByClassName(\"close\")[0];
+
+btn.onclick = function() {
+  logger.style.display = \"block\";
+  startLog();
+}
+
+span.onclick = function() {
+  logger.style.display = \"none\";
+  stopLog();
+}
+
+window.onclick = function(event) {
+  if (event.target == logger) {
+    logger.style.display = \"none\";
+	stopLog();
+  }
+}
+</script>
 </body>
 </html>");
 

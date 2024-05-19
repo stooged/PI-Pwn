@@ -87,6 +87,9 @@ if [ $PPPOECONN = true ] ; then
 else   
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
+if [ -f /boot/firmware/PPPwn/pwn.log ]; then
+   sudo rm -f /boot/firmware/PPPwn/pwn.log
+fi
 if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
    echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
    while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
@@ -102,10 +105,17 @@ fi
 echo -e "\n\033[95mReady for console connection\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
+if [ -f /boot/firmware/PPPwn/config.sh ]; then
+ if  grep -Fxq "PPDBG=true" /boot/firmware/PPPwn/config.sh ; then
+   PPDBG=true
+   else
+   PPDBG=false
+ fi
+fi
 while read -r stdo ; 
-do  
+do 
  if [ $PPDBG = true ] ; then
-	echo -e $stdo | sudo tee /dev/tty1 | sudo tee /dev/pts/*
+	echo -e $stdo | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/pwn.log
  fi
  if [[ $stdo  == "[+] Done!" ]] ; then
 	echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
