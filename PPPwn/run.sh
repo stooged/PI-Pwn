@@ -105,7 +105,7 @@ do
 while read -r stdo ; 
 do  
  if [ $PPDBG = true ] ; then
-	echo -e $stdo | sudo tee /dev/tty1
+	echo -e $stdo | sudo tee /dev/tty1 | sudo tee /dev/pts/*
  fi
  if [[ $stdo  == "[+] Done!" ]] ; then
 	echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
