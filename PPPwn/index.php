@@ -1,5 +1,5 @@
 <?php 
- 
+
 if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
 	$config .= "INTERFACE=\"".str_replace(" ", "", trim($_POST["interface"]))."\"\n";
@@ -13,6 +13,23 @@ if (isset($_POST['save'])){
 	$config .= "TIMEOUT=\"".str_replace(" ", "", trim($_POST["timeout"]))."\"\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
+ 	exec('sudo iptables -P INPUT ACCEPT');
+ 	exec('sudo iptables -P FORWARD ACCEPT');
+ 	exec('sudo iptables -P OUTPUT ACCEPT');
+ 	exec('sudo iptables -t nat -F');
+ 	exec('sudo iptables -t mangle -F');
+ 	exec('sudo iptables -F');
+ 	exec('sudo iptables -X');
+	exec('sudo sysctl net.ipv4.ip_forward=1');
+ 	exec('sudo sysctl net.ipv4.conf.all.route_localnet=1');
+ 	exec('sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353');
+	$plst = explode(",",trim($_POST["plist"]));
+	for($i = 0; $i < count($plst); ++$i) {
+	 	exec('sudo iptables -t nat -I PREROUTING -p tcp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+		exec('sudo iptables -t nat -I PREROUTING -p udp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+	}
+ 	exec('sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE');
+
     if (isset($_POST["vmusb"]) == true)
 	{
       exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
