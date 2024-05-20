@@ -102,7 +102,7 @@ fi
 if [ $RESTMODE = true ] ; then
 sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 
 coproc read -t 2 && wait "$!" || true
-while [[ ! $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
+while [[ $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
 do
     coproc read -t 2 && wait "$!" || true
 done
