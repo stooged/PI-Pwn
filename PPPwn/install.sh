@@ -108,25 +108,7 @@ esac
 done
 fi
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want to detect console shutdown and restart PPPwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" dlnk
-case $dlnk in
-[Yy]* ) 
-DTLNK="true"
-echo -e '\033[32mDetect shutdown enabled\033[0m'
-break;;
-[Nn]* ) 
-echo -e '\033[35mDetect shutdown disabled\033[0m'
-DTLNK="false"
-break;;
-* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
-esac
-done
-while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
-case $pppq in
-[Yy]* ) 
-while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want to set a PPPoE username and password?\r\nif you select no then these defaults will be used\r\n\r\nUsername: \033[33mppp\r\n\033[36mPassword: \033[33mppp\r\n\r\n\033[36m(Y|N)?: \033[0m')" wapset
+read -p "$(printf '\r\n\r\n\033[36mDo you want to change the PPPoE username and password?\r\nif you select no then these defaults will be used\r\n\r\nUsername: \033[33mppp\r\n\033[36mPassword: \033[33mppp\r\n\r\n\033[36m(Y|N)?: \033[0m')" wapset
 case $wapset in
 [Yy]* ) 
 while true; do
@@ -170,12 +152,30 @@ break;;
 esac
 done
 echo '"'$PPPU'"  *  "'$PPPW'"  192.168.2.2' | sudo tee /etc/ppp/pap-secrets
-INET="true"
-SHTDN="false"
-echo -e '\033[32mPPPoE installed\033[0m'
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to detect console shutdown and restart PPPwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" dlnk
+case $dlnk in
+[Yy]* ) 
+DTLNK="true"
+echo -e '\033[32mDetect shutdown enabled\033[0m'
 break;;
 [Nn]* ) 
-echo -e '\033[35mSkipping PPPoE install\033[0m'
+echo -e '\033[35mDetect shutdown disabled\033[0m'
+DTLNK="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want the console to connect to the internet after PPPwn? (Y|N):\033[0m ')" pppq
+case $pppq in
+[Yy]* ) 
+INET="true"
+SHTDN="false"
+echo -e '\033[32mConsole internet access enabled\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mConsole internet access disabled\033[0m'
 INET="false"
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to shutdown after pwn success\r\n\r\n\033[36m(Y|N)?: \033[0m')" pisht
