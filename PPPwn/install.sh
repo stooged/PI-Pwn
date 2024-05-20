@@ -404,7 +404,10 @@ VMUSB='$VUSB'
 DTLINK='$DTLNK'
 RESTMODE='$RESTM'
 PPDBG='$PDBG'
-TIMEOUT="'$TOUT'm"' | sudo tee /boot/firmware/PPPwn/config.sh
+TIMEOUT="'$TOUT'm"
+HOSTNAME="'$HSTN'.local"
+PPPUSER='$PPPU'
+PPPPASS='$PPPW'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
