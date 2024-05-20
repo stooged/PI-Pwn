@@ -210,14 +210,14 @@ break;;
 esac
 done
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mDo you want to enable rest mode support\r\n\r\n\033[36m(Y|N)?: \033[0m')" restmd
+read -p "$(printf '\r\n\r\n\033[36mDo you want to try and detect if goldhen is running and skip running pppwn if found, useful for rest mode\r\n\r\n\033[36m(Y|N)?: \033[0m')" restmd
 case $restmd in
 [Yy]* ) 
 RESTM="true"
-echo -e '\033[32mRest mode support enabled\033[0m'
+echo -e '\033[32mGoldhen detection enabled\033[0m'
 break;;
 [Nn]* ) 
-echo -e '\033[35mRest mode support disabled\033[0m'
+echo -e '\033[35mGoldhen detection disabled\033[0m'
 RESTM="false"
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
