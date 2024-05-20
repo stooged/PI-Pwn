@@ -91,6 +91,12 @@ To use this feature you must plug the raspberry pi 4/5 into the consoles usb por
 If you have power issues you can use a usb Y cable to inject power from another source but in my tests both pi variants ran using a single cable.<br>
 
 
+## Rest Mode
+
+You can enable rest mode support in the options which will cause pi-pwn to check if goldhen is active before running pppwn.<br>
+If you have the pi powered from the console usb port you must disable "Supply Power to USB Ports" in the rest mode settings of the console.<br>
+The console must also use the PPPoe user and pass set for the "console internet connection" of pi-pwn or the defaults if you never changed them which are ppp for both user and password.<br>
+
 
 ## What it does
 
