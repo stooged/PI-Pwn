@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt install pppoe dnsmasq iptables nginx php-fpm -y
+sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
@@ -210,6 +210,64 @@ break;;
 esac
 done
 while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to enable rest mode support\r\n\r\n\033[36m(Y|N)?: \033[0m')" restmd
+case $restmd in
+[Yy]* ) 
+RESTM="true"
+echo -e '\033[32mRest mode support enabled\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mRest mode support disabled\033[0m'
+RESTM="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want pppwn to run in verbose mode\r\n\r\n\033[36m(Y|N)?: \033[0m')" ppdbg
+case $ppdbg in
+[Yy]* ) 
+PDBG="true"
+echo -e '\033[32mPPPwn will run in verbose mode\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mPPPwn will NOT run in verbose mode\033[0m'
+PDBG="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mWould you like to change the timeout for pppwn to restart if it hangs, the default is 5 (minutes)\r\n\r\n\033[36m(Y|N)?: \033[0m')" tmout
+case $tmout in
+[Yy]* ) 
+while true; do
+read -p  "$(printf '\033[33mEnter the timeout value [1 | 2 | 3 | 4 | 5]: \033[0m')" TOUT
+case $TOUT in
+"" ) 
+ echo -e '\033[31mCannot be empty!\033[0m';;
+ * )  
+if grep -q '^[1-5]*$' <<<$TOUT ; then 
+if [[ ! "$TOUT" =~ ^("1"|"2"|"3"|"4"|"5")$ ]]  ; then
+echo -e '\033[31mThe value must be between 1 and 5\033[0m';
+else 
+break;
+fi
+else 
+echo -e '\033[31mThe timeout must only contain a number between 1 and 5\033[0m';
+fi
+esac
+done
+echo -e '\033[32mTimeout set to '$TOUT' (minutes)\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mUsing the default setting: 5 (minutes)\033[0m'
+TOUT="5"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
 read -p "$(printf '\r\n\r\n\033[36mWould you like to change the firmware version being used, the default is 11.00\r\n\r\n\033[36m(Y|N)?: \033[0m')" fwset
 case $fwset in
 [Yy]* ) 
@@ -344,8 +402,9 @@ USBETHERNET='$USBE'
 PPPOECONN='$INET'
 VMUSB='$VUSB'
 DTLINK='$DTLNK'
-PPDBG=false
-TIMEOUT=5m' | sudo tee /boot/firmware/PPPwn/config.sh
+RESTMODE='$RESTM'
+PPDBG='$PDBG'
+TIMEOUT="'$TOUT'm"' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local

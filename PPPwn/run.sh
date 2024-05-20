@@ -12,7 +12,7 @@ if [ -z $VMUSB ]; then VMUSB=false; fi
 if [ -z $DTLINK ]; then DTLINK=false; fi
 if [ -z $PPDBG ]; then PPDBG=false; fi
 if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
-
+if [ -z $RESTMODE ]; then RESTMODE=false; fi
 echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind 
 echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
@@ -59,11 +59,12 @@ echo -e "\n\n\033[36m _____  _____  _____
 |_|    |_|    |_|      \\_/\\_/ |_| |_|\033[0m
 \n\033[33mhttps://github.com/TheOfficialFloW/PPPwn\033[0m\n" | sudo tee /dev/tty1
 sudo systemctl stop pppoe
+sudo systemctl stop dtlink
 if [ $USBETHERNET = true ] ; then
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
 	coproc read -t 2 && wait "$!" || true
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
-	coproc read -t 5 && wait "$!" || true
+	coproc read -t 3 && wait "$!" || true
 	sudo ip link set $INTERFACE up
    else	
 	sudo ip link set $INTERFACE down
@@ -97,6 +98,52 @@ if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
       coproc read -t 2 && wait "$!" || true
    done
    echo -e "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
+fi
+if [ $RESTMODE = true ] ; then
+sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 
+coproc read -t 2 && wait "$!" || true
+while [[ ! $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
+do
+    coproc read -t 2 && wait "$!" || true
+done
+coproc read -t 5 && wait "$!" || true
+GHT=$(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ')
+if [[ $GHT == *"open"* ]] ; then
+echo -e "\n\033[95mGoldhen found aborting pppwn\033[0m\n" | sudo tee /dev/tty1
+sudo killall pppoe-server
+if [ $PPPOECONN = true ] ; then
+	sudo systemctl start pppoe
+	if [ $DTLINK = true ] ; then
+		sudo systemctl start dtlink
+	fi
+else
+	if [ $SHUTDOWN = true ] ; then
+		coproc read -t 5 && wait "$!" || true
+		sudo poweroff
+	else
+		if [ $DTLINK = true ] ; then
+			sudo systemctl start dtlink
+		else
+			sudo ip link set $INTERFACE down
+		fi
+	fi
+fi
+exit 0
+else
+echo -e "\n\033[95mGoldhen not found starting pppwn\033[0m\n" | sudo tee /dev/tty1
+sudo killall pppoe-server
+if [ $USBETHERNET = true ] ; then
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+	coproc read -t 2 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+	coproc read -t 3 && wait "$!" || true
+	sudo ip link set $INTERFACE up
+   else	
+	sudo ip link set $INTERFACE down
+	coproc read -t 5 && wait "$!" || true
+	sudo ip link set $INTERFACE up
+fi
+fi
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then

@@ -2,15 +2,16 @@
 
 if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
-	$config .= "INTERFACE=\"".str_replace(" ", "", trim($_POST["interface"]))."\"\n";
-	$config .= "FIRMWAREVERSION=\"".$_POST["firmware"]."\"\n";
+	$config .= "INTERFACE=\\\"".str_replace(" ", "", trim($_POST["interface"]))."\\\"\n";
+	$config .= "FIRMWAREVERSION=\\\"".$_POST["firmware"]."\\\"\n";
 	$config .= "SHUTDOWN=".(isset($_POST["shutdownpi"]) ? "true" : "false")."\n";
 	$config .= "USBETHERNET=".(isset($_POST["usbether"]) ? "true" : "false")."\n";
 	$config .= "PPPOECONN=".(isset($_POST["pppoeconn"]) ? "true" : "false")."\n";
 	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
 	$config .= "DTLINK=".(isset($_POST["dtlink"]) ? "true" : "false")."\n";
 	$config .= "PPDBG=".(isset($_POST["ppdbg"]) ? "true" : "false")."\n";
-	$config .= "TIMEOUT=\"".str_replace(" ", "", trim($_POST["timeout"]))."\"\n";
+	$config .= "TIMEOUT=\\\"".str_replace(" ", "", trim($_POST["timeout"]))."\\\"\n";
+	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -110,6 +111,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'TIMEOUT')) {
       $timeout = (explode("=", str_replace("\"", "", $x))[1]);
    }
+   elseif (str_starts_with($x, 'RESTMODE')) {
+      $restmode = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -121,6 +125,7 @@ foreach ($data as $x) {
    $dtlink = "false";
    $ppdbg = "false";
    $timeout = "5m";
+   $restmode = "false";
 }
 
 
@@ -465,6 +470,16 @@ print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".
 <label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
 <br>");
 
+
+
+$cval = "";
+if ($restmode == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
+<label for=\"restmode\">&nbsp;Enable rest mode support</label>
+<br>");
 
 
 
