@@ -1,5 +1,8 @@
 <?php 
 
+$firmwares = array("11.00", "10.00", "10.01", "9.00");
+
+
 if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
 	$config .= "INTERFACE=\\\"".str_replace(" ", "", trim($_POST["interface"]))."\\\"\n";
@@ -441,17 +444,16 @@ print("<option value=\"".$x."\">".$x."</option>");
 print("</select><label for=\"interface\">&nbsp; Interface</label><br><br>");
 
 
+
 print("<select name=\"firmware\">");
-
-if ($firmware == "11.00")
+foreach ($firmwares as $fw) {
+if ($firmware == $fw)
 {
-print("<option value=\"11.00\" selected>11.00</option>
-<option value=\"9.00\">9.00</option>");
+	print("<option value=\"".$fw."\" selected>".$fw."</option>");
 }else{
-print("<option value=\"11.00\">11.00</option>
-<option value=\"9.00\" selected>9.00</option>");
+	print("<option value=\"".$fw."\">".$fw."</option>");
 }
-
+}
 print("</select><label for=\"firmware\">&nbsp; Firmware version</label><br><br>");
 
 

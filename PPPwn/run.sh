@@ -165,6 +165,13 @@ if [ -f /boot/firmware/PPPwn/config.sh ]; then
    PPDBG=false
  fi
 fi
+if [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] ;then
+STAGEVER="10.00"
+elif [[ $FIRMWAREVERSION == "9.00" ]] ;then
+STAGEVER="9.00"
+else
+STAGEVER="11.00"
+fi
 while read -r stdo ; 
 do 
  if [ $PPDBG = true ] ; then
@@ -199,6 +206,6 @@ do
  	echo -e "\033[31m\nInterface $INTERFACE not found\033[0m\n" | sudo tee /dev/tty1
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --stage1 "/boot/firmware/PPPwn/stage1_$FIRMWAREVERSION.bin" --stage2 "/boot/firmware/PPPwn/stage2_$FIRMWAREVERSION.bin")
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${STAGEVER//.}" --stage1 "/boot/firmware/PPPwn/stage1_$STAGEVER.bin" --stage2 "/boot/firmware/PPPwn/stage2_$STAGEVER.bin")
 coproc read -t 1 && wait "$!" || true
 done
