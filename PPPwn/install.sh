@@ -62,16 +62,8 @@ echo 'ACTION=="add", KERNEL=="sd*", SUBSYSTEMS=="usb|scsi", DRIVERS=="sd", SYMLI
 ACTION=="remove", SUBSYSTEM=="block", RUN+="/boot/firmware/PPPwn/pwnumount.sh $kernel"' | sudo tee /etc/udev/rules.d/99-pwnmnt.rules
 sudo udevadm control --reload
 fi
-PITYP=$(tr -d '\0' </proc/device-tree/model) 
-if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 if [ -f /media/pwndrives ]; then
 sudo mkdir /media/pwndrives
-echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
-fi
-else
-if [ -f /media/pwndrives ]; then
-sudo mkdir /media/pwndrives
-fi
 fi
 PPSTAT=$(sudo systemctl list-unit-files --state=enabled --type=service|grep pppoe) 
 if [[ ! $PPSTAT == "" ]] ; then
@@ -318,16 +310,20 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want the pi to act as a flash drive to the console\r\n\r\n\033[36m(Y|N)?: \033[0m')" vusb
 case $vusb in
 [Yy]* ) 
 echo -e '\033[32mThe pi will mount as a drive\n\033[33mYou must plug the pi into the console usb port using the \033[35musb-c\033[33m of the pi and the usb drive in the pi must contain a folder named \033[35mpayloads\033[0m'
+sudo sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
+echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 VUSB="true"
 break;;
 [Nn]* ) 
 echo -e '\033[35mThe pi will not mount as a drive\033[0m'
+sudo sed -i "s^dtoverlay=dwc2^^g" /boot/firmware/config.txt
 VUSB="false"
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
