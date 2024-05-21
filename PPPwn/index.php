@@ -80,6 +80,7 @@ if (isset($_POST['remount'])){
    exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
 }
 
+
 $cmd = 'sudo cat /boot/firmware/PPPwn/config.sh';
 exec($cmd ." 2>&1", $data, $ret);
 if ($ret == 0){
@@ -402,12 +403,20 @@ function setEnd() {
 <form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
 
 
+
 $cmd = 'sudo tr -d \'\0\' </proc/device-tree/model';
 exec($cmd ." 2>&1", $pidata, $ret);
-if ($vmusb == "true" && str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
+if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
+{
+$cmd = 'sudo cat /boot/firmware/config.txt | grep "dtoverlay=dwc2"';
+exec($cmd ." 2>&1", $dwcdata, $ret);
+$dwcval = trim(implode($dwcdata)); 
+if ($vmusb == "true" && ! empty($dwcval))
 {
 print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 }
+}
+
 
 print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button>
 </form>
@@ -546,6 +555,8 @@ print("<input type=\"hidden\" name=\"shutdownpi\" value=\"".$shutdownpi."\">");
 
 if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
 {
+if (! empty($dwcval))	
+{	
 $cval = "";
 if ($vmusb == "true")
 {
@@ -553,6 +564,7 @@ $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
 <label for=\"vmusb\">&nbsp;Enable usb drive to console</label>");
+}
 }
 
 
