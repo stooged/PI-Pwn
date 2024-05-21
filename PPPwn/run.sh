@@ -13,8 +13,6 @@ if [ -z $DTLINK ]; then DTLINK=false; fi
 if [ -z $PPDBG ]; then PPDBG=false; fi
 if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
 if [ -z $RESTMODE ]; then RESTMODE=false; fi
-echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind 
-echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
@@ -61,9 +59,7 @@ echo -e "\n\n\033[36m _____  _____  _____
 sudo systemctl stop pppoe
 sudo systemctl stop dtlink
 if [ $USBETHERNET = true ] ; then
-	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
-	coproc read -t 2 && wait "$!" || true
-	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+    sudo bash /boot/firmware/PPPwn/devboot.sh
 	coproc read -t 3 && wait "$!" || true
 	sudo ip link set $INTERFACE up
    else	
@@ -145,9 +141,7 @@ else
 echo -e "\n\033[95mGoldhen not found starting pppwn\033[0m\n" | sudo tee /dev/tty1
 sudo killall pppoe-server
 if [ $USBETHERNET = true ] ; then
-	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
-	coproc read -t 2 && wait "$!" || true
-	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+    sudo bash /boot/firmware/PPPwn/devboot.sh
 	coproc read -t 3 && wait "$!" || true
 	sudo ip link set $INTERFACE up
    else	
