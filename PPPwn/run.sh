@@ -74,14 +74,26 @@ fi
 echo -e "\n\033[36m$PITYP\033[92m\nFirmware:\033[93m $FIRMWAREVERSION\033[92m\nInterface:\033[93m $INTERFACE\033[0m" | sudo tee /dev/tty1
 echo -e "\033[92mPPPwn:\033[93m C++ $CPPBIN \033[0m" | sudo tee /dev/tty1
 if [ $VMUSB = true ] ; then
-   UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
-   if [[ -z $UDEV ]] ;then
-      UDEV="/media/PPPwn/pwndev"
-	  echo -e "\033[92mVirtual Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
-	else
-	  echo -e "\033[92mFlash Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
-   fi
-   sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
+ sudo rmmod g_mass_storage
+  FOUND=0
+  readarray -t rdirarr  < <(sudo ls /media/pwndrives)
+  for rdir in "${rdirarr[@]}"; do
+    readarray -t pdirarr  < <(sudo ls /media/pwndrives/${rdir})
+    for pdir in "${pdirarr[@]}"; do
+       if [[ ${pdir,,}  == "payloads" ]] ; then 
+	     FOUND=1
+	     UDEV='/dev/'${rdir}
+	     break
+      fi
+    done
+      if [ "$FOUND" -ne 0 ]; then
+        break
+      fi
+  done  
+  if [[ ! -z $UDEV ]] ;then
+    sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
+  fi
+  echo -e "\033[92mUSB Drive:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
 fi
 if [ $PPPOECONN = true ] ; then
    echo -e "\033[92mInternet Access:\033[93m Enabled\033[0m" | sudo tee /dev/tty1

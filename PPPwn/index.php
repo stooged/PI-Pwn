@@ -478,7 +478,7 @@ if ($restmode == "true")
 $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
-<label for=\"restmode\">&nbsp;Detect if goldhen is running(useful for rest mode)</label>
+<label for=\"restmode\">&nbsp;Detect if goldhen is running<label style=\"font-size:12px; padding:4px;\">(useful for rest mode)</label></label>
 <br>");
 
 

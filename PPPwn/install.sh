@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap -y
+sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
@@ -64,24 +64,13 @@ sudo udevadm control --reload
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
-if [ ! -f /media/PPPwn/pwndev ]; then
-sudo mkdir /media/PPPwn
-sudo dd if=/dev/zero of=/media/PPPwn/pwndev bs=4096 count=65535 
-sudo mkdosfs /media/PPPwn/pwndev -F 32  
+if [ ! -f /media/pwndrives ]; then
+sudo mkdir /media/pwndrives
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
-sudo mkdir /media/pwndev
-sudo mount -o loop /media/PPPwn/pwndev /media/pwndev
-sudo mkdir /media/pwndev/payloads
-sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
-sudo umount /media/pwndev
-UDEV=$(sudo blkid | grep '^/dev/sd' | cut -f1 -d':')
-if [[ $UDEV == *"dev/sd"* ]] ;then
-sudo mount -o loop $UDEV /media/pwndev
-sudo mkdir /media/pwndev/payloads
-sudo cp "/home/$SUDO_USER/PI-Pwn/USB Drive/goldhen.bin" /media/pwndev
-sudo umount /media/pwndev 
 fi
-sudo rm -f -r /media/pwndev
+else
+if [ ! -f /media/pwndrives ]; then
+sudo mkdir /media/pwndrives
 fi
 fi
 PPSTAT=$(sudo systemctl list-unit-files --state=enabled --type=service|grep pppoe) 
@@ -405,7 +394,6 @@ DTLINK='$DTLNK'
 RESTMODE='$RESTM'
 PPDBG='$PDBG'
 TIMEOUT="'$TOUT'm"' | sudo tee /boot/firmware/PPPwn/config.sh
-sudo rm -f /usr/lib/systemd/system/bluetooth.target
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]

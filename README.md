@@ -4,7 +4,7 @@ This is a script to setup <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_c
 It also supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
 A dns blocker is also installed and used to prevent updates.<br>
 
-The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a>, <a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can act as a virtual flash drive to the console if the pi is plugged into the console usb port removing the need for a flash drive to load payloads.<br>
+The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a>, <a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can pass through a usb drive inserted into the pi to the console if the pi is plugged into the console usb port<br>
 
 There is also a webserver to control the pi, change settings and send payloads by accessing http://pppwn.local from the console or your pc if you have internet access enabled.<br> 
 
@@ -84,16 +84,16 @@ To connect to the servers from your pc just connect to the raspberry pi ip on yo
 For ftp make sure you set the transfer mode on your ftp client software to `Active` not passive.<br>
 
 
-## Flash/Virtual drive
+## USB pass through drive
 
-You can put a usb flash drive in the pi and that will be mounted to the console, if you have no drive in the pi a virtual drive will be mounted.<br>
-To use this feature you must plug the raspberry pi 4/5 into the consoles usb port using the usb-c connection on the pi.<br>
+You can put a usb flash drive in the pi and that will be mounted to the console, you must put a folder on the root of the drive called "payloads"<br>
+To use this feature you must plug the raspberry pi 4 / 400 / 5 into the consoles usb port using the usb-c connection on the pi.<br>
 If you have power issues you can use a usb Y cable to inject power from another source but in my tests both pi variants ran using a single cable.<br>
 
 
 ## Rest Mode
 
-You can the option to detect if goldhen is running in the options which will cause pi-pwn to check if goldhen is active before running pppwn, this is useful for rest mode<br>
+You can enable the option to detect if goldhen is running in the options which will cause pi-pwn to check if goldhen is active before running pppwn, this is useful for rest mode<br>
 If you have the pi powered from the console usb port you must disable "Supply Power to USB Ports" in the rest mode settings of the console.<br>
 The console must also use the PPPoe user and pass set for the "console internet connection" of pi-pwn or the defaults if you never changed them which are ppp for both user and password.<br>
 
