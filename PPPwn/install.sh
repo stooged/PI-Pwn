@@ -64,12 +64,12 @@ sudo udevadm control --reload
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
-if [ ! -f /media/pwndrives ]; then
+if [ -f /media/pwndrives ]; then
 sudo mkdir /media/pwndrives
 echo 'dtoverlay=dwc2' | sudo tee -a /boot/firmware/config.txt
 fi
 else
-if [ ! -f /media/pwndrives ]; then
+if [ -f /media/pwndrives ]; then
 sudo mkdir /media/pwndrives
 fi
 fi
