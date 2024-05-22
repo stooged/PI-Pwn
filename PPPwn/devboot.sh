@@ -1,9 +1,16 @@
 #!/bin/bash
 
-readarray -t usbarr  < <(sudo ls /sys/bus/usb/drivers/usb)
+readarray -t usbarr  < <(sudo lsblk | grep "part" | sed "s^[^[:alnum:] /]^^g")
 for dev in "${usbarr[@]}"; do
-if [[ $dev =~ ^[0-9] && ! "$dev" == *"."* ]]; then
-echo $dev | sudo tee /sys/bus/usb/drivers/usb/unbind 
-echo $dev | sudo tee /sys/bus/usb/drivers/usb/bind
+PARTITION=$(echo $dev | awk -F'part ' '{print $2}')
+MOUNTPOINT=$(echo $dev | cut -f1 -d' ')
+if [ -z $PARTITION ]; then
+if [ ! -d /media/pwndrives ]; then
+mkdir /media/pwndrives
+fi
+if [ ! -d /media/pwndrives/$MOUNTPOINT ]; then
+mkdir /media/pwndrives/$MOUNTPOINT
+fi
+sudo mount "/dev/"$MOUNTPOINT /media/pwndrives/$MOUNTPOINT &
 fi
 done
