@@ -357,17 +357,17 @@ label[id=pwnlog]:focus {
 <script>
 var fid;
 
-function startLog() {
-   fid = setInterval(updateLog, 2000);
+function startLog(lf) {
+   fid = setInterval(updateLog, 2000, lf);
 }
 
 function stopLog() {
   clearInterval(fid);
 }
 
-function updateLog() {
+function updateLog(f) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/pwn.log');
+    xhr.open('GET', '/' + f);
 	xhr.setRequestHeader('Cache-Control', 'no-cache');
 	xhr.responseType = \"text\";
 	xhr.send();
@@ -421,7 +421,7 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 }
 
 
-print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button>
+print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
 </form>
 </center>
 <br>");
@@ -589,7 +589,7 @@ var span = document.getElementsByClassName(\"close\")[0];
 
 btn.onclick = function() {
   logger.style.display = \"block\";
-  startLog();
+  startLog('pwn.log');
 }
 
 span.onclick = function() {
@@ -603,7 +603,15 @@ window.onclick = function(event) {
 	stopLog();
   }
 }
-</script>
+");
+
+if (isset($_POST['update'])){
+     print("logger.style.display = \"block\";
+            startLog('upd.log');");
+	exec('sudo bash /boot/firmware/PPPwn/update.sh &');
+}
+
+print("</script>
 </body>
 </html>");
 
