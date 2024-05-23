@@ -111,4 +111,5 @@ The idea is you boot the console and the pi together and the pi will keep trying
 ## Updating
 
 You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
-The install.sh script can also be run again to install updates or change the settings.
+The commands above can also be run again to install updates or change the settings.
+You can also click the update button on the web ui
