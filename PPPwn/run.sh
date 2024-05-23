@@ -46,7 +46,7 @@ CPPBIN="pppwn64"
 VMUSB=false
 fi
 arch=$(getconf LONG_BIT)
-if [ $arch -eq 32 ] && [ $CPPBIN = "pppwn64" ] ; then
+if [ $arch -eq 32 ] && [ $CPPBIN = "pppwn64" ] && [[ ! $PITYP == *"Raspberry Pi 4"* ]] && [[ ! $PITYP == *"Raspberry Pi 5"* ]] ; then
 CPPBIN="pppwn7"
 fi
 echo -e "\n\n\033[36m _____  _____  _____                 
