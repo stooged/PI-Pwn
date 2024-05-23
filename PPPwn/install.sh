@@ -415,7 +415,7 @@ sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hostname
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot
 else
-echo "Update complete, Rebooting."  | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/pwn.log
+echo "Update complete, Rebooting."  | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/upd.log
 coproc read -t 6 && wait "$!" || true
 sudo reboot
 fi
