@@ -59,8 +59,10 @@ echo -e "\n\n\033[36m _____  _____  _____
 sudo systemctl stop pppoe
 sudo systemctl stop dtlink
 if [ $USBETHERNET = true ] ; then
-    sudo bash /boot/firmware/PPPwn/devboot.sh
-	coproc read -t 3 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+	coproc read -t 1 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+	coproc read -t 4 && wait "$!" || true
 	sudo ip link set $INTERFACE up
    else	
 	sudo ip link set $INTERFACE down
@@ -141,8 +143,10 @@ else
 echo -e "\n\033[95mGoldhen not found starting pppwn\033[0m\n" | sudo tee /dev/tty1
 sudo killall pppoe-server
 if [ $USBETHERNET = true ] ; then
-    sudo bash /boot/firmware/PPPwn/devboot.sh
-	coproc read -t 3 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/unbind
+	coproc read -t 1 && wait "$!" || true
+	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind
+	coproc read -t 4 && wait "$!" || true
 	sudo ip link set $INTERFACE up
    else	
 	sudo ip link set $INTERFACE down
@@ -150,6 +154,13 @@ if [ $USBETHERNET = true ] ; then
 	sudo ip link set $INTERFACE up
 fi
 fi
+fi
+if [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] ;then
+STAGEVER="10.00"
+elif [[ $FIRMWAREVERSION == "9.00" ]] ;then
+STAGEVER="9.00"
+else
+STAGEVER="11.00"
 fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
@@ -164,13 +175,6 @@ if [ -f /boot/firmware/PPPwn/config.sh ]; then
    else
    PPDBG=false
  fi
-fi
-if [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] ;then
-STAGEVER="10.00"
-elif [[ $FIRMWAREVERSION == "9.00" ]] ;then
-STAGEVER="9.00"
-else
-STAGEVER="11.00"
 fi
 while read -r stdo ; 
 do 
@@ -207,5 +211,7 @@ do
  	exit 1
  fi
 done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${STAGEVER//.}" --stage1 "/boot/firmware/PPPwn/stage1_$STAGEVER.bin" --stage2 "/boot/firmware/PPPwn/stage2_$STAGEVER.bin")
-coproc read -t 1 && wait "$!" || true
+sudo ip link set $INTERFACE down
+coproc read -t 3 && wait "$!" || true
+sudo ip link set $INTERFACE up
 done
