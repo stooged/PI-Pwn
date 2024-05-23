@@ -421,7 +421,7 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 }
 
 
-print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> 
+print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
 </form>
 </center>
 <br>");
@@ -606,9 +606,9 @@ window.onclick = function(event) {
 ");
 
 if (isset($_POST['update'])){
-     print("logger.style.display = \"block\";
-            startLog('upd.log');");
-	exec('sudo bash /boot/firmware/PPPwn/update.sh &');
+	exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
+    print("logger.style.display = \"block\";
+    startLog('upd.log');");
 }
 
 print("</script>

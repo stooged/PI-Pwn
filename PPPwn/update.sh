@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if [ -f /boot/firmware/PPPwn/upd.log ]; then
+   sudo rm -f /boot/firmware/PPPwn/upd.log
+fi
 echo "Checking for update..." | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/upd.log
 sudo mkdir /home/www-data
 cd /home/www-data
