@@ -76,10 +76,26 @@ fi
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/devboot.sh \&^^g' /etc/rc.local
 sudo sed -i 's^exit 0^sudo bash /boot/firmware/PPPwn/devboot.sh \&\n\nexit 0^g' /etc/rc.local
+if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to enable the option to use the python(slower) PPPwn\033[36m(Y|N)?: \033[0m')" pypwnopt
+case $pypwnopt in
+[Yy]* ) 
+sudo apt install python3 python3-scapy -y
+break;;
+[Nn]* ) 
+UPYPWN="false"
+echo -e '\033[35mThe python version of PPPwn will not be available\033[0m'
+break;;
+* ) 
+echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" cppp
-case $cppp in
+read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" conf
+case $conf in
 [Yy]* ) 
 break;;
 [Nn]* ) 
@@ -89,6 +105,24 @@ exit 1
 break;;
 * ) 
 echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
+if [[ $(dpkg-query -W --showformat='${Status}\n' python3-scapy|grep "install ok installed")  == "" ]] ;then
+UPYPWN="false"
+else
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to use the old python version of pppwn, It is much slower\r\n\r\n\033[36m(Y|N)?: \033[0m')" pypwn
+case $pypwn in
+[Yy]* ) 
+UPYPWN="true"
+echo -e '\033[32mThe Python version of PPPwn is being used\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe C++ version of PPPwn is being used\033[0m'
+UPYPWN="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
 fi
@@ -393,7 +427,8 @@ VMUSB='$VUSB'
 DTLINK='$DTLNK'
 RESTMODE='$RESTM'
 PPDBG='$PDBG'
-TIMEOUT="'$TOUT'm"' | sudo tee /boot/firmware/PPPwn/config.sh
+TIMEOUT="'$TOUT'm"
+PYPWN='$UPYPWN'' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]

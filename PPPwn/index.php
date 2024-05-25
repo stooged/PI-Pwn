@@ -15,6 +15,7 @@ if (isset($_POST['save'])){
 	$config .= "PPDBG=".(isset($_POST["ppdbg"]) ? "true" : "false")."\n";
 	$config .= "TIMEOUT=\\\"".str_replace(" ", "", trim($_POST["timeout"]))."\\\"\n";
 	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
+	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -118,6 +119,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'RESTMODE')) {
       $restmode = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'PYPWN')) {
+      $upypwn = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -130,6 +134,7 @@ foreach ($data as $x) {
    $ppdbg = "false";
    $timeout = "5m";
    $restmode = "false";
+   $upypwn = "false";
 }
 
 
@@ -142,6 +147,7 @@ if (empty($vmusb)){ $vmusb = "false";}
 if (empty($dtlink)){ $dtlink = "false";}
 if (empty($ppdbg)){ $ppdbg = "false";}
 if (empty($timeout)){ $timeout = "5m";}
+if (empty($upypwn)){ $upypwn = "false";}
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -469,6 +475,24 @@ for($x =1; $x<=5;$x++)
    }
 } 
 print("</select><label for=\"timeout\">&nbsp; Time to restart PPPwn if it hangs</label><br><br>");
+
+
+
+$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
+exec($cmd ." 2>&1", $pypdata, $ret);
+if (implode($pypdata) == "install ok installed")
+{
+$cval = "";
+if ($upypwn == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"upypwn\" value=\"".$upypwn."\" ".$cval.">
+<label for=\"upypwn\">&nbsp;Use Python version</label>
+<br>");
+}else{
+print("<input type=\"hidden\" name=\"upypwn\" value=\"false\">");
+}
 
 
 
