@@ -608,15 +608,23 @@ print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></
 </table>
 <script>
 var logger = document.getElementById(\"pwnlogger\");
-var btn = document.getElementById(\"pwnlog\");
 var span = document.getElementsByClassName(\"close\")[0];
+");
+
+
+if ($ppdbg == "true")
+{
+print("var btn = document.getElementById(\"pwnlog\");
 
 btn.onclick = function() {
   logger.style.display = \"block\";
   startLog('pwn.log');
 }
+");
+}
 
-span.onclick = function() {
+
+print("span.onclick = function() {
   logger.style.display = \"none\";
   stopLog();
 }
