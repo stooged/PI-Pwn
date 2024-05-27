@@ -161,12 +161,10 @@ if ($pret == 0){
    $portlist = "2121,3232,9090,8080,12800,1337";	
 }
 
-
 $cmd = 'sudo ip link | cut -d " " -f-2   | cut -d ":" -f2-2 ';
 exec($cmd ." 2>&1", $idata, $iret);
 
-
-print("<html> 
+echo "<html> 
 <head>
 <title>PI-Pwn</title>
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
@@ -186,8 +184,8 @@ select {
 	padding: 3px 5px;
     border-radius: 3px;
 	border: 1px solid #6495ED;
+	min-width: 90px;
 }
-
 
 input[type=text] {
     background: #454545;
@@ -264,7 +262,16 @@ input[type=checkbox]:checked:after {
     top: 2px;
     left: 6px;
 }	
-	
+.header-buttons {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-bottom: 40px;
+}
+.header-buttons > button {
+	margin: 5px;
+}
 .logger {
     display: none; 
     position: fixed; 
@@ -278,8 +285,8 @@ input[type=checkbox]:checked:after {
     overflow-x:hidden;
     overflow-y:hidden;
     background-color: #00000000;
+    margin-bottom:20px;
 }
-
 
 .logger-content {
     position: relative;
@@ -295,7 +302,6 @@ input[type=checkbox]:checked:after {
     animation-duration: 0.4s
 }
 
-
 @-webkit-keyframes animatetop {
     from {top:-300px; opacity:0} 
     to {top:0; opacity:1}
@@ -305,7 +311,6 @@ input[type=checkbox]:checked:after {
     from {top:-300px; opacity:0}
     to {top:0; opacity:1}
 }
-
 
 .close {
     color: #6495ED;
@@ -327,11 +332,9 @@ input[type=checkbox]:checked:after {
     color: 0E0E14;
 }
 
-.logger-body 
-{
+.logger-body {
     padding: 2px 8px;
 }
-
 
 textarea {
     resize: none;
@@ -358,7 +361,33 @@ label[id=pwnlog]:focus {
     text-decoration: none;
     cursor: pointer;
 }
-
+.select-toggle-wrap {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: center;
+}
+	.section {
+		margin-bottom: 40px;
+		width: 100%;
+		max-width: 500px;
+	}
+	.select-option {
+		margin-bottom: 15px;
+	}
+.port-forwarding > input {
+	width:100%;
+}
+.save-option {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+@media (max-width: 600px) {
+	button {
+		width: 98%
+	}
+}
 </style>
 <script>
 var fid;
@@ -399,217 +428,240 @@ function setEnd() {
 </script>
 </head>
 <body>
-<center>
 
 <div id=\"pwnlogger\" class=\"logger\">
-<div class=\"logger-content\">
-<div class=\"logger-header\">
-<a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><span class=\"close\">&times;</span></a></div>
-<div class=\"logger-body\">
-<textarea disabled id=\"text_box\" rows=\"40\"></textarea>
-</div></div></div>
-<br><br>
-<form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
+	<div class=\"logger-content\">
+		<div class=\"logger-header\">
+			<a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><span class=\"close\">&times;</span></a></div>
+		<div class=\"logger-body\">
+		<textarea disabled id=\"text_box\" rows=\"40\"></textarea>
+		</div>
+	</div>
+</div>
 
+<form method=\"post\">
+	<div class=\"header-buttons\">
+		<button name=\"payloads\">Load Payloads</button>";
 
+		$cmd = 'sudo tr -d \'\0\' </proc/device-tree/model';
+		exec($cmd ." 2>&1", $pidata, $ret);
+		if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
+		{
+			$cmd = 'sudo cat /boot/firmware/config.txt | grep "dtoverlay=dwc2"';
+			exec($cmd ." 2>&1", $dwcdata, $ret);
+			$dwcval = trim(implode($dwcdata)); 
+			if ($vmusb == "true" && ! empty($dwcval))
+			{
+				echo "<button name=\"remount\">Remount USB</button>";
+			}
+		}
 
-$cmd = 'sudo tr -d \'\0\' </proc/device-tree/model';
-exec($cmd ." 2>&1", $pidata, $ret);
-if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
-{
-$cmd = 'sudo cat /boot/firmware/config.txt | grep "dtoverlay=dwc2"';
-exec($cmd ." 2>&1", $dwcdata, $ret);
-$dwcval = trim(implode($dwcdata)); 
-if ($vmusb == "true" && ! empty($dwcval))
-{
-print("<button name=\"remount\">Remount USB</button> &nbsp; ");
-}
-}
-
-
-print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
+		echo "<button name=\"restart\">Restart PPPwn</button> 
+		<button name=\"reboot\">Reboot PI</button>
+		<button name=\"shutdown\">Shutdown PI</button>
+		<button name=\"update\">Update</button>
+	</div>
 </form>
-</center>
-<br>");
 
-print("<br><table align=center><td><form method=\"post\">");
+<form method=\"post\">
+	<div class=\"select-toggle-wrap\">
+		<div class=\"section\">
+			<div class=\"select-option\">
+				<select name=\"interface\">";
+				foreach ($idata as $x) {
+					$x = trim($x);
+					if ($x !== "" && $x !== "lo" && $x !== "ppp0" && !str_starts_with($x, "wlan"))
+					{
+						if ( $interface ==  $x)
+						{
+							echo "<option value=\"".$x."\" selected>".$x."</option>";
+						} else {
+							echo "<option value=\"".$x."\">".$x."</option>";
+						}
+					}
+				}
+				echo "</select>
+				<label for=\"interface\">Interface</label>
+			</div>
 
-print("<select name=\"interface\">");
-foreach ($idata as $x) {
-$x = trim($x);
-if ($x !== "" && $x !== "lo" && $x !== "ppp0" && !str_starts_with($x, "wlan"))
-{
-if ( $interface ==  $x)
-{
-print("<option value=\"".$x."\" selected>".$x."</option>");
-}else{
-print("<option value=\"".$x."\">".$x."</option>");
-}
-}
-}
-print("</select><label for=\"interface\">&nbsp; Interface</label><br><br>");
+			<div class=\"select-option\">
+				<select name=\"firmware\">";
+				foreach ($firmwares as $fw) {
+					if ($firmware == $fw)
+					{
+						echo "<option value=\"".$fw."\" selected>".$fw."</option>";
+					} else {
+						echo "<option value=\"".$fw."\">".$fw."</option>";
+					}
+				}
+				echo "</select>
+				<label for=\"firmware\">Firmware version</label>
+			</div>
 
+			<div class=\"select-option\">
+				<select name=\"timeout\">";
+				for($x =1; $x<=5;$x++)
+				{
+				   if ($timeout == $x."m")
+				   {
+					   echo "<option value=\"".$x."m\" selected>".$x."m</option>";
+				   } else {
+					   echo "<option value=\"".$x."m\">".$x."m</option>";
+				   }
+				} 
+				echo "</select>
+				<label for=\"timeout\">Time to restart PPPwn if it hangs</label>
+			</div>
+		</div>
 
+		<div class=\"section\">";
 
-print("<select name=\"firmware\">");
-foreach ($firmwares as $fw) {
-if ($firmware == $fw)
-{
-	print("<option value=\"".$fw."\" selected>".$fw."</option>");
-}else{
-	print("<option value=\"".$fw."\">".$fw."</option>");
-}
-}
-print("</select><label for=\"firmware\">&nbsp; Firmware version</label><br><br>");
+			$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
+			exec($cmd ." 2>&1", $pypdata, $ret);
+			if (implode($pypdata) == "install ok installed")
+			{
+			$cval = "";
+			if ($upypwn == "true")
+			{
+			$cval = "checked";
+			}
+			echo "<div class=\"select-option\">
+				<input type=\"checkbox\" name=\"upypwn\" value=\"".$upypwn."\" ".$cval.">
+				<label for=\"upypwn\">Use Python version</label>
+			</div>";
+			} else {
+				echo "<input type=\"hidden\" name=\"upypwn\" value=\"false\">";
+			}
 
-
-
-print("<select name=\"timeout\">");
-for($x =1; $x<=5;$x++)
-{
-   if ($timeout == $x."m")
-   {
-	   print("<option value=\"".$x."m\" selected>".$x."m</option>");
-   }else{
-	   print("<option value=\"".$x."m\">".$x."m</option>");
-   }
-} 
-print("</select><label for=\"timeout\">&nbsp; Time to restart PPPwn if it hangs</label><br><br>");
-
-
-
-$cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
-exec($cmd ." 2>&1", $pypdata, $ret);
-if (implode($pypdata) == "install ok installed")
-{
-$cval = "";
-if ($upypwn == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"upypwn\" value=\"".$upypwn."\" ".$cval.">
-<label for=\"upypwn\">&nbsp;Use Python version</label>
-<br>");
-}else{
-print("<input type=\"hidden\" name=\"upypwn\" value=\"false\">");
-}
-
-
-
-$cval = "";
-if ($usbether == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".$cval.">
-<label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
-<br>");
-
-
-
-$cval = "";
-if ($restmode == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
-<label for=\"restmode\">&nbsp;Detect if goldhen is running<label style=\"font-size:12px; padding:4px;\">(useful for rest mode)</label></label>
-<br>");
+			$cval = "";
+			if ($usbether == "true")
+			{
+			$cval = "checked";
+			}
+			echo "<div class=\"select-option\">
+				<input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".$cval.">
+				<label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
+			</div>";
 
 
-
-if ($shutdownpi == "false" || $pppoeconn == "true")
-{
-$cval = "";
-if ($dtlink == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
-<label for=\"dtlink\">&nbsp;Detect console shutdown and restart PPPwn</label>
-<br>");
-}
-else
-{
-print("<input type=\"hidden\" name=\"dtlink\" value=\"".$dtlink."\">");
-}
+			$cval = "";
+			if ($restmode == "true")
+			{
+				$cval = "checked";
+			}
+			echo "<div class=\"select-option\">
+				<input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
+				<label for=\"restmode\">Detect if goldhen is running <label style=\"font-size:12px; padding:4px;\">(useful for rest mode)</label></label>
+			</div>";
 
 
-
-if ($ppdbg == "true")
-{
-print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" checked>
-<label for=\"ppdbg\">&nbsp;Enable verbose PPPwn</label> &nbsp; <a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><label id=\"pwnlog\">Open Log Viewer</label></a>
-<br>");
-}
-else
-{
-print("<br><input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\">
-<label for=\"ppdbg\">&nbsp;Enable verbose PPPwn</label>
-<br>");
-}
+			if ($shutdownpi == "false" || $pppoeconn == "true")
+			{
+			$cval = "";
+			if ($dtlink == "true")
+			{
+			$cval = "checked";
+			}
+			echo "<div class=\"select-option\">
+				<input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
+				<label for=\"dtlink\">Detect console shutdown and restart PPPwn</label>
+			</div>";
+			}
+			else
+			{
+				echo "<input type=\"hidden\" name=\"dtlink\" value=\"".$dtlink."\">";
+			}
 
 
 
-$cval = "";
-if ($pppoeconn == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
-<label for=\"pppoeconn\">&nbsp;Enable console internet access</label>
-<br>");
+			if ($ppdbg == "true")
+			{
+				echo "<div class=\"select-option\">
+					<input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" checked>
+					<label for=\"ppdbg\">Enable verbose PPPwn</label> &nbsp; <a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><label id=\"pwnlog\">Open Log Viewer</label></a>
+				</div>";
+			}
+			else
+			{
+				echo "<div class=\"select-option\">
+					<input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\">
+					<label for=\"ppdbg\">Enable verbose PPPwn</label>
+				</div>";
+			}
 
 
-if ($pppoeconn == "false")
-{
-$cval = "";
-if ($shutdownpi == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
-<label for=\"shutdownpi\">&nbsp;Shutdown PI after PWN</label>
-<br>");
-}
-else
-{
-print("<input type=\"hidden\" name=\"shutdownpi\" value=\"".$shutdownpi."\">");
-}
+			$cval = "";
+			if ($pppoeconn == "true")
+			{
+				$cval = "checked";
+			}
+			echo "<div class=\"select-option\">
+				<input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
+				<label for=\"pppoeconn\">Enable console internet access</label>
+			</div>";
 
 
+			if ($pppoeconn == "false")
+			{
+				$cval = "";
+				if ($shutdownpi == "true")
+				{
+					$cval = "checked";
+				}
+				echo "<div class=\"select-option\">
+					<input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
+					<label for=\"shutdownpi\">Shutdown PI after PWN</label>
+				</div>";
+				}
+				else
+				{
+				echo "<input type=\"hidden\" name=\"shutdownpi\" value=\"".$shutdownpi."\">";
+			}
 
-if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
-{
-if (! empty($dwcval))	
-{	
-$cval = "";
-if ($vmusb == "true")
-{
-$cval = "checked";
-}
-print("<br><input type=\"checkbox\" name=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
-<label for=\"vmusb\">&nbsp;Enable usb drive to console</label>");
-}
-}
+			if (str_starts_with(trim(implode($pidata)),  "Raspberry Pi 4") || str_starts_with(trim(implode($pidata)), "Raspberry Pi 5"))
+			{
+				if (! empty($dwcval))	
+				{	
+					$cval = "";
+				if ($vmusb == "true")
+				{
+					$cval = "checked";
+				}
+				echo "<div class=\"select-option\">
+					<input type=\"checkbox\" name=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
+					<label for=\"vmusb\">Enable usb drive to console</label>
+				</div>";
+				}
+			}
+
+		echo "</div>
 
 
-print("<br>
-<br>
-<label for=\"plist\">Ports: </label>
-<input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>
-<div style=\"text-align:left; font-size:12px; padding:4px;\">
-<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts ranges: 1000-1100</label>
-</div>");
+		<div class=\"section\">
 
-print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
+			<div class=\"port-forwarding\">
+				<label for=\"plist\">Ports: </label><br>
+				<input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\">
+
+				<div style=\"text-align:left; font-size:12px; padding:4px;\">
+					<label>Accepts ranges: 1000-1100</label>
+				</div>
+			</div>
+		</div>
+
+
+		<div class=\"section\">
+
+			<div class=\"save-option\">
+				<button name=\"save\">Save</button>
+			</div>
+		</div>
+	</div>
 </form>
-</td>
-</table>
+
 <script>
 var logger = document.getElementById(\"pwnlogger\");
-var span = document.getElementsByClassName(\"close\")[0];
-");
+var span = document.getElementsByClassName(\"close\")[0];";
 
 
 if ($ppdbg == "true")
@@ -643,8 +695,8 @@ if (isset($_POST['update'])){
     startLog('upd.log');");
 }
 
-print("</script>
-</body>
-</html>");
+	echo "</script>
+	</body>
+</html>";
 
 ?>
