@@ -467,7 +467,7 @@ function setEnd() {
 	<div class=\"select-toggle-wrap\">
 		<div class=\"section\">
 			<div class=\"select-option\">
-				<select name=\"interface\">";
+				<select name=\"interface\" id=\"interface\">";
 				foreach ($idata as $x) {
 					$x = trim($x);
 					if ($x !== "" && $x !== "lo" && $x !== "ppp0" && !str_starts_with($x, "wlan"))
@@ -485,7 +485,7 @@ function setEnd() {
 			</div>
 
 			<div class=\"select-option\">
-				<select name=\"firmware\">";
+				<select name=\"firmware\" id=\"firmware\">";
 				foreach ($firmwares as $fw) {
 					if ($firmware == $fw)
 					{
@@ -499,7 +499,7 @@ function setEnd() {
 			</div>
 
 			<div class=\"select-option\">
-				<select name=\"timeout\">";
+				<select name=\"timeout\" id=\"timeout\">";
 				for($x =1; $x<=5;$x++)
 				{
 				   if ($timeout == $x."m")
@@ -526,7 +526,7 @@ function setEnd() {
 			$cval = "checked";
 			}
 			echo "<div class=\"select-option\">
-				<input type=\"checkbox\" name=\"upypwn\" value=\"".$upypwn."\" ".$cval.">
+				<input type=\"checkbox\" name=\"upypwn\" id=\"upypwn\"  value=\"".$upypwn."\" ".$cval.">
 				<label for=\"upypwn\">Use Python version</label>
 			</div>";
 			} else {
@@ -539,7 +539,7 @@ function setEnd() {
 			$cval = "checked";
 			}
 			echo "<div class=\"select-option\">
-				<input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".$cval.">
+				<input type=\"checkbox\" name=\"usbether\" id=\"usbether\" value=\"".$usbether."\" ".$cval.">
 				<label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
 			</div>";
 
@@ -550,7 +550,7 @@ function setEnd() {
 				$cval = "checked";
 			}
 			echo "<div class=\"select-option\">
-				<input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
+				<input type=\"checkbox\" name=\"restmode\" id=\"restmode\" value=\"".$restmode."\" ".$cval.">
 				<label for=\"restmode\">Detect if goldhen is running <label style=\"font-size:12px; padding:4px;\">(useful for rest mode)</label></label>
 			</div>";
 
@@ -563,13 +563,13 @@ function setEnd() {
 			$cval = "checked";
 			}
 			echo "<div class=\"select-option\">
-				<input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
+				<input type=\"checkbox\" name=\"dtlink\" id=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
 				<label for=\"dtlink\">Detect console shutdown and restart PPPwn</label>
 			</div>";
 			}
 			else
 			{
-				echo "<input type=\"hidden\" name=\"dtlink\" value=\"".$dtlink."\">";
+				echo "<input type=\"hidden\" name=\"dtlink\" id=\"upypwn\" value=\"".$dtlink."\">";
 			}
 
 
@@ -577,14 +577,14 @@ function setEnd() {
 			if ($ppdbg == "true")
 			{
 				echo "<div class=\"select-option\">
-					<input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\" checked>
+					<input type=\"checkbox\" name=\"ppdbg\" id=\"ppdbg\" value=\"".$ppdbg."\" checked>
 					<label for=\"ppdbg\">Enable verbose PPPwn</label> &nbsp; <a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><label id=\"pwnlog\">Open Log Viewer</label></a>
 				</div>";
 			}
 			else
 			{
 				echo "<div class=\"select-option\">
-					<input type=\"checkbox\" name=\"ppdbg\" value=\"".$ppdbg."\">
+					<input type=\"checkbox\" name=\"ppdbg\" id=\"ppdbg\" value=\"".$ppdbg."\">
 					<label for=\"ppdbg\">Enable verbose PPPwn</label>
 				</div>";
 			}
@@ -596,7 +596,7 @@ function setEnd() {
 				$cval = "checked";
 			}
 			echo "<div class=\"select-option\">
-				<input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
+				<input type=\"checkbox\" name=\"pppoeconn\" id=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
 				<label for=\"pppoeconn\">Enable console internet access</label>
 			</div>";
 
@@ -609,7 +609,7 @@ function setEnd() {
 					$cval = "checked";
 				}
 				echo "<div class=\"select-option\">
-					<input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
+					<input type=\"checkbox\" name=\"shutdownpi\" id=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
 					<label for=\"shutdownpi\">Shutdown PI after PWN</label>
 				</div>";
 				}
@@ -628,7 +628,7 @@ function setEnd() {
 					$cval = "checked";
 				}
 				echo "<div class=\"select-option\">
-					<input type=\"checkbox\" name=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
+					<input type=\"checkbox\" name=\"vmusb\" id=\"vmusb\" value=\"".$vmusb."\" ".$cval.">
 					<label for=\"vmusb\">Enable usb drive to console</label>
 				</div>";
 				}
