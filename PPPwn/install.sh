@@ -48,6 +48,10 @@ echo 'server {
 	location / {
 		try_files $uri $uri/ =404;
 	}
+	error_page 404 = @mainindex;
+	location @mainindex {
+	return 302 /;
+	}
 	location ~ \.php$ {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php/php'$PHPVER'-fpm.sock;
@@ -400,7 +404,8 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-echo 'address=/playstation.com/127.0.0.1
+echo 'address=/manuals.playstation.net/192.168.2.1
+address=/playstation.com/127.0.0.1
 address=/playstation.net/127.0.0.1
 address=/playstation.org/127.0.0.1
 address=/akadns.net/127.0.0.1

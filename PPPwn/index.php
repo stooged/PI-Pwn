@@ -376,8 +376,11 @@ function updateLog(f) {
     xhr.open('GET', '/' + f);
 	xhr.setRequestHeader('Cache-Control', 'no-cache');
 	xhr.responseType = \"text\";
-	xhr.send();
 	xhr.onload = () => {
+	if (!xhr.responseURL.includes(f)) {
+	xhr.abort();
+	return;
+	}
 	if (xhr.readyState === xhr.DONE) {
     if (xhr.status === 200) {
 	document.getElementById(\"text_box\").value = xhr.responseText;
@@ -386,6 +389,7 @@ function updateLog(f) {
 	}
   }
 };
+xhr.send();
 }
 
 function setEnd() {
