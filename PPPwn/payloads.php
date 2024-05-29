@@ -1,27 +1,36 @@
-<?php 
+<?php
+session_start();
 
-if (isset($_POST['payload'])){
-$fso = fsockopen("tcp://192.168.2.2", 9090, $errn, $errs, 30);
-if ($fso){
-$file = fopen(urldecode($_POST['payload']), "rb");
-while (!feof($file)) 
-{
-   fwrite($fso, fgets($file));
-}
-fclose($fso);
-fclose($file);
-}
-}
- 
-if (isset($_POST['reload'])){
-	header("Location: payloads.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['payload'])) {
+        $fso = fsockopen("tcp://192.168.2.2", 9090, $errn, $errs, 30);
+        if ($fso) {
+            $file = fopen(urldecode($_POST['payload']), "rb");
+            while (!feof($file)) {
+                fwrite($fso, fgets($file));
+            }
+            fclose($fso);
+            fclose($file);
+            $_SESSION['message'] = "Payload sent successfully!";
+        } else {
+            $_SESSION['message'] = "Failed to connect to the server!";
+        }
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
+    if (isset($_POST['reload'])) {
+        header("Location: payloads.php");
+        exit;
+    }
+
+    if (isset($_POST['back'])) {
+        header("Location: index.php");
+        exit;
+    }
 }
 
-if (isset($_POST['back'])){
-	header("Location: index.php");
-}
-
-print("<html> 
+print("<html>
 <head>
 <title>PI-Pwn</title>
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
@@ -155,7 +164,7 @@ foreach ($rdir as $x) {
 			}
 			else
 			{
-			foreach ($pldata as $z) 
+			foreach ($pldata as $z)
 			{
 				if (str_ends_with($z, ".bin") || str_ends_with($z, ".elf"))
 				{
