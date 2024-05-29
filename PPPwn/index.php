@@ -54,29 +54,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
         exec('sudo systemctl stop pppoe');
     }
     sleep(1);
-
-    $_SESSION['message'] = "Configuration saved successfully!";
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['restart'])) {
     exec('echo "\033[32mRestarting\033[0m"  | sudo tee /dev/tty1 && sudo systemctl restart pipwn');
-    $_SESSION['message'] = "System restarting...";
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reboot'])) {
     exec('sudo reboot');
-    $_SESSION['message'] = "System rebooting...";
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['shutdown'])) {
     exec('sudo poweroff');
-    $_SESSION['message'] = "System shutting down...";
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -88,18 +83,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['payloads'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['remount'])) {
     exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
-    $_SESSION['message'] = "Remount script executed.";
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-    exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
-    $_SESSION['message'] = "Update script executed.";
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
-
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/config.sh';
 exec($cmd . " 2>&1", $data, $ret);
@@ -638,9 +624,10 @@ window.onclick = function(event) {
 ");
 
 
-if (isset($_SESSION['message'])) {
-    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
-    unset($_SESSION['message']);
+if (isset($_POST['update'])){
+	exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
+    print("logger.style.display = \"block\";
+    startLog('upd.log');");
 }
 
 print ("</script>
