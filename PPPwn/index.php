@@ -2,7 +2,6 @@
 
 $firmwares = array("11.00", "10.00", "10.01", "9.00");
 
-
 if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
 	$config .= "INTERFACE=\\\"".str_replace(" ", "", trim($_POST["interface"]))."\\\"\n";
@@ -16,6 +15,8 @@ if (isset($_POST['save'])){
 	$config .= "TIMEOUT=\\\"".str_replace(" ", "", trim($_POST["timeout"]))."\\\"\n";
 	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
 	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
+	$config .= "REDIRECT=\\\"".str_replace(" ", "", trim($_POST["redirect"]))."\\\"\n";
+    exec("echo REDIRECT=\\\"".str_replace(" ", "", trim($_POST["redirect"]))."\\\"\n' | sudo tee /dev/pts/* ");
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -122,6 +123,10 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'PYPWN')) {
       $upypwn = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'REDIRECT')) {
+      $redirect = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   
 }
 }else{
    $interface = "eth0";
@@ -135,6 +140,7 @@ foreach ($data as $x) {
    $timeout = "5m";
    $restmode = "false";
    $upypwn = "false";
+   $redirect = "http://karo218.ir/1100";
 }
 
 
@@ -148,7 +154,7 @@ if (empty($dtlink)){ $dtlink = "false";}
 if (empty($ppdbg)){ $ppdbg = "false";}
 if (empty($timeout)){ $timeout = "5m";}
 if (empty($upypwn)){ $upypwn = "false";}
-
+if (empty($redirect)){ $redirect = "http://karo218.ir/1100";}
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
 exec($cmd ." 2>&1", $pdata, $pret);
@@ -159,6 +165,13 @@ if ($pret == 0){
    }
 }else{
    $portlist = "2121,3232,9090,8080,12800,1337";	
+}
+
+
+
+if (isset($_POST['redirect'])){
+    exec('echo "\033[32mRedirecting\033[0m"  | sudo tee /dev/tty1 | sudo tee /dev/pts/*');
+    header("Location: $redirect");
 }
 
 
@@ -400,6 +413,14 @@ function setEnd() {
 		name.selectionEnd = name.value.length;	
 	}
 }
+function setEnd2() {
+	if (navigator.userAgent.includes('PlayStation 4')) {
+		let name = document.getElementById(\"redirect\");
+		name.focus();
+		name.selectionStart = name.value.length;
+		name.selectionEnd = name.value.length;	
+	}
+}
 </script>
 </head>
 <body>
@@ -431,7 +452,7 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 }
 
 
-print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
+print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>  &nbsp; <button name=\"redirect\">Redirect Host</button>
 </form>
 </center>
 <br>");
@@ -604,6 +625,14 @@ print("<br>
 <input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>
 <div style=\"text-align:left; font-size:12px; padding:4px;\">
 <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts ranges: 1000-1100</label>
+</div>");
+
+print("<br>
+<br>
+<label for=\"redirect\">Redirect: </label>
+<input type=\"text\" name=\"redirect\" id=\"redirect\" value=\"".$redirect."\"><br>
+<div style=\"text-align:left; font-size:12px; padding:4px;\">
+<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: http://example.com/</label>
 </div>");
 
 print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
