@@ -497,8 +497,6 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"upypwn\" value=\"".$upypwn."\" ".$cval.">
 <label for=\"upypwn\">&nbsp;Use Python version</label>
 <br>");
-}else{
-print("<input type=\"hidden\" name=\"upypwn\" value=\"false\">");
 }
 
 
@@ -535,10 +533,6 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"dtlink\" value=\"".$dtlink."\" ".$cval.">
 <label for=\"dtlink\">&nbsp;Detect console shutdown and restart PPPwn</label>
 <br>");
-}
-else
-{
-print("<input type=\"hidden\" name=\"dtlink\" value=\"".$dtlink."\">");
 }
 
 
@@ -578,10 +572,6 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
 <label for=\"shutdownpi\">&nbsp;Shutdown PI after PWN</label>
 <br>");
-}
-else
-{
-print("<input type=\"hidden\" name=\"shutdownpi\" value=\"".$shutdownpi."\">");
 }
 
 

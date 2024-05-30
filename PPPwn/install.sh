@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+if [ ! -d /boot/firmware/PPPwn/payloads ]; then
+  sudo mkdir /boot/firmware/PPPwn/payloads
+fi
 if [ -z $1 ] ;then
 sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at -y
 echo 'bogus-priv
