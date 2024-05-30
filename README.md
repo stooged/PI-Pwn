@@ -100,17 +100,17 @@ The console must also use the PPPoe user and pass set for the "console internet 
 
 ## PI FTP
 
-if you install FTP to access the pppwn folder for the exploit files you can use your root login user/pass to access the server.<br>
-
+If you install FTP to access the pppwn folder for the exploit files you must use your root login user/pass to access the server.<br>
+The ftp server uses the standard ports 21 and 20.
 
 ## PI Samba
 
-if you setup samba to access the pppwn folder for the exploit files you can access the drive on... <br>
+If you setup samba to access the pppwn folder for the exploit files you can access the drive on... <br>
 ` \\pppwn.local\pppwn `<br>
 or <br>
 ` smb:\\pppwn.local\pppwn `<br>
 <br>
-the share has no user/password required to access it.
+The share has no user/password required to access it.
 
 
 ## What it does
