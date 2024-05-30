@@ -75,7 +75,7 @@ Once goldhen has been loaded for the first time it will be copied to the console
 To update goldhen just repeat the above process and the new version will be copied to the internal hdd<br>
 
 
-## FTP / Binload
+## Console FTP / Binload
 
 If the pi pwn was setup to allow internet access you can use the ftp, klog, and binloader servers on the console<br>
 Your pi must be also connected to your home network via wifi or a second ethernet connection<br>
@@ -98,6 +98,21 @@ If you have the pi powered from the console usb port you must disable "Supply Po
 The console must also use the PPPoe user and pass set for the "console internet connection" of pi-pwn or the defaults if you never changed them which are ppp for both user and password.<br>
 
 
+## PI FTP
+
+If you install FTP to access the pppwn folder for the exploit files you must use your root login user/pass to access the server.<br>
+The ftp server uses the standard ports 21 and 20.
+
+## PI Samba
+
+If you setup samba to access the pppwn folder for the exploit files you can access the drive on... <br>
+` \\pppwn.local\pppwn `<br>
+or <br>
+` smb:\\pppwn.local\pppwn `<br>
+<br>
+The share has no user/password required to access it.
+
+
 ## What it does
 
 Once everything is setup and the ethernet cable is plugged in between the pi and the console the pi should automatically try and pwn the console.<br>
@@ -107,6 +122,7 @@ Once pwned the process will stop and the pi will shut down if you are not using 
 You will need to restart the pi if you wish to pwn the console again.<br>
 
 The idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the process completes<br>
+
 
 ## Updating
 
