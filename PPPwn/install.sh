@@ -96,6 +96,142 @@ echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
 fi
+if [[ $(dpkg-query -W --showformat='${Status}\n' vsftpd|grep "install ok installed")  == "" ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to install a FTP server? (Y|N):\033[0m ')" ftpq
+case $ftpq in
+[Yy]* ) 
+sudo apt-get install vsftpd -y
+echo "listen=YES
+local_enable=YES
+dirmessage_enable=YES
+use_localtime=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+secure_chroot_dir=/var/run/vsftpd/empty
+pam_service_name=vsftpd
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+ssl_enable=NO
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=077
+allow_writeable_chroot=YES
+chroot_local_user=YES
+user_sub_token=$USER
+local_root=/boot/firmware/PPPwn" | sudo tee /etc/vsftpd.conf
+sudo sed -i 's^root^^g' /etc/ftpusers
+echo -e '\n\n\033[33mTo use FTP you must set the \033[36mroot\033[33m account password so you can login to the ftp server with full write permissions\033[0m\n'
+while true; do
+read -p "$(printf '\r\n\033[36mDo you want to set the \033[36mroot\033[36m account password\r\n\r\n\033[36m(Y|N)?: \033[0m')" rapw
+case $rapw in
+[Yy]* ) 
+sudo passwd root
+echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: \033[36mroot\033[33m\r\nand the password you just set\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: root\r\nand the password you just set\033[0m'
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+echo -e '\033[32mFTP Installed\033[0m'
+break;;
+[Nn]* ) echo -e '\033[35mSkipping FTP install\033[0m'
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
+if [[ $(dpkg-query -W --showformat='${Status}\n' samba|grep "install ok installed")  == "" ]] ;then
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mnDo you want to setup a SAMBA share? (Y|N):\033[0m ')" smbq
+case $smbq in
+[Yy]* ) 
+sudo apt-get install samba samba-common-bin -y
+echo '[global]
+;   interfaces = 127.0.0.0/8 eth0
+;   bind interfaces only = yes
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   logging = file
+   panic action = /usr/share/samba/panic-action %d
+   server role = standalone server
+   obey pam restrictions = yes
+   unix password sync = yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+   pam password change = yes
+   map to guest = bad user
+;   logon path = \\%N\profiles\%U
+;   logon drive = H:
+;   logon script = logon.cmd
+; add user script = /usr/sbin/useradd --create-home %u
+; add machine script  = /usr/sbin/useradd -g machines -c "%u machine account" -d /var/lib/samba -s /bin/false %u
+; add group script = /usr/sbin/addgroup --force-badname %g
+;   include = /home/samba/etc/smb.conf.%m
+;   idmap config * :              backend = tdb
+;   idmap config * :              range   = 3000-7999
+;   idmap config YOURDOMAINHERE : backend = tdb
+;   idmap config YOURDOMAINHERE : range   = 100000-999999
+;   template shell = /bin/bash
+   usershare allow guests = yes
+[homes]
+   comment = Home Directories
+   browseable = no
+   read only = yes
+   create mask = 0700
+   directory mask = 0700
+   valid users = %S
+;[netlogon]
+;   comment = Network Logon Service
+;   path = /home/samba/netlogon
+;   guest ok = yes
+;   read only = yes
+;[profiles]
+;   comment = Users profiles
+;   path = /home/samba/profiles
+;   guest ok = no
+;   browseable = no
+;   create mask = 0600
+;   directory mask = 0700
+[printers]
+   comment = All Printers
+   browseable = no
+   path = /var/tmp
+   printable = yes
+   guest ok = no
+   read only = yes
+   create mask = 0700
+[print$]
+   comment = Printer Drivers
+   path = /var/lib/samba/printers
+   browseable = yes
+   read only = yes
+   guest ok = no
+;   write list = root, @lpadmin
+[pppwn]
+path = /boot/firmware/PPPwn/
+writeable=Yes
+create mask=0777
+read only = no
+directory mask=0777
+force create mask = 0777
+force directory mask = 0777
+force user = root
+force group = root
+public=yes' | sudo tee /etc/samba/smb.conf
+sudo systemctl unmask smbd
+sudo systemctl enable smbd
+echo -e '\033[32mSamba installed\033[0m'
+break;;
+[Nn]* ) echo -e '\033[35mSkipping SAMBA install\033[0m'
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+fi
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 while true; do
 read -p "$(printf '\r\n\r\n\033[36mConfig found, Do you want to change the stored settings\033[36m(Y|N)?: \033[0m')" conf
