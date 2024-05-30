@@ -105,7 +105,7 @@ if you install FTP to access the pppwn folder for the exploit files you can use 
 
 ## PI Samba
 
-if you setup samba to access the www folder for the exploit files you can access the drive on \\\pppwn.local\pppwn or smb:\\\pppwn.local\pppwn<br>
+if you setup samba to access the pppwn folder for the exploit files you can access the drive on \\\pppwn.local\pppwn or smb:\\\pppwn.local\pppwn<br>
 the share has no user/password required to access it.
 
 
