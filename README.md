@@ -98,12 +98,12 @@ If you have the pi powered from the console usb port you must disable "Supply Po
 The console must also use the PPPoe user and pass set for the "console internet connection" of pi-pwn or the defaults if you never changed them which are ppp for both user and password.<br>
 
 
-### PI FTP
+## PI FTP
 
 if you install FTP to access the pppwn folder for the exploit files you can use your root login user/pass to access the server.<br>
 
 
-### PI Samba
+## PI Samba
 
 if you setup samba to access the www folder for the exploit files you can access the drive on \\\pppwn.local\pppwn or smb:\\\pppwn.local\pppwn<br>
 the share has no user/password required to access it.
