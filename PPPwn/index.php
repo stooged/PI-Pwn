@@ -362,6 +362,9 @@ label[id=pwnlog]:focus {
 </style>
 <script>
 var fid;
+if (window.history.replaceState) {
+   window.history.replaceState(null, null, window.location.href);
+}
 
 function startLog(lf) {
    fid = setInterval(updateLog, 2000, lf);
