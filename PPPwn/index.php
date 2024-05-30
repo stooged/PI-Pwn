@@ -1,7 +1,7 @@
 <?php 
 
 $firmwares = array("11.00", "10.00", "10.01", "9.00");
-
+$ledacts = array("off", "normal", "status");
 
 if (isset($_POST['save'])){
 	$config = "#!/bin/bash\n";
@@ -16,6 +16,7 @@ if (isset($_POST['save'])){
 	$config .= "TIMEOUT=\\\"".str_replace(" ", "", trim($_POST["timeout"]))."\\\"\n";
 	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
 	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
+	$config .= "LEDACT=\\\"".$_POST["ledact"]."\\\"\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -122,6 +123,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'PYPWN')) {
       $upypwn = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'LEDACT')) {
+      $ledact = (explode("=", str_replace("\"", "", $x))[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -135,6 +139,7 @@ foreach ($data as $x) {
    $timeout = "5m";
    $restmode = "false";
    $upypwn = "false";
+   $ledact = "normal";
 }
 
 
@@ -148,6 +153,8 @@ if (empty($dtlink)){ $dtlink = "false";}
 if (empty($ppdbg)){ $ppdbg = "false";}
 if (empty($timeout)){ $timeout = "5m";}
 if (empty($upypwn)){ $upypwn = "false";}
+if (empty($ledact)){ $ledact = "normal";}
+
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -483,6 +490,17 @@ for($x =1; $x<=5;$x++)
 } 
 print("</select><label for=\"timeout\">&nbsp; Time to restart PPPwn if it hangs</label><br><br>");
 
+
+print("<select name=\"ledact\">");
+foreach ($ledacts as $la) {
+if ($ledact == $la)
+{
+	print("<option value=\"".$la."\" selected>".$la."</option>");
+}else{
+	print("<option value=\"".$la."\">".$la."</option>");
+}
+}
+print("</select><label for=\"ledact\">&nbsp; Led activity</label><br><br>");
 
 
 $cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
