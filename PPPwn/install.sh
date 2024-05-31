@@ -576,7 +576,8 @@ RESTMODE='$RESTM'
 PPDBG='$PDBG'
 TIMEOUT="'$TOUT'm"
 PYPWN='$UPYPWN'
-LEDACT="normal"' | sudo tee /boot/firmware/PPPwn/config.sh
+LEDACT="normal"
+DDNS=false' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]

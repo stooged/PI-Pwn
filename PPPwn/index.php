@@ -17,6 +17,7 @@ if (isset($_POST['save'])){
 	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
 	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
 	$config .= "LEDACT=\\\"".$_POST["ledact"]."\\\"\n";
+	$config .= "DDNS=".(isset($_POST["ddns"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -43,6 +44,14 @@ if (isset($_POST['save'])){
 	else
 	{
       exec('sudo rmmod g_mass_storage');
+	}
+	if (isset($_POST["ddns"]) == true)
+	{
+      exec('sudo bash /boot/firmware/PPPwn/disdns.sh &');
+	}
+	else
+	{
+      exec('sudo bash /boot/firmware/PPPwn/endns.sh &');
 	}
 	if (isset($_POST["pppoeconn"]) == true)
 	{
@@ -126,6 +135,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'LEDACT')) {
       $ledact = (explode("=", str_replace("\"", "", $x))[1]);
    }
+   elseif (str_starts_with($x, 'DDNS')) {
+      $ddns = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -140,6 +152,7 @@ foreach ($data as $x) {
    $restmode = "false";
    $upypwn = "false";
    $ledact = "normal";
+   $ddns = "false";
 }
 
 
@@ -154,7 +167,7 @@ if (empty($ppdbg)){ $ppdbg = "false";}
 if (empty($timeout)){ $timeout = "5m";}
 if (empty($upypwn)){ $upypwn = "false";}
 if (empty($ledact)){ $ledact = "normal";}
-
+if (empty($ddns)){ $ddns = "false";}
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -578,6 +591,18 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"pppoeconn\" value=\"".$pppoeconn."\" ".$cval.">
 <label for=\"pppoeconn\">&nbsp;Enable console internet access</label>
 <br>");
+
+
+
+$cval = "";
+if ($ddns == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"ddns\" value=\"".$ddns."\" ".$cval.">
+<label for=\"ddns\">&nbsp;Disable DNS blocker</label>
+<br>");
+
 
 
 if ($pppoeconn == "false")
