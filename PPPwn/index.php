@@ -28,7 +28,7 @@ if (isset($_POST['save'])){
  	exec('sudo iptables -X');
 	exec('sudo sysctl net.ipv4.ip_forward=1');
  	exec('sudo sysctl net.ipv4.conf.all.route_localnet=1');
- 	exec('sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353');
+ 	exec('sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:53');
 	$plst = explode(",",trim($_POST["plist"]));
 	for($i = 0; $i < count($plst); ++$i) {
 	 	exec('sudo iptables -t nat -I PREROUTING -p tcp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
