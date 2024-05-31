@@ -14,7 +14,7 @@ sudo iptables -F
 sudo iptables -X
 sudo sysctl net.ipv4.ip_forward=1
 sudo sysctl net.ipv4.conf.all.route_localnet=1
-sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353
+sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:53
 if [ -f /boot/firmware/PPPwn/ports.txt ]; then
 	PORTS=$(sudo cat /boot/firmware/PPPwn/ports.txt | tr "," "\n")
 	for prt in $PORTS
