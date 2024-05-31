@@ -11,7 +11,6 @@ expand-hosts
 domain-needed
 server=8.8.8.8
 listen-address=127.0.0.1
-port=5353
 conf-file=/etc/dnsmasq.more.conf' | sudo tee /etc/dnsmasq.conf
 echo 'auth
 lcp-echo-failure 3
