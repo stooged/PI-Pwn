@@ -228,6 +228,7 @@ button {
     color: #FFFFFF;
     background: #454545;
     padding: 10px 20px;
+    margin-bottom:12px;
     border-radius: 3px;
 }
 
@@ -435,7 +436,7 @@ function setEnd() {
 <div class=\"logger-body\">
 <textarea disabled id=\"text_box\" rows=\"40\"></textarea>
 </div></div></div>
-<br><br>
+<br>
 <form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
 
 
@@ -456,8 +457,7 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 
 print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
 </form>
-</center>
-<br>");
+</center>");
 
 print("<br><table align=center><td><form method=\"post\">");
 
@@ -538,7 +538,7 @@ if ($usbether == "true")
 $cval = "checked";
 }
 print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".$cval.">
-<label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
+<label for=\"usbether\">&nbsp;Use usb ethernet adapter for console connection</label>
 <br>");
 
 
