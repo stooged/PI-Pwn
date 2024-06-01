@@ -3,6 +3,7 @@ session_start();
 
 $firmwares = array("11.00", "10.00", "10.01", "9.00");
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
     $config = "#!/bin/bash\n";
     $config .= "INTERFACE=\"" . str_replace(" ", "", trim($_POST["interface"])) . "\"\n";
@@ -85,9 +86,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['remount'])) {
     exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
+
+$ledacts = array("off", "normal", "status");
+
+if (isset($_POST['save'])){
+	$config = "#!/bin/bash\n";
+	$config .= "INTERFACE=\\\"".str_replace(" ", "", trim($_POST["interface"]))."\\\"\n";
+	$config .= "FIRMWAREVERSION=\\\"".$_POST["firmware"]."\\\"\n";
+	$config .= "SHUTDOWN=".(isset($_POST["shutdownpi"]) ? "true" : "false")."\n";
+	$config .= "USBETHERNET=".(isset($_POST["usbether"]) ? "true" : "false")."\n";
+	$config .= "PPPOECONN=".(isset($_POST["pppoeconn"]) ? "true" : "false")."\n";
+	$config .= "VMUSB=".(isset($_POST["vmusb"]) ? "true" : "false")."\n";
+	$config .= "DTLINK=".(isset($_POST["dtlink"]) ? "true" : "false")."\n";
+	$config .= "PPDBG=".(isset($_POST["ppdbg"]) ? "true" : "false")."\n";
+	$config .= "TIMEOUT=\\\"".str_replace(" ", "", trim($_POST["timeout"]))."\\\"\n";
+	$config .= "RESTMODE=".(isset($_POST["restmode"]) ? "true" : "false")."\n";
+	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
+	$config .= "LEDACT=\\\"".$_POST["ledact"]."\\\"\n";
+	$config .= "DDNS=".(isset($_POST["ddns"]) ? "true" : "false")."\n";
+	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
+	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
+ 	exec('sudo iptables -P INPUT ACCEPT');
+ 	exec('sudo iptables -P FORWARD ACCEPT');
+ 	exec('sudo iptables -P OUTPUT ACCEPT');
+ 	exec('sudo iptables -t nat -F');
+ 	exec('sudo iptables -t mangle -F');
+ 	exec('sudo iptables -F');
+ 	exec('sudo iptables -X');
+	exec('sudo sysctl net.ipv4.ip_forward=1');
+ 	exec('sudo sysctl net.ipv4.conf.all.route_localnet=1');
+ 	exec('sudo iptables -t nat -I PREROUTING -s 192.168.2.0/24 -p udp -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5353');
+	$plst = explode(",",trim($_POST["plist"]));
+	for($i = 0; $i < count($plst); ++$i) {
+	 	exec('sudo iptables -t nat -I PREROUTING -p tcp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+		exec('sudo iptables -t nat -I PREROUTING -p udp --dport '.str_replace("-", ":", $plst[$i]).' -j DNAT --to 192.168.2.2:'.str_replace(":", "-", $plst[$i]));
+	}
+ 	exec('sudo iptables -t nat -A POSTROUTING -s 192.168.2.0/24 ! -d 192.168.2.0/24 -j MASQUERADE');
+
+    if (isset($_POST["vmusb"]) == true)
+	{
+      exec('sudo bash /boot/firmware/PPPwn/remount.sh &');
+	}
+	else
+	{
+      exec('sudo rmmod g_mass_storage');
+	}
+	if (isset($_POST["ddns"]) == true)
+	{
+      exec('sudo bash /boot/firmware/PPPwn/disdns.sh &');
+	}
+	else
+	{
+      exec('sudo bash /boot/firmware/PPPwn/endns.sh &');
+	}
+	if (isset($_POST["pppoeconn"]) == true)
+	{
+      $cmd = 'sudo systemctl is-active pipwn';
+      exec($cmd ." 2>&1", $sresp, $pret);
+	  if (implode($sresp) != "active")
+	  {
+		$cmd = 'sudo systemctl is-active pppoe';
+		exec($cmd ." 2>&1", $presp, $pret);
+		if (implode($presp) != "active")
+		{
+			exec('sudo systemctl start pppoe'); 
+		}
+	  }
+	}
+	else
+	{
+      exec('sudo systemctl stop pppoe');
+	}
+	sleep(1);
+}
+ 
+if (isset($_POST['restart'])){
+   exec('echo "\033[32mRestarting\033[0m"  | sudo tee /dev/tty1 && sudo systemctl restart pipwn');
+
 }
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/config.sh';
+
 exec($cmd . " 2>&1", $data, $ret);
 if ($ret == 0) {
     foreach ($data as $x) {
@@ -159,6 +238,80 @@ if (empty($timeout)) {
 if (empty($upypwn)) {
     $upypwn = "false";
 }
+=======
+exec($cmd ." 2>&1", $data, $ret);
+if ($ret == 0){
+foreach ($data as $x) {
+   if (str_starts_with($x, 'INTERFACE')) {
+      $interface = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   elseif (str_starts_with($x, 'FIRMWAREVERSION')) {
+      $firmware = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   elseif (str_starts_with($x, 'SHUTDOWN')) {
+      $shutdownpi = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'USBETHERNET')) {
+      $usbether = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'PPPOECONN')) {
+      $pppoeconn = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'VMUSB')) {
+      $vmusb = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'DTLINK')) {
+      $dtlink = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'PPDBG')) {
+      $ppdbg = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'TIMEOUT')) {
+      $timeout = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   elseif (str_starts_with($x, 'RESTMODE')) {
+      $restmode = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'PYPWN')) {
+      $upypwn = (explode("=", $x)[1]);
+   }
+   elseif (str_starts_with($x, 'LEDACT')) {
+      $ledact = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   elseif (str_starts_with($x, 'DDNS')) {
+      $ddns = (explode("=", $x)[1]);
+   }
+}
+}else{
+   $interface = "eth0";
+   $firmware = "11.00";
+   $shutdownpi = "true";
+   $usbether = "false";
+   $pppoeconn = "false";
+   $vmusb = "false";
+   $dtlink = "false";
+   $ppdbg = "false";
+   $timeout = "5m";
+   $restmode = "false";
+   $upypwn = "false";
+   $ledact = "normal";
+   $ddns = "false";
+}
+
+
+if (empty($interface)){ $interface = "eth0";}
+if (empty($firmware)){ $firmware = "11.00";}
+if (empty($shutdownpi)){ $shutdownpi = "true";}
+if (empty($usbether)){ $usbether = "false";}
+if (empty($pppoeconn)){ $pppoeconn = "false";}
+if (empty($vmusb)){ $vmusb = "false";}
+if (empty($dtlink)){ $dtlink = "false";}
+if (empty($ppdbg)){ $ppdbg = "false";}
+if (empty($timeout)){ $timeout = "5m";}
+if (empty($upypwn)){ $upypwn = "false";}
+if (empty($ledact)){ $ledact = "normal";}
+if (empty($ddns)){ $ddns = "false";}
+
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
 exec($cmd . " 2>&1", $pdata, $pret);
@@ -217,6 +370,7 @@ button {
     color: #FFFFFF;
     background: #454545;
     padding: 10px 20px;
+    margin-bottom:12px;
     border-radius: 3px;
 }
 
@@ -371,6 +525,9 @@ label[id=pwnlog]:focus {
 </style>
 <script>
 var fid;
+if (window.history.replaceState) {
+   window.history.replaceState(null, null, window.location.href);
+}
 
 function startLog(lf) {
    fid = setInterval(updateLog, 2000, lf);
@@ -421,7 +578,7 @@ function setEnd() {
 <div class=\"logger-body\">
 <textarea disabled id=\"text_box\" rows=\"40\"></textarea>
 </div></div></div>
-<br><br>
+<br>
 <form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
 
 
@@ -440,8 +597,7 @@ if (str_starts_with(trim(implode($pidata)), "Raspberry Pi 4") || str_starts_with
 
 print ("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
 </form>
-</center>
-<br>");
+</center>");
 
 print ("<br><table align=center><td><form method=\"post\">");
 
@@ -483,6 +639,17 @@ for ($x = 1; $x <= 5; $x++) {
 print ("</select><label for=\"timeout\">&nbsp; Time to restart PPPwn if it hangs</label><br><br>");
 
 
+print("<select name=\"ledact\">");
+foreach ($ledacts as $la) {
+if ($ledact == $la)
+{
+	print("<option value=\"".$la."\" selected>".$la."</option>");
+}else{
+	print("<option value=\"".$la."\">".$la."</option>");
+}
+}
+print("</select><label for=\"ledact\">&nbsp; Led activity</label><br><br>");
+
 
 $cmd = 'sudo dpkg-query -W --showformat="\${Status}\\n" python3-scapy | grep "install ok installed"';
 exec($cmd . " 2>&1", $pypdata, $ret);
@@ -494,8 +661,10 @@ if (implode($pypdata) == "install ok installed") {
     print ("<br><input type=\"checkbox\" name=\"upypwn\" value=\"" . $upypwn . "\" " . $cval . ">
 <label for=\"upypwn\">&nbsp;Use Python version</label>
 <br>");
+
 } else {
     print ("<input type=\"hidden\" name=\"upypwn\" value=\"false\">");
+
 }
 
 
@@ -506,6 +675,9 @@ if ($usbether == "true") {
 }
 print ("<br><input type=\"checkbox\" name=\"usbether\" value=\"" . $usbether . "\" " . $cval . ">
 <label for=\"usbether\">&nbsp;Use usb ethernet adapter</label>
+=======
+print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".$cval.">
+<label for=\"usbether\">&nbsp;Use usb ethernet adapter for console connection</label>
 <br>");
 
 
@@ -565,6 +737,29 @@ if ($pppoeconn == "false") {
 <br>");
 } else {
     print ("<input type=\"hidden\" name=\"shutdownpi\" value=\"" . $shutdownpi . "\">");
+=======
+
+$cval = "";
+if ($ddns == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"ddns\" value=\"".$ddns."\" ".$cval.">
+<label for=\"ddns\">&nbsp;Disable DNS blocker</label>
+<br>");
+
+
+
+if ($pppoeconn == "false")
+{
+$cval = "";
+if ($shutdownpi == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"shutdownpi\" value=\"".$shutdownpi."\" ".$cval.">
+<label for=\"shutdownpi\">&nbsp;Shutdown PI after PWN</label>
+<br>");
 }
 
 

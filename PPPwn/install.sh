@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+if [ ! -d /boot/firmware/PPPwn/payloads ]; then
+  sudo mkdir /boot/firmware/PPPwn/payloads
+fi
 if [ -z $1 ] ;then
 sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at -y
 echo 'bogus-priv
@@ -571,7 +575,9 @@ DTLINK='$DTLNK'
 RESTMODE='$RESTM'
 PPDBG='$PDBG'
 TIMEOUT="'$TOUT'm"
-PYPWN='$UPYPWN'' | sudo tee /boot/firmware/PPPwn/config.sh
+PYPWN='$UPYPWN'
+LEDACT="normal"
+DDNS=false' | sudo tee /boot/firmware/PPPwn/config.sh
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]

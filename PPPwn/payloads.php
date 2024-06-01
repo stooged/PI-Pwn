@@ -72,6 +72,7 @@ button {
     color: #FFFFFF;
     background: #454545;
     padding: 10px 20px;
+    margin-bottom:12px;
     border-radius: 3px;
 }
 
@@ -142,10 +143,18 @@ input[type=submit]:hover {
 }
 
 </style>
+<script>
+if (window.history.replaceState) {
+   window.history.replaceState(null, null, window.location.href);
+}
+</script>
 </head>
 <body>");
 
 print("<br><table align=center><td><form method=\"post\">");
+
+
+$haspl=0;
 
 $cmd = 'sudo ls /media/pwndrives';
 exec($cmd ." 2>&1", $rdir, $ret);
@@ -158,16 +167,13 @@ foreach ($rdir as $x) {
 			$cnt=0;
 			$cmd = 'sudo ls /media/pwndrives/'.$x.'/'.$y;
 			exec($cmd ." 2>&1", $pldata, $ret);
-			if ($ret == 2)
-			{
-			 	//print("mount error");
-			}
-			else
+			if ($ret == 0 && count($pldata) > 0)
 			{
 			foreach ($pldata as $z)
 			{
 				if (str_ends_with($z, ".bin") || str_ends_with($z, ".elf"))
 				{
+					$haspl=1;
 					print("<button name=\"payload\" value=".urlencode('/media/pwndrives/'.$x.'/'.$y.'/'.$z).">".$z."</button>&nbsp; ");
 					$cnt++;
 					if ($cnt >= 4)
@@ -177,10 +183,31 @@ foreach ($rdir as $x) {
 					}
 				}
 		    }
-		    goto done;
+			if ($haspl > 0){goto done;}
 		    }
 		}
 	}
+}
+
+
+$cmd = 'sudo ls /boot/firmware/PPPwn/payloads';
+exec($cmd ." 2>&1", $sdir, $ret);
+if ($ret == 0 && count($sdir) > 0)
+{
+	foreach ($sdir as $a) {
+		if (str_ends_with($a, ".bin") || str_ends_with($a, ".elf"))
+		{
+			$haspl=1;
+			print("<button name=\"payload\" value=".urlencode('/boot/firmware/PPPwn/payloads/'.$a).">".$a."</button>&nbsp; ");
+			$cnt++;
+			if ($cnt >= 4)
+			{
+				print("<br>");
+				$cnt=0;
+			}
+		}
+	}
+if ($haspl > 0){goto done;}
 }
 
 print("<button name=\"reload\" value=\"reload\">Reload page</button>");
