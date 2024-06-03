@@ -181,7 +181,7 @@ foreach ($rdir as $x) {
 }
 
 
-$cmd = 'sudo ls /boot/firmware/PPPwn/payloads';
+$cmd = 'sudo ls /PPPwn/payloads';
 exec($cmd ." 2>&1", $sdir, $ret);
 if ($ret == 0 && count($sdir) > 0)
 {
@@ -189,7 +189,7 @@ if ($ret == 0 && count($sdir) > 0)
 		if (str_ends_with($a, ".bin") || str_ends_with($a, ".elf"))
 		{
 			$haspl=1;
-			print("<button name=\"payload\" value=".urlencode('/boot/firmware/PPPwn/payloads/'.$a).">".$a."</button>&nbsp; ");
+			print("<button name=\"payload\" value=".urlencode('/PPPwn/payloads/'.$a).">".$a."</button>&nbsp; ");
 			$cnt++;
 			if ($cnt >= 4)
 			{

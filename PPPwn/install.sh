@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-if [ ! -d /boot/firmware/PPPwn/payloads ]; then
-  sudo mkdir /boot/firmware/PPPwn/payloads
+if [ ! -d /PPPwn/payloads ]; then
+  sudo mkdir -p /PPPwn/payloads
 fi
 if [ -z $1 ] ;then
 sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at -y
@@ -124,7 +124,7 @@ local_umask=077
 allow_writeable_chroot=YES
 chroot_local_user=YES
 user_sub_token=$USER
-local_root=/boot/firmware/PPPwn" | sudo tee /etc/vsftpd.conf
+local_root=/PPPwn" | sudo tee /etc/vsftpd.conf
 sudo sed -i 's^root^^g' /etc/ftpusers
 echo -e '\n\n\033[33mTo use FTP you must set the \033[36mroot\033[33m account password so you can login to the ftp server with full write permissions\033[0m\n'
 while true; do
@@ -216,7 +216,7 @@ echo '[global]
    guest ok = no
 ;   write list = root, @lpadmin
 [pppwn]
-path = /boot/firmware/PPPwn/
+path = /PPPwn/
 writeable=Yes
 create mask=0777
 read only = no
