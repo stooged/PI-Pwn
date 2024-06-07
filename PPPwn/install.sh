@@ -150,7 +150,7 @@ done
 fi
 if [[ $(dpkg-query -W --showformat='${Status}\n' samba|grep "install ok installed")  == "" ]] ;then
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mnDo you want to setup a SAMBA share? (Y|N):\033[0m ')" smbq
+read -p "$(printf '\r\n\r\n\033[36mDo you want to setup a SAMBA share? (Y|N):\033[0m ')" smbq
 case $smbq in
 [Yy]* ) 
 sudo apt-get install samba samba-common-bin -y
@@ -435,15 +435,15 @@ read -p "$(printf '\r\n\r\n\033[36mWould you like to change the firmware version
 case $fwset in
 [Yy]* ) 
 while true; do
-read -p  "$(printf '\033[33mEnter the firmware version [ 11.00 | 10.00 | 10.01 | 9.00 ]: \033[0m')" FWV
+read -p  "$(printf '\033[33mEnter the firmware version [ 7.00 | 7.01 | 7.02 | 7.50 | 7.51 | 7.55 | 8.00 | 8.01 | 8.03 | 8.50 | 8.52 | 9.00 | 9.03 | 9.04 | 9.50 | 9.51 | 9.60 | 10.00 | 10.01 | 10.50 | 10.70 | 10.71 | 11.00 ]: \033[0m')" FWV
 case $FWV in
 "" ) 
  echo -e '\033[31mCannot be empty!\033[0m';;
  * )  
 if grep -q '^[0-9.]*$' <<<$FWV ; then 
 
-if [[ ! "$FWV" =~ ^("11.00"|"10.00"|"10.01"|"9.00")$ ]]  ; then
-echo -e '\033[31mThe version must be [ 11.00 | 10.00 | 10.01 | 9.00 ]\033[0m';
+if [[ ! "$FWV" =~ ^("7.00"|"7.01"|"7.02"|"7.50"|"7.51"|"7.55"|"8.00"|"8.01"|"8.03"|"8.50"|"8.52"|"9.00"|"9.03"|"9.04"|"9.50"|"9.51"|"9.60"|"10.00"|"10.01"|"10.50"|"10.70"|"10.71"|"11.00")$ ]]  ; then
+echo -e '\033[31mThe version must be [ 7.00 | 7.01 | 7.02 | 7.50 | 7.51 | 7.55 | 8.00 | 8.01 | 8.03 | 8.50 | 8.52 | 9.00 | 9.03 | 9.04 | 9.50 | 9.51 | 9.60 | 10.00 | 10.01 | 10.50 | 10.70 | 10.71 | 11.00 ]\033[0m';
 else 
 break;
 fi
