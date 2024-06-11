@@ -172,34 +172,6 @@ if [ $USBETHERNET = true ] ; then
 fi
 fi
 fi
-if [[ $FIRMWAREVERSION == "7.00" ]] || [[ $FIRMWAREVERSION == "7.01" ]] || [[ $FIRMWAREVERSION == "7.02" ]] ;then
-STAGEVER="7.00"
-elif [[ $FIRMWAREVERSION == "7.50" ]] || [[ $FIRMWAREVERSION == "7.51" ]] || [[ $FIRMWAREVERSION == "7.55" ]] ;then
-STAGEVER="7.50"
-elif [[ $FIRMWAREVERSION == "8.00" ]] || [[ $FIRMWAREVERSION == "8.01" ]] || [[ $FIRMWAREVERSION == "8.03" ]] ;then
-STAGEVER="8.00"
-elif [[ $FIRMWAREVERSION == "8.50" ]] || [[ $FIRMWAREVERSION == "8.52" ]] ;then
-STAGEVER="8.50"
-elif [[ $FIRMWAREVERSION == "9.00" ]] ;then
-STAGEVER="9.00"
-elif [[ $FIRMWAREVERSION == "9.03" ]] || [[ $FIRMWAREVERSION == "9.04" ]] ;then
-STAGEVER="9.03"
-elif [[ $FIRMWAREVERSION == "9.50" ]] || [[ $FIRMWAREVERSION == "9.51" ]] || [[ $FIRMWAREVERSION == "9.60" ]] ;then
-STAGEVER="9.50"
-elif [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] ;then
-STAGEVER="10.00"
-elif [[ $FIRMWAREVERSION == "10.50" ]] || [[ $FIRMWAREVERSION == "10.70" ]] || [[ $FIRMWAREVERSION == "10.71" ]] ;then
-STAGEVER="10.50"
-elif [[ $FIRMWAREVERSION == "11.00" ]] ;then
-STAGEVER="11.00"
-else
-echo -e "\033[31m\nIncorrect firmware value: $FIRMWAREVERSION \033[0m\n" | sudo tee /dev/tty1
-if [[ $LEDACT == "status" ]] ;then
-	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-fi
-exit 1
-fi
 PIIP=$(hostname -I) || true
 if [ "$PIIP" ]; then
    echo -e "\n\033[92mIP: \033[93m $PIIP\033[0m" | sudo tee /dev/tty1
@@ -266,7 +238,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${STAGEVER//.}" --stage1 "/boot/firmware/PPPwn/stage1_$STAGEVER.bin" --stage2 "/boot/firmware/PPPwn/stage2_$STAGEVER.bin")
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}")
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
  	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
