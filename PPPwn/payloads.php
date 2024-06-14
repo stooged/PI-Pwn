@@ -15,10 +15,12 @@ fclose($file);
  
 if (isset($_POST['reload'])){
 	header("Location: payloads.php");
+	exit;
 }
 
 if (isset($_POST['back'])){
 	header("Location: index.php");
+	exit;
 }
 
 print("<html> 

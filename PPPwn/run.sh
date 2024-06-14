@@ -3,6 +3,14 @@
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
 source /boot/firmware/PPPwn/config.sh
 fi
+if [ -z $PYPWN ]; then PYPWN=false; fi
+if [ $PYPWN = true ] ; then
+sudo bash /boot/firmware/PPPwn/runpy.sh
+exit 0
+fi
+if [ -f /boot/firmware/PPPwn/pconfig.sh ]; then
+source /boot/firmware/PPPwn/pconfig.sh
+fi
 if [ -z $INTERFACE ]; then INTERFACE="eth0"; fi
 if [ -z $FIRMWAREVERSION ]; then FIRMWAREVERSION="11.00"; fi
 if [ -z $SHUTDOWN ]; then SHUTDOWN=true; fi
@@ -13,11 +21,15 @@ if [ -z $DTLINK ]; then DTLINK=false; fi
 if [ -z $PPDBG ]; then PPDBG=false; fi
 if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
 if [ -z $RESTMODE ]; then RESTMODE=false; fi
-if [ -z $PYPWN ]; then PYPWN=false; fi
 if [ -z $LEDACT ]; then LEDACT="normal"; fi
-if [ $PYPWN = true ] ; then
-sudo bash /boot/firmware/PPPwn/runpy.sh
-exit 0
+if [ -z $XFWAP ]; then XFWAP="1"; fi
+if [ -z $XFGD ]; then XFGD="4"; fi
+if [ -z $XFBS ]; then XFBS="0"; fi
+if [ -z $XFNWB ]; then XFNWB=false; fi
+if [ $XFNWB = true ] ; then
+XFNW="--no-wait-padi"
+else
+XFNW=""
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
@@ -55,9 +67,22 @@ arch=$(getconf LONG_BIT)
 if [ $arch -eq 32 ] && [ $CPPBIN = "pppwn64" ] && [[ ! $PITYP == *"Raspberry Pi 4"* ]] && [[ ! $PITYP == *"Raspberry Pi 5"* ]] ; then
 CPPBIN="pppwn7"
 fi
+PLED=""
+ALED=""
 if [[ $LEDACT == "status" ]] || [[ $LEDACT == "off" ]] ;then
-   echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-   echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+   if [ -f /sys/class/leds/PWR/trigger ] && [ -f /sys/class/leds/ACT/trigger ]  ; then
+      PLED="/sys/class/leds/PWR/trigger"
+      ALED="/sys/class/leds/ACT/trigger"
+      echo none | sudo tee $PLED >/dev/null
+      echo none | sudo tee $ALED >/dev/null
+   elif [ -f /sys/class/leds/user-led0/trigger ] && [ -f /sys/class/leds/user-led1/trigger ]  ; then
+      PLED="/sys/class/leds/user-led1/trigger"
+      ALED="/sys/class/leds/user-led2/trigger"
+      echo none | sudo tee $PLED >/dev/null
+      echo none | sudo tee $ALED >/dev/null
+   else
+      LEDACT="normal"
+   fi
 fi
 echo -e "\n\n\033[36m _____  _____  _____                               
 |  __ \\|  __ \\|  __ \\                    _     _   
@@ -112,7 +137,7 @@ if [ -f /boot/firmware/PPPwn/pwn.log ]; then
    sudo rm -f /boot/firmware/PPPwn/pwn.log
 fi
 if [[ $LEDACT == "status" ]] ;then
-   echo timer | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+   echo timer | sudo tee $PLED >/dev/null
 fi
 if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
    echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
@@ -134,8 +159,8 @@ GHT=$(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ')
 if [[ $GHT == *"open"* ]] ; then
 echo -e "\n\033[95mGoldhen found aborting pppwn\033[0m\n" | sudo tee /dev/tty1
 if [[ $LEDACT == "status" ]] ;then
-	echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-	echo default-on | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+	echo none | sudo tee $PLED >/dev/null
+	echo default-on | sudo tee $ALED >/dev/null
 fi
 sudo killall pppoe-server
 if [ $PPPOECONN = true ] ; then
@@ -180,8 +205,8 @@ echo -e "\n\033[95mReady for console connection\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
 if [[ $LEDACT == "status" ]] ;then
-	echo heartbeat | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-	echo timer | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+	echo heartbeat | sudo tee $PLED >/dev/null
+	echo timer | sudo tee $ALED >/dev/null
 fi
 if [ -f /boot/firmware/PPPwn/config.sh ]; then
  if  grep -Fxq "PPDBG=true" /boot/firmware/PPPwn/config.sh ; then
@@ -198,8 +223,8 @@ do
  if [[ $stdo  == "[+] Done!" ]] ; then
 	echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
 	if [[ $LEDACT == "status" ]] ;then
-		echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-		echo default-on | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+		echo none | sudo tee $PLED >/dev/null
+		echo default-on | sudo tee $ALED >/dev/null
 	fi
 	if [ $PPPOECONN = true ] ; then
 		sudo systemctl start pppoe
@@ -225,23 +250,23 @@ do
  	echo -e "\033[31m\nUnsupported firmware version\033[0m\n" | sudo tee /dev/tty1
 	
 	if [[ $LEDACT == "status" ]] ;then
-	 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-	 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+	 	echo none | sudo tee $ALED >/dev/null
+	 	echo default-on | sudo tee $PLED >/dev/null
 	fi
  	exit 1
  elif [[ $stdo  == *"Cannot find interface with name of"* ]] ; then
  	echo -e "\033[31m\nInterface $INTERFACE not found\033[0m\n" | sudo tee /dev/tty1
 	
 	if [[ $LEDACT == "status" ]] ;then
-	 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-	 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+	 	echo none | sudo tee $ALED >/dev/null
+	 	echo default-on | sudo tee $PLED >/dev/null
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}")
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW)
 if [[ $LEDACT == "status" ]] ;then
- 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
- 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+ 	echo none | sudo tee $ALED >/dev/null
+ 	echo default-on | sudo tee $PLED >/dev/null
 fi
 sudo ip link set $INTERFACE down
 coproc read -t 3 && wait "$!" || true

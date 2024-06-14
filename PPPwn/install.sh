@@ -135,7 +135,7 @@ sudo passwd root
 echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: \033[36mroot\033[33m\r\nand the password you just set\033[0m'
 break;;
 [Nn]* ) 
-echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: root\r\nand the password you just set\033[0m'
+echo -e '\r\n\033[33mYou can log into the ftp server with\r\nUsername: root\r\nand the password for the root account\033[0m'
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
@@ -577,7 +577,16 @@ PPDBG='$PDBG'
 TIMEOUT="'$TOUT'm"
 PYPWN='$UPYPWN'
 LEDACT="normal"
-DDNS=false' | sudo tee /boot/firmware/PPPwn/config.sh
+DDNS=false
+XFWAP="1"
+XFGD="4"
+XFBS="0"
+XFNWB=false' | sudo tee /boot/firmware/PPPwn/config.sh
+echo '#!/bin/bash
+XFWAP="1"
+XFGD="4"
+XFBS="0"
+XFNWB=false' | sudo tee /boot/firmware/PPPwn/pconfig.sh
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local
 echo '[Service]

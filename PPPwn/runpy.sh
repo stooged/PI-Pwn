@@ -38,9 +38,22 @@ else
 coproc read -t 5 && wait "$!" || true
 VMUSB=false
 fi
+PLED=""
+ALED=""
 if [[ $LEDACT == "status" ]] || [[ $LEDACT == "off" ]] ;then
-   echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-   echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+   if [ -f /sys/class/leds/PWR/trigger ] && [ -f /sys/class/leds/ACT/trigger ]  ; then
+      PLED="/sys/class/leds/PWR/trigger"
+      ALED="/sys/class/leds/ACT/trigger"
+      echo none | sudo tee $PLED >/dev/null
+      echo none | sudo tee $ALED >/dev/null
+   elif [ -f /sys/class/leds/user-led0/trigger ] && [ -f /sys/class/leds/user-led1/trigger ]  ; then
+      PLED="/sys/class/leds/user-led1/trigger"
+      ALED="/sys/class/leds/user-led2/trigger"
+      echo none | sudo tee $PLED >/dev/null
+      echo none | sudo tee $ALED >/dev/null
+   else
+      LEDACT="normal"
+   fi
 fi
 echo -e "\n\n\033[36m _____  _____  _____                 
 |  __ \\|  __ \\|  __ \\
@@ -91,7 +104,7 @@ else
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
 if [[ $LEDACT == "status" ]] ;then
-   echo timer | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+   echo timer | sudo tee $PLED >/dev/null
 fi
 if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
    echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
@@ -113,8 +126,8 @@ GHT=$(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ')
 if [[ $GHT == *"open"* ]] ; then
 echo -e "\n\033[95mGoldhen found aborting pppwn\033[0m\n" | sudo tee /dev/tty1
 if [[ $LEDACT == "status" ]] ;then
-	echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-	echo default-on | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+	echo none | sudo tee $PLED >/dev/null
+	echo default-on | sudo tee $ALED >/dev/null
 fi
 sudo killall pppoe-server
 if [ $PPPOECONN = true ] ; then
@@ -159,8 +172,8 @@ echo -e "\n\033[95mReady for console connection\033[0m\n" | sudo tee /dev/tty1
 while [ true ]
 do
 if [[ $LEDACT == "status" ]] ;then
-	echo heartbeat | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-	echo timer | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+	echo heartbeat | sudo tee $PLED >/dev/null
+	echo timer | sudo tee $ALED >/dev/null
 fi
 sudo ip link set $INTERFACE down
 coproc read -t 5 && wait "$!" || true
@@ -180,8 +193,8 @@ do
  if [[ $stdo  == "[+] Done!" ]] ; then
 	echo -e "\033[32m\nConsole PPPwned! \033[0m\n" | sudo tee /dev/tty1
 	if [[ $LEDACT == "status" ]] ;then
-		echo none | sudo tee /sys/class/leds/PWR/trigger >/dev/null
-		echo default-on | sudo tee /sys/class/leds/ACT/trigger >/dev/null
+		echo none | sudo tee $PLED >/dev/null
+		echo default-on | sudo tee $ALED >/dev/null
 	fi
 	if [ $PPPOECONN = true ] ; then
 		sudo systemctl start pppoe
@@ -206,22 +219,22 @@ do
  elif [[ $stdo  == *"Unsupported firmware version"* ]] ; then
  	echo -e "\033[31m\nUnsupported firmware version\033[0m\n" | sudo tee /dev/tty1
 	if [[ $LEDACT == "status" ]] ;then
-	 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-	 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+	 	echo none | sudo tee $ALED >/dev/null
+	 	echo default-on | sudo tee $PLED >/dev/null
 	fi
  	exit 1
  elif [[ $stdo  == *"Cannot find interface with name of"* ]] ; then
  	echo -e "\033[31m\nInterface $INTERFACE not found\033[0m\n" | sudo tee /dev/tty1
 	if [[ $LEDACT == "status" ]] ;then
-	 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
-	 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+	 	echo none | sudo tee $ALED >/dev/null
+	 	echo default-on | sudo tee $PLED >/dev/null
 	fi
  	exit 1
  fi
 done < <(timeout $TIMEOUT sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.})
 if [[ $LEDACT == "status" ]] ;then
- 	echo none | sudo tee /sys/class/leds/ACT/trigger >/dev/null
- 	echo default-on | sudo tee /sys/class/leds/PWR/trigger >/dev/null
+ 	echo none | sudo tee $ALED >/dev/null
+ 	echo default-on | sudo tee $PLED >/dev/null
 fi
 done
 
