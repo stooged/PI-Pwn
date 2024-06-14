@@ -199,13 +199,13 @@ According to<a href=\"https://github.com/TheOfficialFloW/PPPwn/pull/48\" style=\
 </div>
 <br><br>");
 
-print("<label for=\"xfwap\">Wait after pin </label><input size=\"4\" type=\"text\" name=\"xfwap\" value=\"".$xfwap."\" style=\"text-align:center;\"><br>
+print("<label for=\"xfwap\">Wait after pin </label><input size=\"4\" type=\"text\" name=\"xfwap\" value=\"".$xfwap."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 1)</label><br>
 <div style=\"text-align:left; font-size:12px; padding:10px;\">
 According to<a href=\"https://github.com/SiSTR0/PPPwn/pull/1\" style=\"text-decoration:none;\" target=\"_blank\"><label id=\"urllbl\">SiSTR0/PPPwn/pull/1</label></a>setting this parameter to 20 helps to improve stability
 </div>
 <br><br>");
 
-print("<label for=\"xfgd\">Groom delay&nbsp;</label><input size=\"4\" type=\"text\" name=\"xfgd\" value=\"".$xfgd."\" style=\"text-align:center;\"><br>
+print("<label for=\"xfgd\">Groom delay&nbsp;</label><input size=\"4\" type=\"text\" name=\"xfgd\" value=\"".$xfgd."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 4)</label><br>
 <div style=\"text-align:left; font-size:12px; padding:10px;\">
 The Python version of pppwn does not set any wait at Heap grooming. <br>
 If the C++ version does not add some wait there is a probability of kernel panic.<br>
@@ -213,7 +213,7 @@ You can set any value within 1-4097 (4097 is equivalent to not doing any wait).
 </div>
 <br><br>");
 
-print("<label for=\"xfbs\">Buffer size&nbsp;&nbsp;&nbsp;&nbsp; </label><input size=\"4\" type=\"text\" name=\"xfbs\" value=\"".$xfbs."\" style=\"text-align:center;\"><br>
+print("<label for=\"xfbs\">Buffer size&nbsp;&nbsp;&nbsp;&nbsp; </label><input size=\"4\" type=\"text\" name=\"xfbs\" value=\"".$xfbs."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 0)</label><br>
 <div style=\"text-align:left; font-size:12px; padding:10px;\">
 When running on low-end devices this value can be set to reduce memory usage.<br>
 Setting it to 10240 can run normally and the memory usage is about 3MB.<br>
