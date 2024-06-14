@@ -461,9 +461,22 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
-ip link
+INUM=0
+echo -e '\r\n\r\n  \033[44m\033[97m Interface list \033[0m\r\n'
+readarray -t difcearr  < <(sudo ip link | cut -d " " -f-2 | cut -d ":" -f2-2)
+for difce in "${difcearr[@]}"; do
+if [ ! -z $difce ]; then
+if [ $difce != "lo" ] && [[ $difce != *"ppp"* ]] && [[ ! $difce == *"wlan"* ]]; then
+DEFIFCE=${difce/ /}
+fi
+echo -e $INUM': \033[33m'${difce/ /}'\033[0m'
+interfaces+=(${difce/ /})
+((INUM++))
+fi
+done
+echo -e '\r\n\033[35mDetected lan interface: \033[33m'$DEFIFCE'\033[0m'
 while true; do
-read -p "$(printf '\r\n\r\n\033[36mWould you like to change the pi lan interface, the default is eth0\r\n\r\n\033[36m(Y|N)?: \033[0m')" ifset
+read -p "$(printf '\r\n\033[36mWould you like to change the pi lan interface\r\n\r\n\033[36m(Y|N)?: \033[0m')" ifset
 case $ifset in
 [Yy]* ) 
 while true; do
@@ -471,7 +484,11 @@ read -p  "$(printf '\033[33mEnter the interface value: \033[0m')" IFCE
 case $IFCE in
 "" ) 
  echo -e '\033[31mCannot be empty!\033[0m';;
- * )  
+ * ) 
+if [ ${#IFCE} -le 1 ] && [[ $IFCE == ?(-)+([0-9]) ]] && [ ! -z ${interfaces[IFCE]} ] && [ $IFCE -lt $INUM ]; then
+IFCE=${interfaces[IFCE]}
+break
+fi
 if grep -q '^[0-9a-zA-Z_ -]*$' <<<$IFCE ; then 
 if [ ${#IFCE} -le 1 ]  || [ ${#IFCE} -ge 17 ] ; then
 echo -e '\033[31mThe interface must be between 2 and 16 characters long\033[0m';
@@ -483,11 +500,11 @@ echo -e '\033[31mThe interface must only contain alphanumeric characters\033[0m'
 fi
 esac
 done
-echo -e '\033[32mYou are using '$IFCE'\033[0m'
+echo -e '\033[32mYou are using \033[33m'$IFCE'\033[0m'
 break;;
 [Nn]* ) 
-echo -e '\033[35mUsing the default setting: eth0\033[0m'
-IFCE="eth0"
+echo -e '\033[35mUsing the detected setting: \033[33m'$DEFIFCE'\033[0m'
+IFCE=$DEFIFCE
 break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
@@ -565,8 +582,8 @@ address=/ea.com/127.0.0.1
 address=/'$HSTN'.local/192.168.2.1' | sudo tee /etc/dnsmasq.more.conf
 sudo systemctl restart dnsmasq
 echo '#!/bin/bash
-INTERFACE="'$IFCE'" 
-FIRMWAREVERSION="'$FWV'" 
+INTERFACE="'${IFCE/ /}'" 
+FIRMWAREVERSION="'${FWV/ /}'" 
 SHUTDOWN='$SHTDN'
 USBETHERNET='$USBE'
 PPPOECONN='$INET'
@@ -574,14 +591,10 @@ VMUSB='$VUSB'
 DTLINK='$DTLNK'
 RESTMODE='$RESTM'
 PPDBG='$PDBG'
-TIMEOUT="'$TOUT'm"
+TIMEOUT="'${TOUT/ /}'m"
 PYPWN='$UPYPWN'
 LEDACT="normal"
-DDNS=false
-XFWAP="1"
-XFGD="4"
-XFBS="0"
-XFNWB=false' | sudo tee /boot/firmware/PPPwn/config.sh
+DDNS=false' | sudo tee /boot/firmware/PPPwn/config.sh
 echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"

@@ -188,10 +188,6 @@ if ($pret == 0){
 }
 
 
-$cmd = 'sudo ip link | cut -d " " -f-2   | cut -d ":" -f2-2 ';
-exec($cmd ." 2>&1", $idata, $iret);
-
-
 print("<html> 
 <head>
 <title>PI-Pwn</title>
@@ -477,11 +473,12 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 
 print("<button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
 </form>
-</center>");
+</center><br><table align=center><td><form method=\"post\">");
 
-print("<br><table align=center><td><form method=\"post\">");
 
 print("<select name=\"interface\">");
+$cmd = 'sudo ip link | cut -d " " -f-2 | cut -d ":" -f2-2 ';
+exec($cmd ." 2>&1", $idata, $iret);
 foreach ($idata as $x) {
 $x = trim($x);
 if ($x !== "" && $x !== "lo" && $x !== "ppp0" && !str_starts_with($x, "wlan"))

@@ -75,7 +75,7 @@ if [[ $LEDACT == "status" ]] || [[ $LEDACT == "off" ]] ;then
       ALED="/sys/class/leds/ACT/trigger"
       echo none | sudo tee $PLED >/dev/null
       echo none | sudo tee $ALED >/dev/null
-   elif [ -f /sys/class/leds/user-led0/trigger ] && [ -f /sys/class/leds/user-led1/trigger ]  ; then
+   elif [ -f /sys/class/leds/user-led1/trigger ] && [ -f /sys/class/leds/user-led2/trigger ]  ; then
       PLED="/sys/class/leds/user-led1/trigger"
       ALED="/sys/class/leds/user-led2/trigger"
       echo none | sudo tee $PLED >/dev/null
