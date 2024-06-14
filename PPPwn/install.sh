@@ -467,7 +467,9 @@ readarray -t difcearr  < <(sudo ip link | cut -d " " -f-2 | cut -d ":" -f2-2)
 for difce in "${difcearr[@]}"; do
 if [ ! -z $difce ]; then
 if [ $difce != "lo" ] && [[ $difce != *"ppp"* ]] && [[ ! $difce == *"wlan"* ]]; then
+if [ -z $DEFIFCE ]; then
 DEFIFCE=${difce/ /}
+fi
 fi
 echo -e $INUM': \033[33m'${difce/ /}'\033[0m'
 interfaces+=(${difce/ /})
