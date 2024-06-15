@@ -14,7 +14,7 @@ if [ -z $PPDBG ]; then PPDBG=false; fi
 if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
 if [ -z $RESTMODE ]; then RESTMODE=false; fi
 if [ -z $LEDACT ]; then LEDACT="normal"; fi
-PITYP=$(tr -d '\0' </proc/device-tree/model) 
+PITYP=$(tr -d '\0' </proc/device-tree/model)
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 VMUSB=false
@@ -32,6 +32,9 @@ elif [[ $PITYP == *"Raspberry Pi Zero"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
+coproc read -t 15 && wait "$!" || true
+VMUSB=false
+elif [[ $PITYP == *"Luckfox Pico Max"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 VMUSB=false
 else
@@ -55,7 +58,7 @@ if [[ $LEDACT == "status" ]] || [[ $LEDACT == "off" ]] ;then
       LEDACT="normal"
    fi
 fi
-echo -e "\n\n\033[36m _____  _____  _____                 
+echo -e "\n\n\033[36m _____  _____  _____
 |  __ \\|  __ \\|  __ \\
 | |__) | |__) | |__) |_      ___ __
 |  ___/|  ___/|  ___/\\ \\ /\\ / / '_ \\
@@ -69,7 +72,7 @@ if [ $USBETHERNET = true ] ; then
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind >/dev/null
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
-   else	
+   else
 	sudo ip link set $INTERFACE down
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
@@ -83,7 +86,7 @@ if [ $VMUSB = true ] ; then
   for rdir in "${rdirarr[@]}"; do
     readarray -t pdirarr  < <(sudo ls /media/pwndrives/${rdir})
     for pdir in "${pdirarr[@]}"; do
-       if [[ ${pdir,,}  == "payloads" ]] ; then 
+       if [[ ${pdir,,}  == "payloads" ]] ; then
 	     FOUND=1
 	     UDEV='/dev/'${rdir}
 	     break
@@ -92,7 +95,7 @@ if [ $VMUSB = true ] ; then
       if [ "$FOUND" -ne 0 ]; then
         break
       fi
-  done  
+  done
   if [[ ! -z $UDEV ]] ;then
     sudo modprobe g_mass_storage file=$UDEV stall=0 ro=0 removable=1
   fi
@@ -100,22 +103,22 @@ if [ $VMUSB = true ] ; then
 fi
 if [ $PPPOECONN = true ] ; then
    echo -e "\033[92mInternet Access:\033[93m Enabled\033[0m" | sudo tee /dev/tty1
-else   
+else
    echo -e "\033[92mInternet Access:\033[93m Disabled\033[0m" | sudo tee /dev/tty1
 fi
 if [[ $LEDACT == "status" ]] ;then
    echo timer | sudo tee $PLED >/dev/null
 fi
-if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
+if [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]; then
    echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
-   while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
+   while [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]
    do
       coproc read -t 2 && wait "$!" || true
    done
    echo -e "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
 fi
 if [ $RESTMODE = true ] ; then
-sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 
+sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2
 coproc read -t 2 && wait "$!" || true
 while [[ $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
 do
@@ -157,7 +160,7 @@ if [ $USBETHERNET = true ] ; then
 	echo '1-1' | sudo tee /sys/bus/usb/drivers/usb/bind >/dev/null
 	coproc read -t 4 && wait "$!" || true
 	sudo ip link set $INTERFACE up
-   else	
+   else
 	sudo ip link set $INTERFACE down
 	coproc read -t 5 && wait "$!" || true
 	sudo ip link set $INTERFACE up
@@ -185,8 +188,8 @@ if [ -f /boot/firmware/PPPwn/config.sh ]; then
    PPDBG=false
  fi
 fi
-while read -r stdo ; 
-do 
+while read -r stdo ;
+do
  if [ $PPDBG = true ] ; then
 	echo -e $stdo | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/pwn.log
  fi
