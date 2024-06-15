@@ -58,6 +58,10 @@ elif [[ $PITYP == *"Raspberry Pi"* ]] ;then
 coproc read -t 15 && wait "$!" || true
 CPPBIN="pppwn11"
 VMUSB=false
+elif [[ $PITYP == *"Luckfox Pico Max"* ]] ;then
+coproc read -t 15 && wait "$!" || true
+CPPBIN="pppwn7"
+VMUSB=false
 else
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
