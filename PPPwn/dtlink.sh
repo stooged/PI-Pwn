@@ -10,7 +10,7 @@ if [ -z $DTLINK ]; then DTLINK=false; fi
 if [ $DTLINK = true ] ; then
 echo -e "\033[32mMonitoring link\033[0m\n" | sudo tee /dev/tty1
 coproc read -t 60 && wait "$!" || true
-while [[ $(ifconfig $INTERFACE) == *"RUNNING"* ]]
+while [[ $(ip link show $INTERFACE) == *"LOWER_UP"* ]]
 do
     coproc read -t 10 && wait "$!" || true
 done
