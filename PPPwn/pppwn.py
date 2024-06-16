@@ -165,7 +165,7 @@ class Exploit():
 
     SOURCE_MAC = '41:41:41:41:41:41'
     SOURCE_IPV4 = '192.168.2.1'
-    SOURCE_IPV6 = 'fe80::4141:4141:4141:4141'
+    SOURCE_IPV6 = 'fe80::9f9f:41ff:9f9f:41ff'
 
     TARGET_IPV4 = '192.168.2.2'
 
