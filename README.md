@@ -22,7 +22,7 @@ There is also a webserver to control the pi, change settings and send payloads b
 <a href=https://wiki.radxa.com/Rock4/4cplus>ROCK PI 4C Plus</a> with armbian <a href=https://imola.armbian.com/archive/rockpi-4cplus/archive/Armbian_23.11.1_Rockpi-4cplus_bookworm_current_6.1.63.img.xz>Image</a><br>
 <a href=https://biqu.equipment/products/bigtreetech-btt-pi-v1-2>BIGTREETECH BTT Pi V1.2</a> with armbian <a href=https://www.armbian.com/bigtreetech-cb1/>minimal</a><br>
 <a href=https://www.linksprite.com/linksprite-pcduino3/>pcDuino3b</a> with armbian <a href=https://imola.armbian.com/archive/pcduino3nano/archive/Armbian_5.38_Pcduino3nano_Debian_jessie_next_4.14.14.7z>Image</a><br>
-<a href=https://www.luckfox.com/Luckfox-Pico/Luckfox-Pico-Max>Luckfox Pico Max RV1106</a> with Ubuntu SDCard<a href=https://drive.google.com/file/d/1-f9sWeOS0x9gMJKU7F62PdwikrBuPIcx>Image</a><br> and kernel with USB, NAT, PPPoE support<a href=https://github.com/keschort/PI-Pwn-Luckfox/raw/main/kernel/RV1106/boot.img>kernel</a><br>
+<a href=https://www.luckfox.com/Luckfox-Pico/Luckfox-Pico-Max>Luckfox Pico Max RV1106</a> with Ubuntu SDCard <a href=https://drive.google.com/file/d/1-f9sWeOS0x9gMJKU7F62PdwikrBuPIcx>Image</a> and kernel with USB, NAT, PPPoE support <a href=https://github.com/keschort/PI-Pwn-Luckfox/raw/main/kernel/RV1106/boot.img>kernel</a><br>
 
 
 ## Install
