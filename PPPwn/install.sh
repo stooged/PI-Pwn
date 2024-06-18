@@ -1,11 +1,11 @@
 #!/bin/bash
-
+ 
 
 if [ ! -d /boot/firmware/PPPwn/payloads ]; then
   sudo mkdir /boot/firmware/PPPwn/payloads
 fi
 if [ -z $1 ] ;then
-sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at -y
+sudo apt install pppoe dnsmasq iptables nginx php-fpm nmap at net-tools -y
 echo 'bogus-priv
 expand-hosts
 domain-needed
@@ -492,8 +492,8 @@ IFCE=${interfaces[IFCE]}
 break
 fi
 if grep -q '^[0-9a-zA-Z_ -]*$' <<<$IFCE ; then 
-if [ ${#IFCE} -le 1 ]  || [ ${#IFCE} -ge 17 ] ; then
-echo -e '\033[31mThe interface must be between 2 and 16 characters long\033[0m';
+if [ ${#IFCE} -le 1 ]  || [ ${#IFCE} -ge 16 ] ; then
+echo -e '\033[31mThe interface must be between 2 and 15 characters long\033[0m';
 else 
 break;
 fi
@@ -623,6 +623,9 @@ sudo sed -i "s^$CHSTN^$HSTN^g" /etc/hostname
 echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
 sudo reboot
 else
+if [[ $(dpkg-query -W --showformat='${Status}\n' net-tools|grep "install ok installed")  == "" ]] ;then
+sudo apt install net-tools -y
+fi
 echo "Update complete, Rebooting."  | sudo tee /dev/tty1 | sudo tee /dev/pts/* | sudo tee -a /boot/firmware/PPPwn/upd.log
 coproc read -t 6 && wait "$!" || true
 sudo reboot

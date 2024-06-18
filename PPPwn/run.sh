@@ -139,9 +139,9 @@ fi
 if [[ $LEDACT == "status" ]] ;then
    echo timer | sudo tee $PLED >/dev/null
 fi
-if [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]; then
+if [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]; then
    echo -e "\033[31mWaiting for link\033[0m" | sudo tee /dev/tty1
-   while [[ ! $(ethtool $INTERFACE) == *"Link detected: yes"* ]]
+   while [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]
    do
       coproc read -t 2 && wait "$!" || true
    done
