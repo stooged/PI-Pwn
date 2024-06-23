@@ -14,6 +14,12 @@ if [ -z $PPDBG ]; then PPDBG=false; fi
 if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
 if [ -z $RESTMODE ]; then RESTMODE=false; fi
 if [ -z $LEDACT ]; then LEDACT="normal"; fi
+if [ -z $OIPV ]; then OIPV=false; fi
+if [ $OIPV = true ] ; then
+PYIP="1"
+else
+PYIP="0"
+fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
 coproc read -t 15 && wait "$!" || true
@@ -231,7 +237,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.})
+done < <(timeout $TIMEOUT sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.} --ipv=$PYIP)
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee $ALED >/dev/null
  	echo default-on | sudo tee $PLED >/dev/null

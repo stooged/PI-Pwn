@@ -18,6 +18,7 @@ if (isset($_POST['save'])){
 	$config .= "PYPWN=".(isset($_POST["upypwn"]) ? "true" : "false")."\n";
 	$config .= "LEDACT=\\\"".$_POST["ledact"]."\\\"\n";
 	$config .= "DDNS=".(isset($_POST["ddns"]) ? "true" : "false")."\n";
+	$config .= "OIPV=".(isset($_POST["oipv"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -144,6 +145,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'DDNS')) {
       $ddns = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'OIPV')) {
+      $oipv = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -159,6 +163,7 @@ foreach ($data as $x) {
    $upypwn = "false";
    $ledact = "normal";
    $ddns = "false";
+   $oipv = "false";
 }
 
 
@@ -174,6 +179,7 @@ if (empty($timeout)){ $timeout = "5m";}
 if (empty($upypwn)){ $upypwn = "false";}
 if (empty($ledact)){ $ledact = "normal";}
 if (empty($ddns)){ $ddns = "false";}
+if (empty($oipv)){ $oipv = "false";}
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -554,6 +560,17 @@ print("<br>");
 }else{
 print("<a href=\"pconfig.php\" style=\"text-decoration:none;\"><label id=\"pconfig\">PPPwn C++ Options</label></a><br>");
 }
+
+
+
+$cval = "";
+if ($oipv == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"oipv\" value=\"".$oipv."\" ".$cval.">
+<label for=\"oipv\">&nbsp;Use original source ipv6<label style=\"font-size:12px; padding:4px;\">(fe80::4141:4141:4141:4141)</label></label>
+<br>");
 
 
 

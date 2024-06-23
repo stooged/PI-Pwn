@@ -596,7 +596,8 @@ PPDBG='$PDBG'
 TIMEOUT="'${TOUT/ /}'m"
 PYPWN='$UPYPWN'
 LEDACT="normal"
-DDNS=false' | sudo tee /boot/firmware/PPPwn/config.sh
+DDNS=false
+OIPV=false' | sudo tee /boot/firmware/PPPwn/config.sh
 echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"
