@@ -225,10 +225,19 @@ input[type=text] {
 	border: 1px solid #6495ED;
 }
 
-a:active,
+a:active,a:hover,
 a:focus {
     outline: 0;
     border: none;
+	color: #999999;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a {
+	font-size:12px; 
+	text-decoration: none;
+	color:6495ED;
 }
 
 button {
@@ -316,7 +325,7 @@ input[type=checkbox]:checked:after {
     margin: auto;
     padding: 0;
     border: 1px solid #6495ED;
-    width: 50%;
+    width: 80%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -361,7 +370,6 @@ input[type=checkbox]:checked:after {
     padding: 2px 8px;
 }
 
-
 textarea {
     resize: none;
     border: none;
@@ -381,8 +389,23 @@ label[id=pwnlog] {
 	padding:4px; 
 	color:6495ED;
 }
+
 label[id=pwnlog]:hover,
 label[id=pwnlog]:focus {
+    color: #999999;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+label[id=help] {
+    padding: 5px 5px;
+	font-size:12px; 
+	padding:4px; 
+	color:6495ED;
+}
+
+label[id=help]:hover,
+label[id=help]:focus {
     color: #999999;
     text-decoration: none;
     cursor: pointer;
@@ -394,6 +417,7 @@ label[id=pconfig] {
 	padding:4px; 
 	color:6495ED;
 }
+
 label[id=pconfig]:hover,
 label[id=pconfig]:focus {
     color: #999999;
@@ -401,6 +425,13 @@ label[id=pconfig]:focus {
     cursor: pointer;
 }
 
+div[id=help]{
+    height:100%;
+    overflow:auto;
+    overflow-x:hidden;
+	scrollbar-color: #6495ED #0E0E14;
+    scrollbar-width: thin;
+}
 
 </style>
 <script>
@@ -456,7 +487,6 @@ function setEnd() {
 <div class=\"logger-header\">
 <a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><span class=\"close\">&times;</span></a></div>
 <div class=\"logger-body\">
-<textarea disabled id=\"text_box\" rows=\"40\"></textarea>
 </div></div></div>
 <br>
 <form method=\"post\"><button name=\"payloads\">Load Payloads</button> &nbsp; ");
@@ -682,6 +712,9 @@ print("<br>
 <input type=\"text\" name=\"plist\" id=\"plist\" value=\"".$portlist."\" onclick=\"setEnd()\"><br>
 <div style=\"text-align:left; font-size:12px; padding:4px;\">
 <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts ranges: 1000-1100</label>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href=\"javascript:void(0);\" style=\"text-decoration:none;\"><label id=\"help\">Show Help</label></a>
+
 </div>");
 
 print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
@@ -697,24 +730,36 @@ var span = document.getElementsByClassName(\"close\")[0];
 if ($ppdbg == "true")
 {
 print("var btn = document.getElementById(\"pwnlog\");
-
 btn.onclick = function() {
   logger.style.display = \"block\";
+  var lbody = document.getElementsByClassName(\"logger-body\")[0];
+  lbody.innerHTML  = '<textarea disabled id=\"text_box\" rows=\"40\"></textarea>';
   startLog('pwn.log');
 }
 ");
 }
 
 
-print("span.onclick = function() {
+print("var btn1 = document.getElementById(\"help\");
+btn1.onclick = function() {
+  logger.style.display = \"block\";
+  var lbody = document.getElementsByClassName(\"logger-body\")[0];
+  lbody.innerHTML  = \"<br><div id=help style='text-align: left; font-size: 14px;'> <font color='#F28C28'>Interface</font> - this is the lan interface on the pi that is connected to the console.<br><br><font color='#F28C28'>Firmware version</font> - version of firmware running on the console.<br><br><font color='#F28C28'>Time to restart PPPwn if it hangs</font> - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br><font color='#F28C28'>Led activity</font> - on selected pi models this will have the leds flash based on the exploit progress.<br><br><font color='#F28C28'>Use Python version</font> - enabling this will force the use of the original python pppwn released by <a href='https://github.com/TheOfficialFloW/PPPwn' target='_blank'>TheOfficialFloW</a> <br><br><font color='#F28C28'>Use original source ipv6</font> - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br><font color='#F28C28'>Use usb ethernet adapter for console connection</font> - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br><font color='#F28C28'>Detect if goldhen is running</font> - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br><font color='#F28C28'>Detect console shutdown and restart PPPwn</font> - with this enabled if the link is lost between the pi and the console pppwn will be restarted.<br><br><font color='#F28C28'>Enable verbose PPPwn</font> - enables debug output from pppwn so you can see the exploit progress.<br><br><font color='#F28C28'>Enable console internet access</font> - enabling this will make pi-pwn setup a connection to the console allowing internet access after pppwn succeeds.<br><br><font color='#F28C28'>Disable DNS blocker</font> - enabling this will turn off the dns blocker that blocks certain servers that are used for updates and telemetry. <br><br><font color='#F28C28'>Shutdown PI after PWN</font> - if enabled this will make the pi shutdown after pppwn succeeds.<br><br><font color='#F28C28'>Enable usb drive to console</font> - on selected pi models this will allow a usb drive in the pi to be passed through to the console.<br><br><font color='#F28C28'>Ports</font> - this is a list of ports that are forwarded from the pi to the console, single ports or port ranges can be used.<br><br><br><br><center><font color='#50C878'>Credits</font> - all credit goes to <a href='https://github.com/TheOfficialFloW' target='_blank'>TheOfficialFloW</a>, <a href='https://github.com/xfangfang' target='_blank'>xfangfang</a>, <a href='https://github.com/SiSTR0' target='_blank'>SiSTR0</a> who have made this project possible.</center>\";
+}
+
+span.onclick = function() {
   logger.style.display = \"none\";
   stopLog();
+  var text1 = document.getElementById(\"text_box\");
+  text1.value = '';
 }
 
 window.onclick = function(event) {
   if (event.target == logger) {
     logger.style.display = \"none\";
 	stopLog();
+	var text1 = document.getElementById(\"text_box\");
+	text1.value = '';
   }
 }
 ");
@@ -722,6 +767,8 @@ window.onclick = function(event) {
 if (isset($_POST['update'])){
 	exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
     print("logger.style.display = \"block\";
+    var lbody = document.getElementsByClassName(\"logger-body\")[0];
+    lbody.innerHTML  = '<textarea disabled id=\"text_box\" rows=\"40\"></textarea>';
     startLog('upd.log');");
 }
 

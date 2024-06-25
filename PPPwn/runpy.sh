@@ -16,9 +16,9 @@ if [ -z $RESTMODE ]; then RESTMODE=false; fi
 if [ -z $LEDACT ]; then LEDACT="normal"; fi
 if [ -z $OIPV ]; then OIPV=false; fi
 if [ $OIPV = true ] ; then
-PYIP="1"
+PYIP="fe80::4141:4141:4141:4141"
 else
-PYIP="0"
+PYIP="fe80::9f9f:41ff:9f9f:41ff"
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then

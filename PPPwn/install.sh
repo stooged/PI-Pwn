@@ -511,6 +511,20 @@ break;;
 * ) echo -e '\033[31mPlease answer Y or N\033[0m';;
 esac
 done
+while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to use the original ipv6 address that was used in pppwn\r\n\r\n\033[36m(Y|N)?: \033[0m')" uoipv
+case $uoipv in
+[Yy]* ) 
+IPV="true"
+echo -e '\033[32mThe original ipv6 address will be used\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mThe default ipv6 address will be used\033[0m'
+IPV="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 4"* ]] || [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 while true; do
@@ -597,7 +611,7 @@ TIMEOUT="'${TOUT/ /}'m"
 PYPWN='$UPYPWN'
 LEDACT="normal"
 DDNS=false
-OIPV=false' | sudo tee /boot/firmware/PPPwn/config.sh
+OIPV='$IPV'' | sudo tee /boot/firmware/PPPwn/config.sh
 echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"
