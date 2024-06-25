@@ -12,6 +12,7 @@ There is also a webserver to control the pi, change settings and send payloads b
 
 ## Tested PI Models
 
+These are models i have tested with but pi-pwn is not limited to these models.<br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a><br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4 Model B</a><br>
 <a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a><br>
@@ -119,8 +120,6 @@ Once everything is setup and the ethernet cable is plugged in between the pi and
 The exploit may fail many times but the pi will continue to purge the console to keep trying to pwn itself.<br>
 Once pwned the process will stop and the pi will shut down if you are not using internet access. <br>
 
-You will need to restart the pi if you wish to pwn the console again.<br>
-
 The idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the process completes<br>
 
 
@@ -129,3 +128,28 @@ The idea is you boot the console and the pi together and the pi will keep trying
 You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
 The commands above can also be run again to install updates or change the settings.<br>
 You can also click the update button on the web ui.<br>
+
+
+## Options
+
+ `Interface` - this is the lan interface on the pi that is connected to the console.<br><br>
+ `Firmware version` - version of firmware running on the console.<br><br>
+ `Time to restart PPPwn if it hangs` - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br>
+ `Led activity` - on selected pi models this will have the leds flash based on the exploit progress.<br><br>
+ `Use Python version` - enabling this will force the use of the original python pppwn released by <a href=https://github.com/TheOfficialFloW/PPPwn>TheOfficialFloW</a> <br><br>
+ `Use original source ipv6` - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br>
+ `Use usb ethernet adapter for console connection` - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br>
+ `Detect if goldhen is running` - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br>
+ `Detect console shutdown and restart PPPwn` - with this enabled if the link is lost between the pi and the console pppwn will be restarted.<br><br>
+ `Enable verbose PPPwn` - enables debug output from pppwn so you can see the exploit progress.<br><br>
+ `Enable console internet access` - enabling this will make pi-pwn setup a connection to the console allowing internet access after pppwn succeeds.<br><br>
+ `Disable DNS blocker` - enabling this will turn off the dns blocker that blocks certain servers that are used for updates and telemetry. <br><br>
+ `Shutdown PI after PWN` - if enabled this will make the pi shutdown after pppwn succeeds.<br><br>
+ `Enable usb drive to console` - on selected pi models this will allow a usb drive in the pi to be passed through to the console.<br><br>
+ `Ports` - this is a list of ports that are forwarded from the pi to the console, single ports or port ranges can be used.<br><br>
+ 
+ 
+ ## Credits
+ 
+ All credit goes to <a href=https://github.com/TheOfficialFloW>TheOfficialFloW</a>, <a href=https://github.com/xfangfang>xfangfang</a>, <a href=https://github.com/SiSTR0>SiSTR0</a> who have made this project possible.<br><br>
+ 
