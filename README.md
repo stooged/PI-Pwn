@@ -1,6 +1,27 @@
 # PI Pwn
 
-This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi and run <a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> on the PS4 fw 11.0, 10.01, 10.00, 9.60, 9.00<br>
+This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi.<br> 
+
+<a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> will run on firmware versions<br>
+
+9.00<br>
+9.60<br>
+10.00, 10.01<br>
+11.00<br>
+
+<br>
+
+<a href=https://github.com/EchoStretch/ps4-hen-vtx>ps4-hen-vtx</a> will run on firmware versions<br>
+
+7.00, 7.01, 7.02<br>
+7.50, 7.51, 7.55<br>
+8.00, 8.01, 8.03<br>
+8.50, 8.52<br>
+9.03, 9.04<br>
+10.50, 10.70, 10.71 <br>
+
+<br>
+
 It also supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
 A dns blocker is also installed and used to prevent updates.<br>
 

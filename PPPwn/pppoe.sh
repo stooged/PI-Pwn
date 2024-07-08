@@ -31,7 +31,7 @@ if [ -f /boot/firmware/PPPwn/ports.txt ]; then
 	for prt in $PORTS
 	do
     	sudo iptables -t nat -I PREROUTING -p tcp --dport ${prt/-/:} -j DNAT --to 192.168.2.2:${prt/:/-}
-		sudo iptables -t nat -I PREROUTING -p udp --dport ${prt/-/:} -j DNAT --to 192.168.2.2:${prt/:/-}
+    	sudo iptables -t nat -I PREROUTING -p udp --dport ${prt/-/:} -j DNAT --to 192.168.2.2:${prt/:/-}
 	done
 else
 	sudo iptables -t nat -I PREROUTING -p tcp --dport 2121 -j DNAT --to 192.168.2.2:2121
