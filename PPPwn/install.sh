@@ -271,6 +271,20 @@ esac
 done
 fi
 while true; do
+read -p "$(printf '\r\n\r\n\033[36mDo you want to use GoldHen if it is available for the selected firmware\r\n\r\n\033[36m(Y|N)?: \033[0m')" usgh
+case $usgh in
+[Yy]* ) 
+USEGH="true"
+echo -e '\033[32mGoldHen will be used\033[0m'
+break;;
+[Nn]* ) 
+echo -e '\033[35mvtx-hen will be used\033[0m'
+USEGH="false"
+break;;
+* ) echo -e '\033[31mPlease answer Y or N\033[0m';;
+esac
+done
+while true; do
 read -p "$(printf '\r\n\r\n\033[36mDo you want to change the PPPoE username and password?\r\nif you select no then these defaults will be used\r\n\r\nUsername: \033[33mppp\r\n\033[36mPassword: \033[33mppp\r\n\r\n\033[36m(Y|N)?: \033[0m')" wapset
 case $wapset in
 [Yy]* ) 
@@ -611,7 +625,8 @@ TIMEOUT="'${TOUT/ /}'m"
 PYPWN='$UPYPWN'
 LEDACT="normal"
 DDNS=false
-OIPV='$IPV'' | sudo tee /boot/firmware/PPPwn/config.sh
+OIPV='$IPV'
+UGH='$USEGH'' | sudo tee /boot/firmware/PPPwn/config.sh
 echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"

@@ -17,8 +17,12 @@ This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 7.50, 7.51, 7.55<br>
 8.00, 8.01, 8.03<br>
 8.50, 8.52<br>
+9.00<br>
 9.03, 9.04<br>
-10.50, 10.70, 10.71 <br>
+9.50, 9.51, 9.60<br>
+10.00, 10.01<br>
+10.50, 10.70, 10.71<br>
+11.00<br>
 
 <br>
 

@@ -15,10 +15,21 @@ if [ -z $TIMEOUT ]; then TIMEOUT="5m"; fi
 if [ -z $RESTMODE ]; then RESTMODE=false; fi
 if [ -z $LEDACT ]; then LEDACT="normal"; fi
 if [ -z $OIPV ]; then OIPV=false; fi
+if [ -z $UGH ]; then UGH=true; fi
 if [ $OIPV = true ] ; then
 PYIP="fe80::4141:4141:4141:4141"
 else
 PYIP="fe80::9f9f:41ff:9f9f:41ff"
+fi
+if [ $UGH = true ] ; then
+if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
+PYGH="1"
+else
+PYGH="0"
+UGH=false
+fi
+else
+PYGH="0"
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
@@ -120,7 +131,7 @@ if [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]; then
    done
    echo -e "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
 fi
-if [ $RESTMODE = true ] ; then
+if [ $RESTMODE = true ] && [ $UGH = true ] ; then
 sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 
 coproc read -t 2 && wait "$!" || true
 while [[ $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
@@ -237,7 +248,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.} --ipv=$PYIP)
+done < <(timeout $TIMEOUT sudo python3 /boot/firmware/PPPwn/pppwn.py --interface=$INTERFACE --fw=${FIRMWAREVERSION//.} --ipv=$PYIP --gh=$PYGH)
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee $ALED >/dev/null
  	echo default-on | sudo tee $PLED >/dev/null

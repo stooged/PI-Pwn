@@ -19,6 +19,7 @@ if (isset($_POST['save'])){
 	$config .= "LEDACT=\\\"".$_POST["ledact"]."\\\"\n";
 	$config .= "DDNS=".(isset($_POST["ddns"]) ? "true" : "false")."\n";
 	$config .= "OIPV=".(isset($_POST["oipv"]) ? "true" : "false")."\n";
+	$config .= "UGH=".(isset($_POST["ugh"]) ? "true" : "false")."\n";
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/config.sh');
 	exec('echo "'.trim($_POST["plist"]).'" | sudo tee /boot/firmware/PPPwn/ports.txt');
  	exec('sudo iptables -P INPUT ACCEPT');
@@ -148,6 +149,9 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'OIPV')) {
       $oipv = (explode("=", $x)[1]);
    }
+   elseif (str_starts_with($x, 'UGH')) {
+      $ugh = (explode("=", $x)[1]);
+   }
 }
 }else{
    $interface = "eth0";
@@ -164,6 +168,7 @@ foreach ($data as $x) {
    $ledact = "normal";
    $ddns = "false";
    $oipv = "false";
+   $ugh = "true";
 }
 
 
@@ -180,6 +185,7 @@ if (empty($upypwn)){ $upypwn = "false";}
 if (empty($ledact)){ $ledact = "normal";}
 if (empty($ddns)){ $ddns = "false";}
 if (empty($oipv)){ $oipv = "false";}
+if (empty($ugh)){ $ugh = "true";}
 
 
 $cmd = 'sudo cat /boot/firmware/PPPwn/ports.txt';
@@ -592,6 +598,16 @@ print("<a href=\"pconfig.php\" style=\"text-decoration:none;\"><label id=\"pconf
 }
 
 
+$cval = "";
+if ($ugh == "true")
+{
+$cval = "checked";
+}
+print("<br><input type=\"checkbox\" name=\"ugh\" value=\"".$ugh."\" ".$cval.">
+<label for=\"ugh\">&nbsp;Use GoldHen if available for selected firmware</label>
+<br>");
+
+
 
 $cval = "";
 if ($oipv == "true")
@@ -614,7 +630,8 @@ print("<br><input type=\"checkbox\" name=\"usbether\" value=\"".$usbether."\" ".
 <br>");
 
 
-
+if ($ugh == "true")
+{
 $cval = "";
 if ($restmode == "true")
 {
@@ -623,7 +640,7 @@ $cval = "checked";
 print("<br><input type=\"checkbox\" name=\"restmode\" value=\"".$restmode."\" ".$cval.">
 <label for=\"restmode\">&nbsp;Detect if goldhen is running<label style=\"font-size:12px; padding:4px;\">(useful for rest mode)</label></label>
 <br>");
-
+}
 
 
 if ($shutdownpi == "false" || $pppoeconn == "true")
@@ -744,7 +761,7 @@ print("var btn1 = document.getElementById(\"help\");
 btn1.onclick = function() {
   logger.style.display = \"block\";
   var lbody = document.getElementsByClassName(\"logger-body\")[0];
-  lbody.innerHTML  = \"<br><div id=help style='text-align: left; font-size: 14px;'> <font color='#F28C28'>Interface</font> - this is the lan interface on the pi that is connected to the console.<br><br><font color='#F28C28'>Firmware version</font> - version of firmware running on the console.<br><br><font color='#F28C28'>Time to restart PPPwn if it hangs</font> - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br><font color='#F28C28'>Led activity</font> - on selected pi models this will have the leds flash based on the exploit progress.<br><br><font color='#F28C28'>Use Python version</font> - enabling this will force the use of the original python pppwn released by <a href='https://github.com/TheOfficialFloW/PPPwn' target='_blank'>TheOfficialFloW</a> <br><br><font color='#F28C28'>Use original source ipv6</font> - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br><font color='#F28C28'>Use usb ethernet adapter for console connection</font> - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br><font color='#F28C28'>Detect if goldhen is running</font> - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br><font color='#F28C28'>Detect console shutdown and restart PPPwn</font> - with this enabled if the link is lost between the pi and the console pppwn will be restarted.<br><br><font color='#F28C28'>Enable verbose PPPwn</font> - enables debug output from pppwn so you can see the exploit progress.<br><br><font color='#F28C28'>Enable console internet access</font> - enabling this will make pi-pwn setup a connection to the console allowing internet access after pppwn succeeds.<br><br><font color='#F28C28'>Disable DNS blocker</font> - enabling this will turn off the dns blocker that blocks certain servers that are used for updates and telemetry. <br><br><font color='#F28C28'>Shutdown PI after PWN</font> - if enabled this will make the pi shutdown after pppwn succeeds.<br><br><font color='#F28C28'>Enable usb drive to console</font> - on selected pi models this will allow a usb drive in the pi to be passed through to the console.<br><br><font color='#F28C28'>Ports</font> - this is a list of ports that are forwarded from the pi to the console, single ports or port ranges can be used.<br><br><br><br><center><font color='#50C878'>Credits</font> - all credit goes to <a href='https://github.com/TheOfficialFloW' target='_blank'>TheOfficialFloW</a>, <a href='https://github.com/xfangfang' target='_blank'>xfangfang</a>, <a href='https://github.com/SiSTR0' target='_blank'>SiSTR0</a> who have made this project possible.</center>\";
+  lbody.innerHTML  = \"<br><div id=help style='text-align: left; font-size: 14px;'> <font color='#F28C28'>Interface</font> - this is the lan interface on the pi that is connected to the console.<br><br><font color='#F28C28'>Firmware version</font> - version of firmware running on the console.<br><br><font color='#F28C28'>Time to restart PPPwn if it hangs</font> - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br><font color='#F28C28'>Led activity</font> - on selected pi models this will have the leds flash based on the exploit progress.<br><br><font color='#F28C28'>Use Python version</font> - enabling this will force the use of the original python pppwn released by <a href='https://github.com/TheOfficialFloW/PPPwn' target='_blank'>TheOfficialFloW</a> <br><br><font color='#F28C28'>Use GoldHen if available for selected firmware</font> - if this is not enabled or your firmware has no goldhen available vtx-hen will be used.<br><br><font color='#F28C28'>Use original source ipv6</font> - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br><font color='#F28C28'>Use usb ethernet adapter for console connection</font> - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br><font color='#F28C28'>Detect if goldhen is running</font> - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br><font color='#F28C28'>Detect console shutdown and restart PPPwn</font> - with this enabled if the link is lost between the pi and the console pppwn will be restarted.<br><br><font color='#F28C28'>Enable verbose PPPwn</font> - enables debug output from pppwn so you can see the exploit progress.<br><br><font color='#F28C28'>Enable console internet access</font> - enabling this will make pi-pwn setup a connection to the console allowing internet access after pppwn succeeds.<br><br><font color='#F28C28'>Disable DNS blocker</font> - enabling this will turn off the dns blocker that blocks certain servers that are used for updates and telemetry. <br><br><font color='#F28C28'>Shutdown PI after PWN</font> - if enabled this will make the pi shutdown after pppwn succeeds.<br><br><font color='#F28C28'>Enable usb drive to console</font> - on selected pi models this will allow a usb drive in the pi to be passed through to the console.<br><br><font color='#F28C28'>Ports</font> - this is a list of ports that are forwarded from the pi to the console, single ports or port ranges can be used.<br><br><br><br><center><font color='#50C878'>Credits</font> - all credit goes to <a href='https://github.com/TheOfficialFloW' target='_blank'>TheOfficialFloW</a>, <a href='https://github.com/xfangfang' target='_blank'>xfangfang</a>, <a href='https://github.com/SiSTR0' target='_blank'>SiSTR0</a> who have made this project possible.</center>\";
 }
 
 span.onclick = function() {

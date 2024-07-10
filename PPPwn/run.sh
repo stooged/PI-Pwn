@@ -27,6 +27,7 @@ if [ -z $XFGD ]; then XFGD="4"; fi
 if [ -z $XFBS ]; then XFBS="0"; fi
 if [ -z $XFNWB ]; then XFNWB=false; fi
 if [ -z $OIPV ]; then OIPV=false; fi
+if [ -z $UGH ]; then UGH=true; fi
 if [ $OIPV = true ] ; then
 XFIP="fe80::4141:4141:4141:4141"
 else
@@ -36,6 +37,16 @@ if [ $XFNWB = true ] ; then
 XFNW="--no-wait-padi"
 else
 XFNW=""
+fi
+if [ $UGH = true ] ; then
+if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
+XFGH="-gh"
+else
+XFGH=""
+UGH=false
+fi
+else
+XFGH=""
 fi
 PITYP=$(tr -d '\0' </proc/device-tree/model) 
 if [[ $PITYP == *"Raspberry Pi 2"* ]] ;then
@@ -153,7 +164,7 @@ if [[ ! $(ifconfig $INTERFACE) == *"RUNNING"* ]]; then
    done
    echo -e "\033[32mLink found\033[0m\n" | sudo tee /dev/tty1
 fi
-if [ $RESTMODE = true ] ; then
+if [ $RESTMODE = true ] && [ $UGH = true ] ; then
 sudo pppoe-server -I $INTERFACE -T 60 -N 1 -C PPPWN -S PPPWN -L 192.168.2.1 -R 192.168.2.2 
 coproc read -t 2 && wait "$!" || true
 while [[ $(sudo nmap -p 3232 192.168.2.2 | grep '3232/tcp' | cut -f2 -d' ') == "" ]]
@@ -269,7 +280,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --ipv "$XFIP" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW)
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" --ipv "$XFIP" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW $XFGH)
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee $ALED >/dev/null
  	echo default-on | sudo tee $PLED >/dev/null
