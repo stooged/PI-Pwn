@@ -162,6 +162,7 @@ You can also click the update button on the web ui.<br>
  `Time to restart PPPwn if it hangs` - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br>
  `Led activity` - on selected pi models this will have the leds flash based on the exploit progress.<br><br>
  `Use Python version` - enabling this will force the use of the original python pppwn released by <a href=https://github.com/TheOfficialFloW/PPPwn>TheOfficialFloW</a> <br><br>
+ `Use GoldHen if available for selected firmware` - if this is not enabled or your firmware has no goldhen available vtx-hen will be used.<br><br>
  `Use original source ipv6` - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br>
  `Use usb ethernet adapter for console connection` - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br>
  `Detect if goldhen is running` - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br>
@@ -176,5 +177,5 @@ You can also click the update button on the web ui.<br>
  
  ## Credits
  
- All credit goes to <a href=https://github.com/TheOfficialFloW>TheOfficialFloW</a>, <a href=https://github.com/xfangfang>xfangfang</a>, <a href=https://github.com/SiSTR0>SiSTR0</a> who have made this project possible.<br><br>
+ All credit goes to <a href=https://github.com/TheOfficialFloW>TheOfficialFloW</a>, <a href=https://github.com/xfangfang>xfangfang</a>, <a href=https://github.com/SiSTR0>SiSTR0</a>, <a href=https://github.com/xvortex>Vortex</a>, <a href=https://github.com/EchoStretch>EchoStretch</a> and many other people who have made this project possible.<br><br>
  
