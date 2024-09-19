@@ -76,8 +76,10 @@ sudo bash install.sh
 <br>
 
 There's the possibility to upgrade PI-Pwn using the PI-Pwn_upgrade.sh bash file that performs all the command written above, useful if you don't want to copy and paste all the above commands.
+
 For Android download <a href="https://play.google.com/store/apps/details?id=mobileSSH.feng.gao&hl=it&pli=1">MobileSSH</a><br>
 For Apple download <a href="https://apps.apple.com/us/app/prompt-3/id1594420480?pt=10692&ct=panic-web&mt=8">Prompt3</a><br>
+
 In this case you have to run the following command:
 
 <br>
