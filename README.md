@@ -75,7 +75,7 @@ sudo bash install.sh
 
 <br>
 
-There's the possibility to upgrade PI-Pwn using the PI-Pwn_upgrade.sh bash file that performs all the command written above, useful if you don't want to re-write all the commands above.
+There's the possibility to upgrade PI-Pwn using the PI-Pwn_upgrade.sh bash file that performs all the command written above, useful if you don't want to copy and paste all the above commands.
 In this case you have to run the following command:
 
 <br>
