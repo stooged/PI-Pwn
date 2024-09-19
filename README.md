@@ -75,6 +75,15 @@ sudo bash install.sh
 
 <br>
 
+There's the possibility to upgrade PI-Pwn using the PI-Pwn_upgrade.sh bash file that performs all the command written above, useful if you don't want to re-write all the commands above.
+In this case you have to run the following command:
+
+<br>
+
+```sh
+./PI-Pwn_upgrade.sh
+```
+<br>
 During the install process you will be asked to set some options.<br>
 
 If you are using a <b>usb to ethernet adapter</b> for the connection to the console you need to select yes<br>
