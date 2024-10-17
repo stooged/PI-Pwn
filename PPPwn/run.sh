@@ -60,6 +60,9 @@ VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi 4"* ]] ;then
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
+elif [[ $PITYP == *"Raspberry Pi Compute Module 4"* ]] ;then
+coproc read -t 5 && wait "$!" || true
+CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
