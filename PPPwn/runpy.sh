@@ -22,7 +22,7 @@ else
 PYIP="fe80::9f9f:41ff:9f9f:41ff"
 fi
 if [ $UGH = true ] ; then
-if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
+if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "10.50" ]] || [[ $FIRMWAREVERSION == "10.70" ]] || [[ $FIRMWAREVERSION == "10.71" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
 PYGH="1"
 else
 PYGH="0"
@@ -39,6 +39,8 @@ elif [[ $PITYP == *"Raspberry Pi 3"* ]] ;then
 coproc read -t 10 && wait "$!" || true
 VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi 4"* ]] ;then
+coproc read -t 5 && wait "$!" || true
+elif [[ $PITYP == *"Raspberry Pi Compute Module 4"* ]] ;then
 coproc read -t 5 && wait "$!" || true
 elif [[ $PITYP == *"Raspberry Pi 5"* ]] ;then
 coproc read -t 5 && wait "$!" || true

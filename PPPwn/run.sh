@@ -39,7 +39,7 @@ else
 XFNW=""
 fi
 if [ $UGH = true ] ; then
-if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
+if [[ $FIRMWAREVERSION == "9.00" ]] || [[ $FIRMWAREVERSION == "9.60" ]] || [[ $FIRMWAREVERSION == "10.00" ]] || [[ $FIRMWAREVERSION == "10.01" ]] || [[ $FIRMWAREVERSION == "10.50" ]] || [[ $FIRMWAREVERSION == "10.70" ]] || [[ $FIRMWAREVERSION == "10.71" ]] || [[ $FIRMWAREVERSION == "11.00" ]] ; then
 XFGH="-gh"
 else
 XFGH=""
@@ -58,6 +58,9 @@ coproc read -t 10 && wait "$!" || true
 CPPBIN="pppwn64"
 VMUSB=false
 elif [[ $PITYP == *"Raspberry Pi 4"* ]] ;then
+coproc read -t 5 && wait "$!" || true
+CPPBIN="pppwn64"
+elif [[ $PITYP == *"Raspberry Pi Compute Module 4"* ]] ;then
 coproc read -t 5 && wait "$!" || true
 CPPBIN="pppwn64"
 elif [[ $PITYP == *"Raspberry Pi 5"* ]] ;then

@@ -7,6 +7,7 @@ This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn
 9.00<br>
 9.60<br>
 10.00, 10.01<br>
+10.50, 10.70, 10.71<br>
 11.00<br>
 
 <br>
