@@ -13,11 +13,11 @@ patching(){
         sudo apt-get update
         echo -e "\nInstalling Nala...\n"
         sudo apt-get install nala -y
-        echo -e "\nRunning Rasbian upgrade...\n"
+        echo -e "\nRunning Raspbian upgrade...\n"
 	sudo DEBIAN_FRONTEND=noninteractive nala upgrade -y
         echo -e "\nAll set!"
     else
-	echo -e "\nRunning Rasbian upgrade...\n"
+	echo -e "\nRunning Raspbian upgrade...\n"
         sudo DEBIAN_FRONTEND=noninteractive nala upgrade -y
         echo -e "\nAll set!"
     fi
