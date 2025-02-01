@@ -631,6 +631,9 @@ echo '#!/bin/bash
 XFWAP="1"
 XFGD="4"
 XFBS="0"
+XFSN="0x1000"
+XFPN="0x1000"
+XFCN="0x1"
 XFNWB=false' | sudo tee /boot/firmware/PPPwn/pconfig.sh
 sudo rm -f /usr/lib/systemd/system/network-online.target
 sudo sed -i 's^sudo bash /boot/firmware/PPPwn/run.sh \&^^g' /etc/rc.local

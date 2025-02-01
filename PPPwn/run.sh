@@ -25,6 +25,9 @@ if [ -z $LEDACT ]; then LEDACT="normal"; fi
 if [ -z $XFWAP ]; then XFWAP="1"; fi
 if [ -z $XFGD ]; then XFGD="4"; fi
 if [ -z $XFBS ]; then XFBS="0"; fi
+if [ -z $XFSN ]; then XFSN="0x1000"; fi
+if [ -z $XFPN ]; then XFPN="0x1000"; fi
+if [ -z $XFCN ]; then XFCN="0x1"; fi
 if [ -z $XFNWB ]; then XFNWB=false; fi
 if [ -z $OIPV ]; then OIPV=false; fi
 if [ -z $UGH ]; then UGH=true; fi
@@ -314,7 +317,7 @@ do
 	fi
  	exit 1
  fi
-done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" -sta "$HDIR$STA2" --ipv "$XFIP" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS $XFNW)
+done < <(timeout $TIMEOUT sudo /boot/firmware/PPPwn/$CPPBIN --interface "$INTERFACE" --fw "${FIRMWAREVERSION//.}" -sta "$HDIR$STA2" --ipv "$XFIP" --wait-after-pin $XFWAP --groom-delay $XFGD --buffer-size $XFBS --spray-num $XFSN --pin-num $XFPN --corrupt-num $XFCN $XFNW)
 if [[ $LEDACT == "status" ]] ;then
  	echo none | sudo tee $ALED >/dev/null
  	echo default-on | sudo tee $PLED >/dev/null

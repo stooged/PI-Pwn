@@ -5,15 +5,27 @@ if (isset($_POST['save'])){
 	$xfgd = str_replace(" ", "", trim($_POST["xfgd"]));
 	$xfbs = str_replace(" ", "", trim($_POST["xfbs"]));
 	$xfnwb = (isset($_POST["xfnwb"]) ? "true" : "false");
+	$xfsn = str_replace(" ", "", trim($_POST["xfsn"]));
+	$xfpn = str_replace(" ", "", trim($_POST["xfpn"]));
+	$xfcn = str_replace(" ", "", trim($_POST["xfcn"]));
+	
 	if (empty($xfwap)){ $xfwap = "1";}
 	if (empty($xfgd)){ $xfgd = "4";}
 	if (empty($xfbs)){ $xfbs = "0";}
 	if (empty($xfnwb)){ $xfnwb = "false";}
+	if (empty($xfsn)){ $xfsn = "0x1000";}
+	if (empty($xfpn)){ $xfpn = "0x1000";}
+	if (empty($xfcn)){ $xfcn = "0x1";}
+	
 	$config = "#!/bin/bash\n";
 	$config .= "XFWAP=\\\"".$xfwap."\\\"\n";
 	$config .= "XFGD=\\\"".$xfgd."\\\"\n";
 	$config .= "XFBS=\\\"".$xfbs."\\\"\n";
+	$config .= "XFSN=\\\"".$xfsn."\\\"\n";
+	$config .= "XFPN=\\\"".$xfpn."\\\"\n";
+	$config .= "XFCN=\\\"".$xfcn."\\\"\n";	
 	$config .= "XFNWB=".$xfnwb."\n";
+
 	exec('echo "'.$config.'" | sudo tee /boot/firmware/PPPwn/pconfig.sh');
 	sleep(1);
 }
@@ -41,19 +53,34 @@ foreach ($data as $x) {
    elseif (str_starts_with($x, 'XFNWB')) {
       $xfnwb = (explode("=", $x)[1]);
    }
+    elseif (str_starts_with($x, 'XFSN')) {
+      $xfsn = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+    elseif (str_starts_with($x, 'XFPN')) {
+      $xfpn = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+    elseif (str_starts_with($x, 'XFCN')) {
+      $xfcn = (explode("=", str_replace("\"", "", $x))[1]);
+   }
+   
 }
 }else{
    $xfwap = "1";
    $xfgd = "4";
    $xfbs = "0";
    $xfnwb = "false";
+   $xfsn = "0x1000";
+   $xfpn = "0x1000";
+   $xfcn = "0x1";
 }
 
 if (empty($xfwap)){ $xfwap = "1";}
 if (empty($xfgd)){ $xfgd = "4";}
 if (empty($xfbs)){ $xfbs = "0";}
 if (empty($xfnwb)){ $xfnwb = "false";}
-
+if (empty($xfsn)){ $xfsn = "0x1000";}
+if (empty($xfpn)){ $xfpn = "0x1000";}
+if (empty($xfcn)){ $xfcn = "0x1";}
 
 print("<html> 
 <head>
@@ -219,8 +246,29 @@ When running on low-end devices this value can be set to reduce memory usage.<br
 Setting it to 10240 can run normally and the memory usage is about 3MB.<br>
 (Note: A value that is too small may cause some packets to not be captured properly)
 </div>
-<br>");
+<br><br>");
 
+print("<label for=\"xfsn\">Spray Num&nbsp;&nbsp;&nbsp; </label><input size=\"4\" type=\"text\" name=\"xfsn\" value=\"".$xfsn."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 0X1000)</label><br>
+<div style=\"text-align:left; font-size:12px; padding:10px;\">
+Brief testing shows that increasing this by steps of 0x50 up to around 0x1500 results in better reliability.
+</div>
+<br><br>");
+
+print("<label for=\"xfpn\">Pin Num&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label><input size=\"4\" type=\"text\" name=\"xfpn\" value=\"".$xfpn."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 0X1000)</label><br>
+<div style=\"text-align:left; font-size:12px; padding:10px;\">
+PIN_NUM is the time to wait on a core before proceeding with the exploit.<br>
+Brief testing has shown this doesn't affect too much, so it's fine to leave this at default.<br>
+</div>
+<br><br>");
+
+print("<label for=\"xfcn\">Corrupt Num&nbsp;</label><input size=\"4\" type=\"text\" name=\"xfcn\" value=\"".$xfcn."\" style=\"text-align:center;\"><label style=\"text-align:left; font-size:12px; padding:10px;\"> (Default: 0X1)</label><br>
+<div style=\"text-align:left; font-size:12px; padding:10px;\">
+CORRUPT_NUM is the amout of malicious packets sent to the PS4.<br>
+Breif testing shows increasing this results in much better reliability.<br>
+Reccomended values are 0x1 0x2, 0x4, 0x6, 0x8, 0x10, 0x14, 0x20, 0x30, 0x40.<br>
+Values too high may result in a crash.
+</div>
+<br>");
 
 print("</td></tr><td align=center><br><button name=\"save\">Save</button></td></tr>
 </form>
