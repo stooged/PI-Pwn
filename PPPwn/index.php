@@ -518,7 +518,8 @@ print("<button name=\"remount\">Remount USB</button> &nbsp; ");
 }
 
 
-print("<button name=\"network\">Network Settings</button> &nbsp; <button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"update\">Update</button>
+print("<button name=\"network\">Network Settings</button> &nbsp; <button name=\"restart\">Restart PPPwn</button> &nbsp; <button name=\"reboot\">Reboot PI</button> &nbsp; <button 
+name=\"shutdown\">Shutdown PI</button> &nbsp; <button name=\"patch\">Update Raspbian/OS</button> &nbsp;  <button name=\"update\">Update</button>
 </form>
 </center><br><table align=center><td><form method=\"post\">");
 
@@ -785,6 +786,14 @@ window.onclick = function(event) {
   }
 }
 ");
+
+if (isset($_POST['patch'])){
+        exec('sudo bash /boot/firmware/PPPwn/patch.sh >> /dev/null &');
+    print("logger.style.display = \"block\";
+    var lbody = document.getElementsByClassName(\"logger-body\")[0];
+    lbody.innerHTML  = '<textarea disabled id=\"text_box\" rows=\"40\"></textarea>';
+    startLog('patch.log');");
+}
 
 if (isset($_POST['update'])){
 	exec('sudo bash /boot/firmware/PPPwn/update.sh >> /dev/null &');
